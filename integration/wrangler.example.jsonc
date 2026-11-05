@@ -1,0 +1,8 @@
+{
+  "name": "pika-pet-playtest",
+  "main": "worker-built.mjs",
+  "compatibility_date": "2026-11-04",
+  "assets": { "directory": "../dist", "binding": "ASSETS", "run_worker_first": ["/api/*", "/auth/*"] },
+  "vars": { "DISCORD_CLIENT_ID": "1554992710723567757", "PUBLIC_ORIGIN": "https://REPLACE-WITH-YOUR-WORKER.workers.dev" },
+  "d1_databases": [{ "binding": "PET_DB", "database_name": "pika-pet-playtest", "database_id": "REPLACE-WITH-NEW-PLAYTEST-DATABASE-ID" }]
+}
