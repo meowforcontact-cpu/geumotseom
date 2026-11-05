@@ -20,7 +20,20 @@ export function validateSave(value, items) {
   const pos={}; for (const id of ['m1','m2','m3']) { const xy=s.pos?.[id]; if (!Array.isArray(xy)||xy.length!==2||xy.some(n=>!Number.isFinite(n)||n < -128||n>256)) throw Error('가구 배치를 읽을 수 없어요.');pos[id]=[...xy]; }
   const result={coins:s.coins,earned:s.earned,xp:s.xp,owned:[...s.owned],eq:{벽:s.eq.벽??null,바닥:s.eq.바닥??null,칭호:s.eq.칭호??null,배지:s.eq.배지??null,가구:[...s.eq.가구]},pets:s.pets.map(p=>({name:p.name,kind:p.kind,hatched:p.hatched,taps:p.taps})),rep:s.rep,hun:s.hun,mood:s.mood,poop:[...s.poop],att:{streak:s.att.streak,done:s.att.done},sent:s.sent.map(x=>[...x]),log:s.log.map(x=>[...x]),pos,cleaned:integer(s.cleaned,0,1000000)?s.cleaned:0};
   if (value.day !== day()) { result.att.done=false;result.sent=[]; if(value.day!==day(Date.now()-86400000))result.att.streak=0; }
+  if(s.daily!==undefined){
+    if(!s.daily||typeof s.daily.day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s.daily.day)||typeof s.daily.feed!=='boolean'||typeof s.daily.play!=='boolean')throw Error('일일미션 기록을 읽을 수 없어요.');
+    result.daily=s.daily.day===day()&&value.day===day()?{day:s.daily.day,feed:s.daily.feed,play:s.daily.play}:{day:day(),feed:false,play:false};
+  }
   return result;
+}
+export function ensureDaily(state,today=day()){
+  if(!state.daily||state.daily.day!==today)state.daily={day:today,feed:false,play:false};
+  return state.daily;
+}
+export function recordDailyAction(state,action,today=day()){
+  const daily=ensureDaily(state,today);
+  if(action!=='feed'&&action!=='play')return false;
+  const changed=!daily[action];daily[action]=true;return changed;
 }
 export function snapshot(state) {return {version:1,day:day(),savedAt:new Date().toISOString(),state:{...state,log:state.log.slice(0,100)}};}
 export function purchase(state, product) {

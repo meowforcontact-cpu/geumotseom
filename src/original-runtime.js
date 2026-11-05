@@ -4,6 +4,7 @@ let account=null,accountRevision=null,connectionReady=false;
 function persist(){
   if(resetting)return;
   if(activeDay!==day()){if(activeDay!==day(Date.now()-86400000))state.att.streak=0;state.att.done=false;state.sent=[];activeDay=day()}
+  ensureDaily(state);
   const value=snapshot(state),fingerprint=JSON.stringify(value.state)+value.day;
   try{if(fingerprint!==savedFingerprint){localStorage.setItem(KEY,JSON.stringify(value));savedFingerprint=fingerprint}}catch{}
 }
@@ -19,6 +20,20 @@ function importProgress(){
 function renamePet(){const name=prompt('친구 이름을 입력해 주세요.',pet().name);if(!name?.trim())return;pet().name=name.trim().slice(0,20);persist();render()}
 function resetProgress(){if(!confirm('이 브라우저의 체험 진행을 지우고 처음부터 시작할까요?'))return;try{localStorage.removeItem(KEY);resetting=true;location.reload()}catch{say('저장소에 접근할 수 없어요.')}}
 const originalSettingsList=SCR.set.list;
+const originalActivityList=SCR.act.list;
+const missionCount=()=>Number(state.att.done)+Number(ensureDaily(state).feed)+Number(state.daily.play);
+SCR.act.list=()=>{persist();return [L('일일미션','ilist',()=>push('daily'),missionCount()+'/3'),...originalActivityList()]};
+function recordDaily(action){recordDailyAction(state,action);persist()}
+SCR.daily={title:'일일미션',right:()=>missionCount()+'/3',list:()=>{
+  persist();const daily=ensureDaily(state);
+  return [
+    L('오늘 출석하기','ipaw',()=>push('att'),state.att.done?'완료':'0/1'),
+    L('밥 한 번 주기','ibowl',eggOnly(()=>push('food')),daily.feed?'완료':'0/1'),
+    L('함께 한 번 놀기','iball',()=>care('play'),daily.play?'완료':'0/1'),
+    L('매일 0시 갱신','ilist',()=>{},'한국시간',1),
+    L('달성 기록만 저장돼요','ilist',()=>{},'체험',1),BACK()
+  ];
+}};
 const originalBuyOK=buyOK;
 let purchasePending=false;
 buyOK=async function(screen){if(purchasePending)return;purchasePending=true;try{return await originalBuyOK(screen)}finally{purchasePending=false}};
