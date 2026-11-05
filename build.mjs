@@ -1,5 +1,5 @@
 import {readFile,writeFile,mkdir,copyFile} from 'node:fs/promises';
-let html=await readFile('src/pet.html','utf8');
+let html=(await readFile('src/pet.html','utf8')).replace(/\r\n/g,'\n');
 const replace=(before,after)=>{if(!html.includes(before))throw Error('원본 변경 확인 필요: '+before.slice(0,65));html=html.replace(before,after)};
 // Preserve the supplied device, artwork, palette, menus and responsive layout.
 replace('<html>','<html lang="ko">');
@@ -27,3 +27,4 @@ offline=offline.replace('checkConnection();','/* Offline: account connection una
 await mkdir('outputs',{recursive:true});
 await writeFile('outputs/그못섬-오프라인-체험판.html',offline);
 console.log('Built restored original UI with compatible local saves.');
+
