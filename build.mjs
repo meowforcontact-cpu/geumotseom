@@ -4,6 +4,7 @@ const replace=(before,after)=>{if(!html.includes(before))throw Error('원본 변
 // Preserve the supplied device, artwork, palette, menus and responsive layout.
 replace('<html>','<html lang="ko">');
 replace('<title>피카 다마고치</title>','<title>그못섬 · 내 방</title>');
+replace('</head>',`<style>${await readFile('src/navigation-v9.css','utf8')}</style></head>`);
 const start=html.indexOf('// 서버 연동 지점:');
 const end=html.indexOf('\nconst state=',start);
 if(start<0||end<0)throw Error('상점 경계 없음');
@@ -14,7 +15,8 @@ replace("startAnim('play',20);return say('신난다!')", "recordDaily('play');st
 replace('if(i.pet)return;','if(!i || !state.owned.includes(i.id) || i.pet)return;');
 replace("addEventListener('keydown',e=>{", "addEventListener('keydown',e=>{\n  if(e.target.closest?.('input,textarea,select,[contenteditable]'))return;");
 replace("else{equip(i,true);back();say('방에 놓았어요!')}","else{back();say('보유함에 담았어요!')}\n    persist(); render();");
-replace("const qs=Q.get('stage');",`const qs=null;\n${await readFile('src/original-runtime.js','utf8')}\n`);
+replace("const qs=Q.get('stage');",`const qs=null;\n${await readFile('src/original-runtime.js','utf8')}\n${await readFile('src/menu-icons.js','utf8')}\n${await readFile('src/navigation-v9.js','utf8')}\n`);
+replace('att:{streak:3,done:false}','att:{streak:0,done:false}');
 replace("state.coins=+Q.get('coins')||r.coins;state.earned=r.earned;state.owned=r.owned;r.owned.forEach(id=>equip(item(id),true));", "state.coins=r.coins;state.earned=r.earned;state.owned=r.owned;state.eq.가구=['m1'];restore();");
 replace('layout();\n  if(stage()', 'layout(); persist();\n  if(stage()');
 replace('</script>',"addEventListener('pagehide',persist);\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});\n</script>");

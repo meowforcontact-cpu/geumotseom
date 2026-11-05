@@ -1,0 +1,20 @@
+/* Layout-only island draft, composed with the game's existing pixel icons. */
+.nav-menu-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:4px;flex:1;min-height:0;padding:3px 0}
+.nav-menu-cell{appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;min-height:0;margin:0;padding:3px 1px;border:1px solid var(--dash);border-radius:0;background:var(--cell);color:var(--ink);font:9px "DotGothic16","Malgun Gothic",monospace;cursor:pointer}
+.nav-menu-art{width:20px;height:20px;display:grid;place-items:center;flex:none}
+.nav-menu-art canvas{display:block;width:16px!important;height:16px!important;image-rendering:pixelated}
+.nav-menu-label{display:block;width:100%;line-height:12px;text-align:center;white-space:nowrap}
+.nav-menu-cell.is-selected{background:var(--lcd);border-color:var(--ink);box-shadow:inset 0 -2px 0 var(--fill)}
+.nav-menu-cell:focus-visible{outline:1px solid var(--ink);outline-offset:-2px}
+.home-quick{position:absolute;bottom:1px;left:2px;right:2px;display:flex;justify-content:space-between;z-index:2;pointer-events:auto}
+.home-quick button{font:9px "DotGothic16","Malgun Gothic",monospace;border:0;border-radius:0;background:var(--bar);color:var(--ink);padding:2px 4px;cursor:pointer}
+.home-quick button:focus-visible{outline:1px dashed var(--ink)}
+.island-map{position:relative;width:100%;height:88px;flex:none;overflow:hidden}
+.island-terrain{position:absolute;inset:0;width:100%;height:100%;shape-rendering:crispEdges}
+.map-destination{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:1px;padding:2px 4px;border:0;background:transparent;color:#30486d;font:9px "DotGothic16","Malgun Gothic",monospace;cursor:pointer;white-space:nowrap}
+.map-destination span{padding:0 3px;background:#fffaf0;box-shadow:0 1px 0 #b5c9c9}
+.map-destination.chosen span,.map-destination:focus-visible span{background:var(--selbg);color:var(--selfg)}
+.map-destination:focus-visible{outline:1px dashed var(--ink)}
+.map-caption{text-align:center;font-size:8px;line-height:12px;color:var(--ink);min-height:12px}
+.map-enter{font:9px "DotGothic16","Malgun Gothic",monospace;color:var(--ink);background:none;border:0;padding:1px;cursor:pointer;line-height:12px}
+.map-enter:focus-visible{outline:1px dashed var(--ink)}
