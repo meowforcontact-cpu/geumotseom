@@ -19,26 +19,44 @@
 .map-enter{font:9px "DotGothic16","Malgun Gothic",monospace;color:var(--ink);background:none;border:0;padding:1px;cursor:pointer;line-height:12px}
 .map-enter:focus-visible{outline:1px dashed var(--ink)}
 
-/* A compact stamp notebook, using the device's blue and pink palettes. */
-.attendance{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;min-height:0;width:100%;color:var(--ink)}
-.att-stats{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--dash);background:var(--cell);box-shadow:0 2px 0 var(--dash)}
-.att-stats>div{display:flex;flex-direction:column;align-items:center;padding:2px 0;gap:1px}
-.att-stats>div+div{border-left:1px dashed var(--dash)}
-.att-stats span{font-size:9px;line-height:11px;color:var(--sub)}
-.att-stats strong{font-size:20px;line-height:23px;font-weight:400}
-.att-stats small{font-size:9px;margin-left:2px}
-.att-caption{display:flex;justify-content:space-between;font-size:8px;line-height:10px;margin-top:2px}
-.att-caption span+span{color:var(--sub)}
+/* A tiny sticker book; all ink and paper follow the existing device theme. */
+.attendance{display:flex;flex-direction:column;justify-content:center;gap:2px;flex:1;min-height:0;width:100%;color:var(--ink)}
+.att-ribbon{position:relative;isolation:isolate;margin:0 6px;text-align:center;background:var(--dash);padding:1px 4px;flex:none;box-shadow:0 2px 0 var(--sub)}
+.att-ribbon:before,.att-ribbon:after{content:"";position:absolute;top:5px;width:7px;height:20px;background:var(--dash);z-index:-1}
+.att-ribbon:before{left:-6px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,35% 50%)}
+.att-ribbon:after{right:-6px;clip-path:polygon(0 0,100% 0,65% 50%,100% 100%,0 100%)}
+.att-ribbon>span{display:block;font-size:7px;line-height:8px}
+.att-ribbon strong{display:block;font-size:11px;line-height:13px;font-weight:400}
+.att-paper{position:relative;margin-top:3px;padding:4px 3px 2px;border:1px solid var(--dash);border-radius:2px 2px 6px 2px;background:var(--cell);box-shadow:1px 2px 0 var(--dash)}
+.att-paper:before{content:"";position:absolute;left:50%;top:-3px;width:25px;height:5px;transform:translateX(-50%);background:var(--dash);opacity:.7}
+.att-caption{display:flex;justify-content:space-between;font-size:8px;line-height:9px;margin-bottom:3px;color:var(--sub)}
 .att-stamps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
-.att-stamp{height:20px;display:grid;place-items:center;border:1px dashed var(--dash);background:var(--cell);font-size:9px;color:var(--off)}
-.att-stamp.filled{border:1px solid var(--ink);background:var(--lcd);box-shadow:0 1px 0 var(--dash)}
+.att-stamp{position:relative;height:22px;display:grid;place-items:center;border:1px dotted var(--dash);background:var(--lcd);color:var(--off);font-size:8px}
+.att-stamp-face{display:grid;place-items:center;width:calc(100% - 2px);height:calc(100% - 4px);border:1px solid var(--dash)}
+.att-stamp.filled{border-color:var(--ink);background:var(--cell);color:var(--ink)}
+.att-stamp.filled .att-stamp-face{border-color:var(--sub)}
 .att-stamp canvas{width:14px!important;height:14px!important;image-rendering:pixelated}
-.att-reward{text-align:center;font-size:9px;line-height:12px}
-.att-reward span{display:block;font-size:8px;color:var(--sub)}
-.att-check{width:100%;min-height:21px;flex:none;padding:3px 1px;border:1px solid var(--ink);border-radius:0;background:var(--selbg);color:var(--selfg);font:10px "DotGothic16","Malgun Gothic",monospace;line-height:13px;cursor:pointer;box-shadow:0 2px 0 var(--dash)}
+.att-greeting{text-align:center;font-size:8px;line-height:9px;margin-top:2px;color:var(--sub)}
+.att-total{display:flex;align-items:center;justify-content:space-between;gap:3px;margin:2px 0 0;padding:2px 4px;background:var(--cell);border:1px solid var(--dash);border-left:3px solid var(--sub);border-radius:0 4px 4px 0;font-size:8px;line-height:12px}
+.att-total>span{display:flex;align-items:center;gap:2px;color:var(--sub)}
+.att-total strong{font-size:9px;font-weight:400}
+.att-total canvas,.att-check canvas{flex:none;width:12px!important;height:12px!important;image-rendering:pixelated}
+.att-check{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-height:22px;flex:none;padding:3px 1px;border:1px solid var(--ink);border-radius:5px;background:var(--selbg);color:var(--selfg);font:10px "DotGothic16","Malgun Gothic",monospace;line-height:13px;cursor:pointer;box-shadow:0 2px 0 var(--dash)}
+.att-check:not(.is-done) canvas{background:var(--cell);box-shadow:0 0 0 2px var(--cell)}
 .att-check:focus-visible{outline:1px dashed var(--selfg);outline-offset:-3px}
 .att-check.is-done{background:var(--cell);color:var(--ink);border-color:var(--dash);box-shadow:none;cursor:default;opacity:1}
-.att-note{text-align:center;font-size:7px;line-height:9px;color:var(--sub)}
+.att-reward{text-align:center;font-size:7px;line-height:8px;color:var(--sub)}
+.att-note{text-align:center;font-size:7px;line-height:8px;color:var(--sub)}
+.just-stamped canvas{animation:att-stamp-in .48s ease-out both}
+.att-sparkles{position:absolute;inset:-5px;pointer-events:none}
+.att-sparkles i{position:absolute;width:2px;height:2px;background:var(--fill);box-shadow:0 -2px 0 var(--fill),0 2px 0 var(--fill),-2px 0 0 var(--fill),2px 0 0 var(--fill);opacity:0;animation:att-twinkle .8s ease-out both}
+.att-sparkles i:nth-child(1){top:3px;left:1px}
+.att-sparkles i:nth-child(2){top:0;right:1px;animation-delay:.1s}
+.att-sparkles i:nth-child(3){bottom:3px;right:0;animation-delay:.15s}
+@keyframes att-stamp-in{0%{transform:scale(1.7);opacity:0}45%{transform:scale(.9);opacity:1}75%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes att-twinkle{0%{opacity:0;transform:translateY(3px) scale(.5)}35%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-5px) scale(.5)}}
+@media(prefers-reduced-motion:reduce){.just-stamped canvas{animation:none}.att-sparkles{display:none}}
+
 </style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -1312,17 +1330,21 @@ function attendanceView(){
  const nextPage=!a.done&&a.streak%7===0;
  const filled=nextPage?0:(a.streak-1)%7+1;
  const start=nextPage?a.streak+1:Math.floor((a.streak-1)/7)*7+1;
+ const celebrating=SCR.att.stampedUntil>Date.now();
  return '<section class="attendance" aria-label="내 출석 기록">'
-  +'<div class="att-stats"><div><span>연속 출석</span><strong>'+fmt(a.streak)+'<small>일</small></strong></div><div><span>누적 출석</span><strong>'+fmt(a.total)+'<small>일'+(a.totalEstimated?'+':'')+'</small></strong></div></div>'
-  +'<div class="att-caption"><span>차곡차곡 발도장</span><span>'+start+'–'+(start+6)+'일</span></div>'
-  +'<div class="att-stamps">'+Array.from({length:7},(_,i)=>'<div class="att-stamp'+(i<filled?' filled':'')+'" aria-label="'+(start+i)+'일 '+(i<filled?'달성':'미달성')+'">'+(i<filled?icon('npaw',14):'<span>'+(start+i)+'</span>')+'</div>').join('')+'</div>'
-  +'<div class="att-reward">'+(a.done?'오늘도 만나서 반가워!':'하루 한 번, 반가운 발도장')+'<span>100냥 · 5,000 XP '+(a.done?'받았어요':'받아요')+'</span></div>'
-  +'<button type="button" class="att-check'+(a.done?' is-done':'')+'" '+(a.done?'disabled':'data-ok')+'>'+(a.done?'✓ 오늘 출석 완료':'오늘 발도장 찍기')+'</button>'
+  +'<div class="att-ribbon"><span>연속 출석</span><strong>'+(a.streak?'우리 '+fmt(a.streak)+'일째 만났어!':'오늘부터 매일 만나!')+'</strong></div>'
+  +'<div class="att-paper"><div class="att-caption"><span>나의 발도장 모음</span><span>'+start+'–'+(start+6)+'일</span></div>'
+  +'<div class="att-stamps">'+Array.from({length:7},(_,i)=>'<div class="att-stamp'+(i<filled?' filled':'')+(celebrating&&i===filled-1?' just-stamped':'')+'" aria-label="'+(start+i)+'일 '+(i<filled?'달성':'미달성')+'"><span class="att-stamp-face">'+(i<filled?icon('npaw',14):'<span>'+(start+i)+'</span>')+'</span>'+(celebrating&&i===filled-1?'<span class="att-sparkles" aria-hidden="true"><i></i><i></i><i></i></span>':'')+'</div>').join('')+'</div>'
+  +'<div class="att-greeting">'+(a.done?'내일도 여기서 기다릴게냥':'오늘의 작은 만남을 모아요')+'</div></div>'
+  +'<div class="att-total"><span>'+icon('nbook',12)+' 누적 출석</span><strong>함께한 날 '+fmt(a.total)+'일'+(a.totalEstimated?'+':'')+'</strong></div>'
+  +'<button type="button" class="att-check'+(a.done?' is-done':'')+'" '+(a.done?'disabled':'data-ok')+'>'+icon('npaw',12)+'<span>'+(a.done?'오늘 출석 완료!':'오늘도 왔냥')+'</span></button>'
+  +'<div class="att-reward">100냥 · 5,000 XP '+(a.done?'받았어요':'받아요')+'</div>'
   +'<div class="att-note">'+(a.totalEstimated?'+ 이전 누적은 확인된 기록 기준':'매일 0시 · 한국시간 기준')+'</div></section>';
 }
 SCR.att={title:'출석수첩',right:()=>{persist();return day().slice(5).replace('-','.')},view:attendanceView,ok:()=>{
  persist();if(!claimAttendance(state))return;
- gain(100,5000,'출석 보상');persist();say('오늘 발도장을 남겼어요!');render();
+ SCR.att.stampedUntil=Date.now()+900;
+ gain(100,5000,'출석 보상');persist();render();
 }};
 const dailyTitle=SCR.daily.right;
 SCR.daily.right=()=>{persist();return dailyTitle()};
