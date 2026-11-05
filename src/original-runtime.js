@@ -3,10 +3,13 @@ let savedFingerprint='',activeDay=day(),resetting=false;
 let account=null,accountRevision=null,connectionReady=false;
 function persist(){
   if(resetting)return;
-  if(activeDay!==day()){if(activeDay!==day(Date.now()-86400000))state.att.streak=0;state.att.done=false;state.sent=[];activeDay=day()}
+  const changedDay=activeDay!==day();
+  syncAttendance(state);
+  if(activeDay!==day()){state.sent=[];activeDay=day()}
   ensureDaily(state);
   const value=snapshot(state),fingerprint=JSON.stringify(value.state)+value.day;
   try{if(fingerprint!==savedFingerprint){localStorage.setItem(KEY,JSON.stringify(value));savedFingerprint=fingerprint}}catch{}
+  if(changedDay&&scr().id==='att')render();
 }
 function restore(){try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(state,validateSave(JSON.parse(raw),ITEMS))}catch{say('이전 저장을 읽지 못했어요. 진행 파일을 확인해 주세요.')}}
 function exportProgress(){

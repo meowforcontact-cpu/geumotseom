@@ -27,6 +27,7 @@ const MAIN_MENU=[
 SCR.menu.grid=()=>MAIN_MENU;
 const originalBody=body;
 body=function(s){
+ if(s.id==='att')return attendanceView();
  if(s.id!=='menu'&&s.id!=='act')return originalBody(s);
  return '<div class="nav-menu-grid">'+MAIN_MENU.map(([label,sprite],i)=>'<button type="button" class="nav-menu-cell'+(s.cur===i?' is-selected':'')+'" data-i="'+i+'" aria-label="'+label+'"><span class="nav-menu-art">'+icon(sprite,16)+'</span><span class="nav-menu-label">'+label+'</span></button>').join('')+'</div>';
 };
@@ -60,8 +61,23 @@ SCR.help={title:'도움말',pages:()=>3,view:s=>{
  const pages=[['내 방에서','알은 세 번 톡톡 눌러 주세요.','먹이·놀이·꾸미기·외출을 해요.','외출을 누르면 지도가 열려요.'],['오늘 할 일','메뉴에서 출석과 미션을 열어요.','밥 주기와 놀이가 미션에 반영돼요.','미션은 한국시간 0시에 갱신돼요.'],['내 기록','설정 → 저장·연결에서 저장해요.','새로고침해도 진행은 남아요.','친구·쪽지·게시판은 준비 중이에요.']];
  const [title,...lines]=pages[s.pg];return '<div class="c"><div class="h">'+title+'</div>'+lines.map(l=>'<div class="s">'+l+'</div>').join('')+'</div>';
 }};
-const attendanceOK=SCR.att.ok;
-SCR.att.ok=()=>{persist();attendanceOK();persist();};
+function attendanceView(){
+ persist();const a=state.att;
+ const nextPage=!a.done&&a.streak%7===0;
+ const filled=nextPage?0:(a.streak-1)%7+1;
+ const start=nextPage?a.streak+1:Math.floor((a.streak-1)/7)*7+1;
+ return '<section class="attendance" aria-label="내 출석 기록">'
+  +'<div class="att-stats"><div><span>연속 출석</span><strong>'+fmt(a.streak)+'<small>일</small></strong></div><div><span>누적 출석</span><strong>'+fmt(a.total)+'<small>일'+(a.totalEstimated?'+':'')+'</small></strong></div></div>'
+  +'<div class="att-caption"><span>차곡차곡 발도장</span><span>'+start+'–'+(start+6)+'일</span></div>'
+  +'<div class="att-stamps">'+Array.from({length:7},(_,i)=>'<div class="att-stamp'+(i<filled?' filled':'')+'" aria-label="'+(start+i)+'일 '+(i<filled?'달성':'미달성')+'">'+(i<filled?icon('npaw',14):'<span>'+(start+i)+'</span>')+'</div>').join('')+'</div>'
+  +'<div class="att-reward">'+(a.done?'오늘도 만나서 반가워!':'하루 한 번, 반가운 발도장')+'<span>100냥 · 5,000 XP '+(a.done?'받았어요':'받아요')+'</span></div>'
+  +'<button type="button" class="att-check'+(a.done?' is-done':'')+'" '+(a.done?'disabled':'data-ok')+'>'+(a.done?'✓ 오늘 출석 완료':'오늘 발도장 찍기')+'</button>'
+  +'<div class="att-note">'+(a.totalEstimated?'+ 이전 누적은 확인된 기록 기준':'매일 0시 · 한국시간 기준')+'</div></section>';
+}
+SCR.att={title:'출석수첩',right:()=>{persist();return day().slice(5).replace('-','.')},view:attendanceView,ok:()=>{
+ persist();if(!claimAttendance(state))return;
+ gain(100,5000,'출석 보상');persist();say('오늘 발도장을 남겼어요!');render();
+}};
 const dailyTitle=SCR.daily.right;
 SCR.daily.right=()=>{persist();return dailyTitle()};
 

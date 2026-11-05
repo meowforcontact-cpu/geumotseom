@@ -1,6 +1,27 @@
 export const KEY = 'pika.pet.playtest.v1';
 export const day = (time = Date.now()) => new Date(time + 9 * 3600000).toISOString().slice(0, 10);
 const integer = (v, min, max) => Number.isSafeInteger(v) && v >= min && v <= max;
+const previousDay = date => day(Date.parse(date+'T00:00:00+09:00')-86400000);
+const validDay = date => typeof date==='string' && /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(Date.parse(date)) && new Date(date).toISOString().slice(0,10)===date;
+function migrateAttendance(att,savedDay){
+  const legacy=att.total===undefined;
+  return {streak:att.streak,done:att.done,total:legacy?Math.max(att.streak,Number(att.done)):att.total,
+    totalEstimated:legacy?att.streak>0||att.done:att.totalEstimated===true,
+    lastDate:att.lastDate??(att.done?savedDay:att.streak>0?previousDay(savedDay):null)};
+}
+export function syncAttendance(state,now=Date.now()){
+  const today=day(now),yesterday=day(now-86400000);
+  state.att=migrateAttendance(state.att,today);
+  state.att.done=state.att.lastDate===today;
+  if(!state.att.done&&state.att.lastDate!==yesterday)state.att.streak=0;
+  return state.att;
+}
+export function claimAttendance(state,now=Date.now()){
+  const att=syncAttendance(state,now);
+  if(att.done)return false;
+  att.streak++;att.total++;att.done=true;att.lastDate=day(now);
+  return true;
+}
 export function validateSave(value, items) {
   if (!value || value.version !== 1 || !value.state) throw Error('그못섬 체험판 진행 파일을 골라 주세요.');
   const s = value.state, ids = new Set(items.map(i => i.id));
@@ -15,11 +36,15 @@ export function validateSave(value, items) {
   for (const p of s.pets) if (!['white','angel'].includes(p.kind) || typeof p.name !== 'string' || p.name.length > 20 || typeof p.hatched !== 'boolean' || !integer(p.taps,0,3) || (p.kind === 'angel' && !s.owned.includes('p1'))) throw Error('펫 정보를 읽을 수 없어요.');
   if (!integer(s.hun,0,3) || !integer(s.mood,0,3) || !Array.isArray(s.poop) || s.poop.length > 2 || s.poop.some(n => !integer(n,0,128))) throw Error('돌봄 상태를 읽을 수 없어요.');
   if (!s.att || typeof s.att.done !== 'boolean' || !integer(s.att.streak,0,100000)) throw Error('출석 기록을 읽을 수 없어요.');
+  if(!validDay(value.day))throw Error('저장 날짜를 읽을 수 없어요.');
+  if(s.att.total!==undefined&&(!integer(s.att.total,Math.max(s.att.streak,Number(s.att.done)),1000000)||typeof s.att.totalEstimated!=='boolean'||(s.att.lastDate!==null&&(!validDay(s.att.lastDate)||s.att.lastDate>value.day))))throw Error('누적 출석 기록을 읽을 수 없어요.');
   if (!Array.isArray(s.sent) || s.sent.length > 3 || s.sent.some(x=>!Array.isArray(x)||x.length!==2||x.some(t=>typeof t!=='string'||t.length>200))) throw Error('카드 기록을 읽을 수 없어요.');
   if (!Array.isArray(s.log) || s.log.length > 100 || s.log.some(x=>!Array.isArray(x)||x.length!==3||x.some(t=>typeof t!=='string'||t.length>200))) throw Error('활동 기록을 읽을 수 없어요.');
   const pos={}; for (const id of ['m1','m2','m3']) { const xy=s.pos?.[id]; if (!Array.isArray(xy)||xy.length!==2||xy.some(n=>!Number.isFinite(n)||n < -128||n>256)) throw Error('가구 배치를 읽을 수 없어요.');pos[id]=[...xy]; }
   const result={coins:s.coins,earned:s.earned,xp:s.xp,owned:[...s.owned],eq:{벽:s.eq.벽??null,바닥:s.eq.바닥??null,칭호:s.eq.칭호??null,배지:s.eq.배지??null,가구:[...s.eq.가구]},pets:s.pets.map(p=>({name:p.name,kind:p.kind,hatched:p.hatched,taps:p.taps})),rep:s.rep,hun:s.hun,mood:s.mood,poop:[...s.poop],att:{streak:s.att.streak,done:s.att.done},sent:s.sent.map(x=>[...x]),log:s.log.map(x=>[...x]),pos,cleaned:integer(s.cleaned,0,1000000)?s.cleaned:0};
-  if (value.day !== day()) { result.att.done=false;result.sent=[]; if(value.day!==day(Date.now()-86400000))result.att.streak=0; }
+  result.att=migrateAttendance(s.att,value.day);
+  syncAttendance(result);
+  if(value.day!==day())result.sent=[];
   if(s.daily!==undefined){
     if(!s.daily||typeof s.daily.day!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s.daily.day)||typeof s.daily.feed!=='boolean'||typeof s.daily.play!=='boolean')throw Error('일일미션 기록을 읽을 수 없어요.');
     result.daily=s.daily.day===day()&&value.day===day()?{day:s.daily.day,feed:s.daily.feed,play:s.daily.play}:{day:day(),feed:false,play:false};

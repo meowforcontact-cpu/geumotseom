@@ -18,3 +18,24 @@
 .map-caption{text-align:center;font-size:8px;line-height:12px;color:var(--ink);min-height:12px}
 .map-enter{font:9px "DotGothic16","Malgun Gothic",monospace;color:var(--ink);background:none;border:0;padding:1px;cursor:pointer;line-height:12px}
 .map-enter:focus-visible{outline:1px dashed var(--ink)}
+
+/* A compact stamp notebook, using the device's blue and pink palettes. */
+.attendance{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;min-height:0;width:100%;color:var(--ink)}
+.att-stats{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--dash);background:var(--cell);box-shadow:0 2px 0 var(--dash)}
+.att-stats>div{display:flex;flex-direction:column;align-items:center;padding:2px 0;gap:1px}
+.att-stats>div+div{border-left:1px dashed var(--dash)}
+.att-stats span{font-size:9px;line-height:11px;color:var(--sub)}
+.att-stats strong{font-size:20px;line-height:23px;font-weight:400}
+.att-stats small{font-size:9px;margin-left:2px}
+.att-caption{display:flex;justify-content:space-between;font-size:8px;line-height:10px;margin-top:2px}
+.att-caption span+span{color:var(--sub)}
+.att-stamps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.att-stamp{height:20px;display:grid;place-items:center;border:1px dashed var(--dash);background:var(--cell);font-size:9px;color:var(--off)}
+.att-stamp.filled{border:1px solid var(--ink);background:var(--lcd);box-shadow:0 1px 0 var(--dash)}
+.att-stamp canvas{width:14px!important;height:14px!important;image-rendering:pixelated}
+.att-reward{text-align:center;font-size:9px;line-height:12px}
+.att-reward span{display:block;font-size:8px;color:var(--sub)}
+.att-check{width:100%;min-height:21px;flex:none;padding:3px 1px;border:1px solid var(--ink);border-radius:0;background:var(--selbg);color:var(--selfg);font:10px "DotGothic16","Malgun Gothic",monospace;line-height:13px;cursor:pointer;box-shadow:0 2px 0 var(--dash)}
+.att-check:focus-visible{outline:1px dashed var(--selfg);outline-offset:-3px}
+.att-check.is-done{background:var(--cell);color:var(--ink);border-color:var(--dash);box-shadow:none;cursor:default;opacity:1}
+.att-note{text-align:center;font-size:7px;line-height:9px;color:var(--sub)}

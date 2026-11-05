@@ -18,6 +18,27 @@
 .map-caption{text-align:center;font-size:8px;line-height:12px;color:var(--ink);min-height:12px}
 .map-enter{font:9px "DotGothic16","Malgun Gothic",monospace;color:var(--ink);background:none;border:0;padding:1px;cursor:pointer;line-height:12px}
 .map-enter:focus-visible{outline:1px dashed var(--ink)}
+
+/* A compact stamp notebook, using the device's blue and pink palettes. */
+.attendance{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;min-height:0;width:100%;color:var(--ink)}
+.att-stats{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--dash);background:var(--cell);box-shadow:0 2px 0 var(--dash)}
+.att-stats>div{display:flex;flex-direction:column;align-items:center;padding:2px 0;gap:1px}
+.att-stats>div+div{border-left:1px dashed var(--dash)}
+.att-stats span{font-size:9px;line-height:11px;color:var(--sub)}
+.att-stats strong{font-size:20px;line-height:23px;font-weight:400}
+.att-stats small{font-size:9px;margin-left:2px}
+.att-caption{display:flex;justify-content:space-between;font-size:8px;line-height:10px;margin-top:2px}
+.att-caption span+span{color:var(--sub)}
+.att-stamps{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.att-stamp{height:20px;display:grid;place-items:center;border:1px dashed var(--dash);background:var(--cell);font-size:9px;color:var(--off)}
+.att-stamp.filled{border:1px solid var(--ink);background:var(--lcd);box-shadow:0 1px 0 var(--dash)}
+.att-stamp canvas{width:14px!important;height:14px!important;image-rendering:pixelated}
+.att-reward{text-align:center;font-size:9px;line-height:12px}
+.att-reward span{display:block;font-size:8px;color:var(--sub)}
+.att-check{width:100%;min-height:21px;flex:none;padding:3px 1px;border:1px solid var(--ink);border-radius:0;background:var(--selbg);color:var(--selfg);font:10px "DotGothic16","Malgun Gothic",monospace;line-height:13px;cursor:pointer;box-shadow:0 2px 0 var(--dash)}
+.att-check:focus-visible{outline:1px dashed var(--selfg);outline-offset:-3px}
+.att-check.is-done{background:var(--cell);color:var(--ink);border-color:var(--dash);box-shadow:none;cursor:default;opacity:1}
+.att-note{text-align:center;font-size:7px;line-height:9px;color:var(--sub)}
 </style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -162,7 +183,7 @@ body{min-height:100svh;overflow:hidden;background:radial-gradient(var(--dotc) 1.
   <div class="sr" id="sr" aria-live="polite"></div>
 </main>
 <script type="module">
-import {KEY,day,validateSave,snapshot,purchase,ensureDaily,recordDailyAction} from "./storage.mjs";
+import {KEY,day,validateSave,snapshot,purchase,ensureDaily,recordDailyAction,syncAttendance,claimAttendance} from "./storage.mjs";
 const $=id=>document.getElementById(id);
 const Q=new URLSearchParams(location.search);
 const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1144,10 +1165,13 @@ let savedFingerprint='',activeDay=day(),resetting=false;
 let account=null,accountRevision=null,connectionReady=false;
 function persist(){
   if(resetting)return;
-  if(activeDay!==day()){if(activeDay!==day(Date.now()-86400000))state.att.streak=0;state.att.done=false;state.sent=[];activeDay=day()}
+  const changedDay=activeDay!==day();
+  syncAttendance(state);
+  if(activeDay!==day()){state.sent=[];activeDay=day()}
   ensureDaily(state);
   const value=snapshot(state),fingerprint=JSON.stringify(value.state)+value.day;
   try{if(fingerprint!==savedFingerprint){localStorage.setItem(KEY,JSON.stringify(value));savedFingerprint=fingerprint}}catch{}
+  if(changedDay&&scr().id==='att')render();
 }
 function restore(){try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(state,validateSave(JSON.parse(raw),ITEMS))}catch{say('이전 저장을 읽지 못했어요. 진행 파일을 확인해 주세요.')}}
 function exportProgress(){
@@ -1249,6 +1273,7 @@ const MAIN_MENU=[
 SCR.menu.grid=()=>MAIN_MENU;
 const originalBody=body;
 body=function(s){
+ if(s.id==='att')return attendanceView();
  if(s.id!=='menu'&&s.id!=='act')return originalBody(s);
  return '<div class="nav-menu-grid">'+MAIN_MENU.map(([label,sprite],i)=>'<button type="button" class="nav-menu-cell'+(s.cur===i?' is-selected':'')+'" data-i="'+i+'" aria-label="'+label+'"><span class="nav-menu-art">'+icon(sprite,16)+'</span><span class="nav-menu-label">'+label+'</span></button>').join('')+'</div>';
 };
@@ -1282,8 +1307,23 @@ SCR.help={title:'도움말',pages:()=>3,view:s=>{
  const pages=[['내 방에서','알은 세 번 톡톡 눌러 주세요.','먹이·놀이·꾸미기·외출을 해요.','외출을 누르면 지도가 열려요.'],['오늘 할 일','메뉴에서 출석과 미션을 열어요.','밥 주기와 놀이가 미션에 반영돼요.','미션은 한국시간 0시에 갱신돼요.'],['내 기록','설정 → 저장·연결에서 저장해요.','새로고침해도 진행은 남아요.','친구·쪽지·게시판은 준비 중이에요.']];
  const [title,...lines]=pages[s.pg];return '<div class="c"><div class="h">'+title+'</div>'+lines.map(l=>'<div class="s">'+l+'</div>').join('')+'</div>';
 }};
-const attendanceOK=SCR.att.ok;
-SCR.att.ok=()=>{persist();attendanceOK();persist();};
+function attendanceView(){
+ persist();const a=state.att;
+ const nextPage=!a.done&&a.streak%7===0;
+ const filled=nextPage?0:(a.streak-1)%7+1;
+ const start=nextPage?a.streak+1:Math.floor((a.streak-1)/7)*7+1;
+ return '<section class="attendance" aria-label="내 출석 기록">'
+  +'<div class="att-stats"><div><span>연속 출석</span><strong>'+fmt(a.streak)+'<small>일</small></strong></div><div><span>누적 출석</span><strong>'+fmt(a.total)+'<small>일'+(a.totalEstimated?'+':'')+'</small></strong></div></div>'
+  +'<div class="att-caption"><span>차곡차곡 발도장</span><span>'+start+'–'+(start+6)+'일</span></div>'
+  +'<div class="att-stamps">'+Array.from({length:7},(_,i)=>'<div class="att-stamp'+(i<filled?' filled':'')+'" aria-label="'+(start+i)+'일 '+(i<filled?'달성':'미달성')+'">'+(i<filled?icon('npaw',14):'<span>'+(start+i)+'</span>')+'</div>').join('')+'</div>'
+  +'<div class="att-reward">'+(a.done?'오늘도 만나서 반가워!':'하루 한 번, 반가운 발도장')+'<span>100냥 · 5,000 XP '+(a.done?'받았어요':'받아요')+'</span></div>'
+  +'<button type="button" class="att-check'+(a.done?' is-done':'')+'" '+(a.done?'disabled':'data-ok')+'>'+(a.done?'✓ 오늘 출석 완료':'오늘 발도장 찍기')+'</button>'
+  +'<div class="att-note">'+(a.totalEstimated?'+ 이전 누적은 확인된 기록 기준':'매일 0시 · 한국시간 기준')+'</div></section>';
+}
+SCR.att={title:'출석수첩',right:()=>{persist();return day().slice(5).replace('-','.')},view:attendanceView,ok:()=>{
+ persist();if(!claimAttendance(state))return;
+ gain(100,5000,'출석 보상');persist();say('오늘 발도장을 남겼어요!');render();
+}};
 const dailyTitle=SCR.daily.right;
 SCR.daily.right=()=>{persist();return dailyTitle()};
 
