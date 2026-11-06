@@ -1057,7 +1057,7 @@ function startAnim(type,t,done){anim={type,t,done};idle=0}
 function petTap(){
   idle=0;const p=pet();
   if(!p.hatched){if(anim&&anim.type==='hatch')return;p.taps++;
-    if(p.taps>=3){startAnim('hatch',12,()=>{p.hatched=true;spriteCache.clear();startAnim('hello',16);say('안녕! 반가워')})}
+    if(p.taps>=3){startAnim('hatch',12,()=>{p.hatched=true;spriteCache.clear();startAnim('hello',16);say('안녕! 반가워');setTimeout(renamePet,300)})}
     else{startAnim('wobble',6);say(['톡톡! 한 번 더','조금만 더!'][p.taps-1])}return}
   state.mood=Math.min(3,state.mood+(Math.random()<.5?1:0));startAnim('pet',14);say(Math.random()<.35?skyLine():['그르릉...','좋아~','냐앙~'][Math.floor(Math.random()*3)]);
 }
