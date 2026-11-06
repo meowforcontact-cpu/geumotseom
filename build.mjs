@@ -3,7 +3,7 @@ let html=(await readFile('src/pet.html','utf8')).replace(/\r\n/g,'\n');
 const replace=(before,after)=>{if(!html.includes(before))throw Error('원본 변경 확인 필요: '+before.slice(0,65));html=html.replace(before,after)};
 // Preserve the supplied device, artwork, palette, menus and responsive layout.
 replace('<html>','<html lang="ko">');
-replace('<title>피카 다마고치</title>','<title>그못섬 · 내 방</title>');
+replace('<title>토모고찌 · 내 방</title>','<title>토모고찌 · 내 방</title>');
 replace('</head>',`<style>${await readFile('src/navigation-v9.css','utf8')}</style></head>`);
 const start=html.indexOf('// 서버 연동 지점:');
 const end=html.indexOf('\nconst state=',start);
