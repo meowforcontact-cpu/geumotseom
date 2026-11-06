@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>피카 다마고치</title>
+<title>토모고찌 · 내 방</title>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <style>
 :root{--bg1:#a9c8ff;--bg2:#d3e5ff;--bg3:#f6faff;--dotc:rgba(255,255,255,.75);--shadow:rgba(47,85,196,.3);
@@ -244,7 +244,7 @@ const ITEMS=[
  {id:'b2',cat:'배지',name:'하트 배지',price:250,spr:'heart'},
  {id:'b3',cat:'배지',name:'달 배지',price:300,spr:'moon'},
  {id:'b4',cat:'배지',name:'구름 배지',price:300,spr:'cloud'},
- {id:'p1',cat:'펫',name:'천사냥 알',price:500,spr:'iegg',pet:'angel',pname:'천사냥'}
+ {id:'p1',cat:'펫',name:'천사냥 알',price:500,spr:'iegg',pet:'angel',pname:'고양이'}
 ];
 const item=id=>ITEMS.find(i=>i.id===id);
 const GROW=300000; // 누적 획득 냐냐냥이 이 값 이상이면 어른
@@ -280,7 +280,7 @@ const ShopAPI={
 };
 
 const state={coins:0,earned:0,xp:12340,owned:[],eq:{벽:null,바닥:null,칭호:null,배지:null,가구:[]},
-  pets:[{name:'피카',kind:'white',hatched:false,taps:0}],rep:0,hun:2,mood:2,poop:[],
+  pets:[{name:'고양이',kind:'white',hatched:false,taps:0}],rep:0,hun:2,mood:2,poop:[],
   att:{streak:3,done:false},sent:[],log:[],pos:{m1:[2,78],m2:[94,72],m3:[34,80]}};
 const pet=()=>state.pets[state.rep];
 const stage=()=>!pet().hatched?'egg':state.earned>=GROW?'adult':'child';
@@ -880,7 +880,8 @@ const CONSOLE_BAR=[F.deco,F.out,F.shop,F.act,F.prof,F.set];
 // 메뉴: 홈 아이콘에 있는 것(먹이·놀이·꾸미기·외출)은 제외
 const MI=(f,ic)=>[f[0],ic,f[2]];
 const MENU_ALL=[MI(F.book,'nbook'),MI(F.deco,'ndeco'),MI(F.out,'nout'),MI(F.shop,'nshop'),MI(F.act,'npaw'),MI(F.prof,'nid'),['친구네','nhouse',()=>push('visit')],MI(F.set,'ngear'),['도움말','nhelp',()=>push('help')]];
-const PETS=[{kind:'white',name:'기본 냥이'},{kind:'angel',name:'천사냥'}];
+const PET_SPECIES=Object.freeze({white:'고양이',angel:'고양이',dog:'강아지',rabbit:'토끼',raccoon:'너구리'});
+const PETS=[{kind:'white',name:'고양이'},{kind:'angel',name:'고양이 · 천사형'}];
 // 도감: 펫·칭호·배지. 없는 건 실루엣 + 자물쇠
 const HELP=()=>[
  ['키우기','알을 3번 톡톡!','먹이 = 배 · 놀이 = 기분','응가는 눌러서 치워요','밥·기분은 천천히 줄어요'],
@@ -965,7 +966,7 @@ function profBody(fi){
   else{const f=FRIEND_DATA[fi];d={name:FR[fi],rep:f.rep,pic:'<canvas data-fpet="'+fi+'" style="width:46px;height:46px"></canvas>',title:f.title,rank:rk(FR[fi]),coins:f.coins,xp:RANK[fi][1],book:f.book,streak:f.streak}}
   return '<div class="idc"><div class="ph"><div class="phf">'+d.pic+'</div><div class="rib">'+(d.title?esc(d.title):'칭호 없음')+'</div></div>'
    +'<div class="inf"><div class="tt"><span>ID CARD</span><span>♡</span></div>'
-   +[['이름',d.name],['대표 냥이',d.rep],['랭킹',d.rank+'위'],['냐냐냥',fmt(d.coins)],['XP',fmt(d.xp)],['도감',d.book+' / '+tot],['출석','연속 '+d.streak+'일']].map(([k,v])=>'<div class="kv"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')
+   +[['이름',d.name],['대표 동물',d.rep],['랭킹',d.rank+'위'],['냐냐냥',fmt(d.coins)],['XP',fmt(d.xp)],['도감',d.book+' / '+tot],['출석','연속 '+d.streak+'일']].map(([k,v])=>'<div class="kv"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')
    +'<div class="bt"><span class="bc"></span>'+(d.me?'<span class="gs" data-go="book">'+icon('ibook',8)+'도감</span><span class="gs" data-go="set">'+icon('iwrench',8)+'설정</span>':'<span class="gs">'+icon('heart',8)+'친구</span>')+'</div></div></div>';
 }
 const listOf=s=>SCR[s.id].list(s);
@@ -1031,7 +1032,7 @@ function render(){
   document.querySelectorAll('#lcd canvas[data-fpet]').forEach(c=>{const fi=+c.dataset.fpet;c.width=c.height=32;drawUser(c.getContext('2d'),'normal',0,fi%2?'pink':'blue',false,'basic',FRIEND_EYE[fi])});
   document.querySelectorAll('#lcd canvas[data-pet]').forEach(c=>{const [kd,ht]=c.dataset.pet.split('|');c.width=c.height=32;c.getContext('2d').drawImage(sprite(ht==='1'?'child':'egg',ht==='1'?'normal':'idle',0,kd),0,0)});
   fitLCD();placeBubble();
-  $('sr').textContent=home?'피카의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
+  $('sr').textContent=home?'내 친구의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
 }
 function fitLCD(){
   const wrap=$('lcdwrap'),w=wrap.clientWidth,h=wrap.clientHeight,st=$('st');if(!w||!st||!GD)return;
