@@ -11,7 +11,7 @@ function persist(){
   try{if(fingerprint!==savedFingerprint){localStorage.setItem(KEY,JSON.stringify(value));savedFingerprint=fingerprint}}catch{}
   if(changedDay&&scr().id==='att')render();
 }
-function restore(){try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(state,validateSave(JSON.parse(raw),ITEMS))}catch{say('이전 저장을 읽지 못했어요. 진행 파일을 확인해 주세요.')}}
+function restore(){try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(state,validateSave(JSON.parse(raw),ITEMS));for(const companion of state.pets){if(companion.kind==='white'&&companion.name==='피카')companion.name='고양이'}}catch{say('이전 저장을 읽지 못했어요. 진행 파일을 확인해 주세요.')}}
 function exportProgress(){
   const url=URL.createObjectURL(new Blob([JSON.stringify(snapshot(state),null,2)],{type:'application/json'}));
   const link=document.createElement('a');link.href=url;link.download='geumotseom-'+day()+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -20,7 +20,7 @@ function importProgress(){
   const file=document.createElement('input');file.type='file';file.accept='.json,application/json';
   file.onchange=async()=>{try{const selected=file.files[0];if(!selected)return;if(selected.size>100000)throw Error('100KB 이하의 진행 파일을 골라 주세요.');const next=validateSave(JSON.parse(await selected.text()),ITEMS);if(!confirm('현재 진행을 선택한 파일로 바꿀까요?'))return;Object.assign(state,next);persist();goHome();say('진행을 불러왔어요.')}catch(error){say(error.message)}};file.click();
 }
-function renamePet(){const name=prompt('친구 이름을 입력해 주세요.',pet().name);if(!name?.trim())return;pet().name=name.trim().slice(0,20);persist();render()}
+function renamePet(){const species=PET_SPECIES[pet().kind]||'동물';const name=prompt(species+' 이름을 지어 주세요.',pet().name);if(!name?.trim())return;pet().name=name.trim().slice(0,20);persist();render()}
 function resetProgress(){if(!confirm('이 브라우저의 체험 진행을 지우고 처음부터 시작할까요?'))return;try{localStorage.removeItem(KEY);resetting=true;location.reload()}catch{say('저장소에 접근할 수 없어요.')}}
 const originalSettingsList=SCR.set.list;
 const originalActivityList=SCR.act.list;
@@ -44,13 +44,13 @@ SCR.set.list=()=>{const rows=originalSettingsList();rows[3]=L('저장·연결','
 SCR.save={title:'저장·연결',list:()=>[
   L('이 기기에 저장','ilist',()=>{},'체험판',1),
   L('진행 파일 저장','ilist',exportProgress),L('진행 불러오기','ilist',importProgress),
-  L('친구 이름 바꾸기','heart',renamePet),L('Discord 연결','ilist',()=>push('account')),
+  L('내 동물 이름 짓기','heart',renamePet),L('Discord 연결','ilist',()=>push('account')),
   L('체험 처음부터','ilist',resetProgress),BACK()
 ]};
 SCR.account={title:'Discord 연결',list:()=>!connectionReady?[
   L('계정 연결 준비 중','ilist',()=>{},'',1),L('진행은 이 기기에 저장','ilist',()=>{},'',1),BACK()
 ]:account?[
-  L(account.name,'heart',()=>{},'연결됨',1),L('계정에 진행 저장','ilist',()=>handleAccount('save')),
+  L(account.name,'heart',()=>{},'연결됨',1),L('실제 냐냐냥은 미연동','ilist',()=>{},'체험 잔액',1),L('계정에 진행 저장','ilist',()=>handleAccount('save')),
   L('계정에서 불러오기','ilist',()=>handleAccount('load')),L('로그아웃','ilist',()=>handleAccount('logout')),BACK()
 ]:[L('Discord로 연결하기','ilist',()=>location.assign('/auth/discord')),BACK()]};
 async function accountRequest(route,body){
