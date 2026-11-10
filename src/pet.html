@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>피카 다마고치</title>
+<title>토모고찌 · 내 방</title>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 <style>
 :root{--bg1:#a9c8ff;--bg2:#d3e5ff;--bg3:#f6faff;--dotc:rgba(255,255,255,.75);--shadow:rgba(47,85,196,.3);
@@ -147,6 +147,8 @@ const Q=new URLSearchParams(location.search);
 const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=n=>n.toLocaleString('ko-KR');
+// 재화 숫자에는 냥 접미사 대신 발바닥 이모지를 표시합니다.
+const fmtCoins=n=>fmt(n)+' 🐾';
 
 // ===== 테마 (블루 / 핑크) =====
 let skin='blue';try{skin=localStorage.getItem('pikaSkin')||'blue'}catch(e){}
@@ -244,7 +246,7 @@ const ITEMS=[
  {id:'b2',cat:'배지',name:'하트 배지',price:250,spr:'heart'},
  {id:'b3',cat:'배지',name:'달 배지',price:300,spr:'moon'},
  {id:'b4',cat:'배지',name:'구름 배지',price:300,spr:'cloud'},
- {id:'p1',cat:'펫',name:'천사냥 알',price:500,spr:'iegg',pet:'angel',pname:'천사냥'}
+ {id:'p1',cat:'펫',name:'천사냥 알',price:500,spr:'iegg',pet:'angel',pname:'고양이'}
 ];
 const item=id=>ITEMS.find(i=>i.id===id);
 const GROW=300000; // 누적 획득 냐냐냥이 이 값 이상이면 어른
@@ -280,7 +282,7 @@ const ShopAPI={
 };
 
 const state={coins:0,earned:0,xp:12340,owned:[],eq:{벽:null,바닥:null,칭호:null,배지:null,가구:[]},
-  pets:[{name:'피카',kind:'white',hatched:false,taps:0}],rep:0,hun:2,mood:2,poop:[],
+  pets:[{name:'고양이',kind:'white',hatched:false,taps:0}],rep:0,hun:2,mood:2,poop:[],
   att:{streak:3,done:false},sent:[],log:[],pos:{m1:[2,78],m2:[94,72],m3:[34,80]}};
 const pet=()=>state.pets[state.rep];
 const stage=()=>!pet().hatched?'egg':state.earned>=GROW?'adult':'child';
@@ -290,7 +292,7 @@ function equip(i,on){
   if(i.cat==='가구'){const a=state.eq['가구'],k=a.indexOf(i.id);if(k<0){if(on!==false)a.push(i.id)}else if(on!==true)a.splice(k,1)}
   else state.eq[i.cat]=(state.eq[i.cat]===i.id&&on!==true)?null:i.id;
 }
-function gain(c,x,why){if(c){state.coins+=c;state.earned+=c;state.log.unshift([why,'+'+fmt(c),'냥'])}if(x){state.xp+=x;state.log.unshift([why,'+'+fmt(x),'XP'])}}
+function gain(c,x,why){if(c){state.coins+=c;state.earned+=c;state.log.unshift([why,'+'+fmt(c),'🐾'])}if(x){state.xp+=x;state.log.unshift([why,'+'+fmt(x),'XP'])}}
 
 // ===== 알 (코드로 찍은 32x32) =====
 const KIND={white:['#ffffff','#c9daf7'],angel:['#fff3f8','#ffc6d8']};
@@ -861,7 +863,7 @@ const FR=['미유','하루','나나','코코'];
 const RANK=[['미유',48200],['하루',39150],['나나',31020],['코코',9800]];
 const RCV=[['미유','같이 게임해줘서 고마워요!'],['하루','어제 도와줘서 고마워요']];
 const ACH=[['첫 출석','출석체크 1회',()=>state.att.streak>0?1:0,1],['일주일 개근','7일 연속 출석',()=>state.att.streak,7],['첫 쇼핑','상점에서 물건 구매',()=>state.owned.length>1?1:0,1],['돌봄 달인','똥 치우기 3번',()=>state.cleaned||0,3]];
-const RULES=[['채팅','10초 쿨타임','+15 XP'],['음성 채널','5분마다','+200 XP'],['출석체크','하루 1회','+5,000 XP'],['지정 채널','채널별 추가','+50 XP'],['티어별 채팅방','브론즈~챔피언','+200 XP'],['오버워치 방송','음성 5분마다','+40 XP · 100냥']];
+const RULES=[['채팅','10초 쿨타임','+15 XP'],['음성 채널','5분마다','+200 XP'],['출석체크','하루 1회','+5,000 XP'],['지정 채널','채널별 추가','+50 XP'],['티어별 채팅방','브론즈~챔피언','+200 XP'],['오버워치 방송','음성 5분마다','+40 XP · 100 🐾']];
 const PRESET=['고마워요!','같이 놀아줘서 고마워','도와줘서 고마워요','오늘도 최고야!'];
 const ui={stack:[{id:'home',cur:0}],toast:'',toastT:0,bub:'',bubT:0,hc:-1};
 const scr=()=>ui.stack[ui.stack.length-1];
@@ -882,13 +884,14 @@ const CONSOLE_BAR=[F.deco,F.out,F.shop,F.act,F.prof,F.set];
 // 메뉴: 홈 아이콘에 있는 것(먹이·놀이·꾸미기·외출)은 제외
 const MI=(f,ic)=>[f[0],ic,f[2]];
 const MENU_ALL=[MI(F.book,'nbook'),MI(F.deco,'ndeco'),MI(F.out,'nout'),MI(F.shop,'nshop'),MI(F.act,'npaw'),MI(F.prof,'nid'),['친구네','nhouse',()=>push('visit')],MI(F.set,'ngear'),['도움말','nhelp',()=>push('help')]];
-const PETS=[{kind:'white',name:'기본 냥이'},{kind:'angel',name:'천사냥'}];
+const PET_SPECIES=Object.freeze({white:'고양이',angel:'고양이',dog:'강아지',rabbit:'토끼',raccoon:'너구리'});
+const PETS=[{kind:'white',name:'고양이'},{kind:'angel',name:'고양이 · 천사형'}];
 // 도감: 펫·칭호·배지. 없는 건 실루엣 + 자물쇠
 const HELP=()=>[
  ['키우기','알을 3번 톡톡!','먹이 = 배 · 놀이 = 기분','응가는 눌러서 치워요','밥·기분은 천천히 줄어요'],
  MODE==='console'?['버튼','A 확인 (길게: 뒤로)','B 뒤로 · X 메뉴 · Y 홈','먹이: 짧게 사료','먹이: 길게 간식 고르기','놀이: 짧게 놀기']
   :['버튼','가운데 = 확인 (길게: 뒤로)','왼쪽 먹이: 짧게 사료','왼쪽 먹이: 길게 간식','오른쪽 놀이 · 위 ☰ 메뉴'],
- ['돈과 XP','출석 100냥 + 5,000 XP','카드는 하루 3장','랭킹은 늘 공개','30만 냥 모으면 어른'],
+ ['돈과 XP','출석 100 🐾 + 5,000 XP','카드는 하루 3장','랭킹은 늘 공개','30만 냥 모으면 어른'],
  ['알아두기','펫은 죽지 않아요','환불·되팔기는 없어요','칭호는 시즌마다 바뀜','도감에서 펫 모아보기']];
 const BOOK_TABS=[['펫','heart'],['칭호','crown'],['배지','star']];
 function bookCards(s){
@@ -938,11 +941,11 @@ const SCR={
    L('내 XP','star',()=>{},fmt(state.xp),1),L(ShopAPI.mode==='preview'?'미리보기 · 저장 안 됨':'내 계정','ilist',()=>{},'',1),BACK()]},
  cardTo:{title:'누구에게?',right:()=>'남은 '+(3-state.sent.length)+'장',list:()=>[...FR.map(n=>L(n,'imail',()=>push('cardMsg',{to:n}))),BACK()]},
  cardMsg:{title:s=>s.to+'에게',list:s=>[...PRESET.map(m=>L(m,'heart',()=>{if(state.sent.length>=3)return say('오늘은 다 보냈어요');state.sent.push([s.to,m]);back(2);say('카드를 보냈어요!')})),BACK()]},
- shop:{title:s=>'상점 · '+CATS[s.cat||0][0],right:()=>fmt(state.coins)+'냥'},
+ shop:{title:s=>'상점 · '+CATS[s.cat||0][0],right:()=>fmtCoins(state.coins)},
  buy:{title:'구매 확인'},
  att:{title:'출석',right:()=>'연속 '+state.att.streak+'일',view:()=>{const n=Math.min(state.att.streak,7);
    return '<div class="c"><div class="dys">'+[1,2,3,4,5,6,7].map(d=>'<div class="dy'+(d<=n?' on':'')+(ui.stamp&&d===n?' pop':'')+'">'+(d<=n?icon('ipaw',14):d)+'</div>').join('')+'</div>'
-     +'<div class="h">'+(state.att.done?'오늘 도장 찍었어요!':'오늘 출석 아직이야')+'</div><div class="s">출석하면 100냥 · 5,000 XP</div>'+(state.att.done?'':'<span class="pill sel blink" data-ok>도장 찍기</span>')+'</div>'},
+     +'<div class="h">'+(state.att.done?'오늘 도장 찍었어요!':'오늘 출석 아직이야')+'</div><div class="s">출석하면 100 🐾 · 5,000 XP</div>'+(state.att.done?'':'<span class="pill sel blink" data-ok>도장 찍기</span>')+'</div>'},
    ok:()=>{if(state.att.done)return back();gain(100,5000,'출석 보상');state.att.streak++;state.att.done=true;ui.stamp=1;say('출석 완료!');ui.stamp=0}},
  ach:{title:'업적',pages:()=>ACH.length,view:s=>{const [t,d,f,max]=ACH[s.pg],v=Math.min(f(),max),n=max>5?7:max;
    return '<div class="c">'+icon('star',30,v>=max?'':'dim')+'<div class="h">'+esc(t)+'</div><div class="s">'+esc(d)+'</div><div class="bar">'+Array.from({length:n},(_,i)=>'<i class="'+(i<Math.round(v/max*n)?'f':'')+'"></i>').join('')+'</div><div class="s">'+(v>=max?'달성!':v+' / '+max)+'</div></div>'}},
@@ -955,7 +958,7 @@ const SCR={
 };
 const hearts=n=>[0,1,2].map(i=>icon(i<n?'shf':'she',11)).join('');
 const foods=n=>[0,1,2].map(i=>icon(i<n?'sbw':'sbe',11)).join('');
-const statusHTML=()=>'<span class="pl">'+foods(state.hun)+'</span><span class="pl coin">'+icon('icoin',8)+fmt(state.coins)+'</span><span class="pl hb">'+hearts(state.mood)+'</span>';
+const statusHTML=()=>'<span class="pl">'+foods(state.hun)+'</span><span class="pl coin">'+fmtCoins(state.coins)+'</span><span class="pl hb">'+hearts(state.mood)+'</span>';
 const FRIEND_DATA=[{rep:'모찌',coins:8200,book:5,streak:21,title:'왕관 고양이'},{rep:'구름이',coins:4100,book:3,streak:9,title:null},{rep:'나비',coins:2600,book:4,streak:12,title:'서버 부스터'},{rep:'콩이',coins:900,book:1,streak:2,title:null}];
 // 프로필 카드: 내 것은 친구가 내 방에 놀러 오면 똑같이 보임
 function profBody(fi){
@@ -967,7 +970,7 @@ function profBody(fi){
   else{const f=FRIEND_DATA[fi];d={name:FR[fi],rep:f.rep,pic:'<canvas data-fpet="'+fi+'" style="width:46px;height:46px"></canvas>',title:f.title,rank:rk(FR[fi]),coins:f.coins,xp:RANK[fi][1],book:f.book,streak:f.streak}}
   return '<div class="idc"><div class="ph"><div class="phf">'+d.pic+'</div><div class="rib">'+(d.title?esc(d.title):'칭호 없음')+'</div></div>'
    +'<div class="inf"><div class="tt"><span>ID CARD</span><span>♡</span></div>'
-   +[['이름',d.name],['대표 냥이',d.rep],['랭킹',d.rank+'위'],['냐냐냥',fmt(d.coins)],['XP',fmt(d.xp)],['도감',d.book+' / '+tot],['출석','연속 '+d.streak+'일']].map(([k,v])=>'<div class="kv"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')
+   +[['이름',d.name],['대표 동물',d.rep],['랭킹',d.rank+'위'],['냐냐냥',fmtCoins(d.coins)],['XP',fmt(d.xp)],['도감',d.book+' / '+tot],['출석','연속 '+d.streak+'일']].map(([k,v])=>'<div class="kv"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')
    +'<div class="bt"><span class="bc"></span>'+(d.me?'<span class="gs" data-go="book">'+icon('ibook',8)+'도감</span><span class="gs" data-go="set">'+icon('iwrench',8)+'설정</span>':'<span class="gs">'+icon('heart',8)+'친구</span>')+'</div></div></div>';
 }
 const listOf=s=>SCR[s.id].list(s);
@@ -979,7 +982,7 @@ function shopBody(s){
   let h='<div class="cats">'+CATS.map(([nm,sp],i)=>'<div class="ct'+(i===(s.cat||0)?' on':'')+(c===i?' sel blink':'')+'" data-i="'+i+'">'+icon(sp,14)+'</div>').join('')+'</div><div class="prods">';
   for(let j=0;j<4;j++){const i=its[j];if(!i){h+='<div></div>';continue}
     const own=state.owned.includes(i.id),poor=state.coins<i.price;
-    h+='<div class="pd'+(c===n+j?' sel':'')+'" data-i="'+(n+j)+'">'+icon(i.spr,20,own||i.only||poor?'dim':'')+'<span class="n">'+esc(i.name)+'</span><span class="p">'+(own?'보유 중':i.only?i.only:fmt(i.price)+'냥'+(i.season?' ★':''))+'</span></div>'}
+    h+='<div class="pd'+(c===n+j?' sel':'')+'" data-i="'+(n+j)+'">'+icon(i.spr,20,own||i.only||poor?'dim':'')+'<span class="n">'+esc(i.name)+'</span><span class="p">'+(own?'보유 중':i.only?i.only:fmtCoins(i.price)+(i.season?' ★':''))+'</span></div>'}
   return h+'</div><div class="row'+(c===n+its.length?' sel':'')+'" data-i="'+(n+its.length)+'">'+icon('ileft',8)+'<span class="l">뒤로</span>'+(ShopAPI.mode==='preview'?'<span class="r">미리보기</span>':'')+'</div>';
 }
 function shopOK(s){
@@ -993,12 +996,12 @@ function shopOK(s){
   push('buy',{item:i,cur:1});
 }
 function buyBody(s){const i=s.item;
-  return '<div class="c">'+icon(i.spr,30)+'<div class="h">'+esc(i.name)+(i.season?' ★':'')+'</div><div class="s">'+fmt(i.price)+'냥 · '+fmt(state.coins)+' → '+fmt(state.coins-i.price)+'</div><div class="s">환불·되팔기는 안 돼요'+(i.season?' · 시즌 한정':'')+'</div>'
+  return '<div class="c">'+icon(i.spr,30)+'<div class="h">'+esc(i.name)+(i.season?' ★':'')+'</div><div class="s">'+fmtCoins(i.price)+' · '+fmtCoins(state.coins)+' → '+fmtCoins(state.coins-i.price)+'</div><div class="s">환불·되팔기는 안 돼요'+(i.season?' · 시즌 한정':'')+'</div>'
    +'<div class="two"><span class="pill'+(s.cur===0?' sel':'')+'" data-i="0">사기</span><span class="pill'+(s.cur===1?' sel':'')+'" data-i="1">취소</span></div></div>'}
 async function buyOK(s){
   if(s.cur===1)return back();
   const i=s.item;
-  try{const r=await ShopAPI.buy(i.id);state.coins=r.coins;state.owned=r.owned;state.log.unshift([i.name+' 구매','-'+fmt(i.price),'냥']);
+  try{const r=await ShopAPI.buy(i.id);state.coins=r.coins;state.owned=r.owned;state.log.unshift([i.name+' 구매','-'+fmt(i.price),'🐾']);
     if(i.pet){state.pets.push({name:i.pname,kind:i.pet,hatched:false,taps:0});back();say('도감에 새 알이 도착했어요')}
     else{equip(i,true);back();say('방에 놓았어요!')}}
   catch(e){back();say(e.message)}
@@ -1016,7 +1019,7 @@ function body(s){
 function homeHTML(){
   const ir=(a,o,c,attr)=>'<div class="ir '+c+'">'+a.map((m,i)=>'<div class="ic'+(attr==='h'&&ui.hc===i+o?' sel blink':'')+'" data-'+attr+'="'+(i+o)+'" aria-label="'+m[0]+'">'+(c==='t'?icon(m[3]||m[1],20):icon(m[1],11)+'<span>'+m[0]+'</span>')+'</div>').join('')+'</div>';
   if(MODE==='console')return '<div class="sb">'+statusHTML()+'</div><div class="bd"></div><div id="bub" hidden></div>';
-  return '<div class="sb"><span class="pl">'+foods(state.hun)+'</span><span class="pl coin">'+icon('icoin',8)+fmt(state.coins)+'</span><span class="rg"><span class="pl hb">'+hearts(state.mood)+'</span><span class="mn" data-go="menu" aria-label="메뉴">'+icon('nmenu',14)+'</span></span></div><div class="bd"></div><div id="bub" hidden></div>';
+  return '<div class="sb"><span class="pl">'+foods(state.hun)+'</span><span class="pl coin">'+fmtCoins(state.coins)+'</span><span class="rg"><span class="pl hb">'+hearts(state.mood)+'</span><span class="mn" data-go="menu" aria-label="메뉴">'+icon('nmenu',14)+'</span></span></div><div class="bd"></div><div id="bub" hidden></div>';
 }
 function render(){
   if(!GD)return;
@@ -1033,7 +1036,7 @@ function render(){
   document.querySelectorAll('#lcd canvas[data-fpet]').forEach(c=>{const fi=+c.dataset.fpet;c.width=c.height=32;drawUser(c.getContext('2d'),'normal',0,fi%2?'pink':'blue',false,'basic',FRIEND_EYE[fi])});
   document.querySelectorAll('#lcd canvas[data-pet]').forEach(c=>{const [kd,ht]=c.dataset.pet.split('|');c.width=c.height=32;c.getContext('2d').drawImage(sprite(ht==='1'?'child':'egg',ht==='1'?'normal':'idle',0,kd),0,0)});
   fitLCD();placeBubble();
-  $('sr').textContent=home?'피카의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
+  $('sr').textContent=home?'내 친구의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
 }
 function fitLCD(){
   const wrap=$('lcdwrap'),w=wrap.clientWidth,h=wrap.clientHeight,st=$('st');if(!w||!st||!GD)return;
@@ -1058,7 +1061,7 @@ function startAnim(type,t,done){anim={type,t,done};idle=0}
 function petTap(){
   idle=0;const p=pet();
   if(!p.hatched){if(anim&&anim.type==='hatch')return;p.taps++;
-    if(p.taps>=3){startAnim('hatch',12,()=>{p.hatched=true;spriteCache.clear();startAnim('hello',16);say('안녕! 반가워')})}
+    if(p.taps>=3){startAnim('hatch',12,()=>{p.hatched=true;spriteCache.clear();startAnim('hello',16);say('안녕! 반가워');setTimeout(renamePet,300)})}
     else{startAnim('wobble',6);say(['톡톡! 한 번 더','조금만 더!'][p.taps-1])}return}
   state.mood=Math.min(3,state.mood+(Math.random()<.5?1:0));startAnim('pet',14);say(Math.random()<.35?skyLine():['그르릉...','좋아~','냐앙~'][Math.floor(Math.random()*3)]);
 }
