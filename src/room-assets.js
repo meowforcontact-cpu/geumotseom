@@ -1,0 +1,93 @@
+// Original PNGs remain separate so wallpaper and flooring can be mixed.
+const roomLayers={};
+const roomNames={cream:'크림블루',pink:'핑크장식',whitewood:'화이트 우드 방'};
+const whitewoodRoomImage=new Image();whitewoodRoomImage.onload=()=>{QK='';render()};whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
+const isWhitewoodRoom=()=>roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
+function roomLook(){return state.roomLook||{wall:'whitewood',floor:'whitewood'}}
+for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.map(t=>'sky-'+t)]){
+ const im=new Image();
+ im.onload=()=>{
+  if(name.endsWith('-wall')){
+   const c=document.createElement('canvas');c.width=im.width;c.height=im.height;
+   const ctx=c.getContext('2d');ctx.drawImage(im,0,0);
+   const pixels=ctx.getImageData(0,0,c.width,c.height),d=pixels.data;
+   // Cut only blue glass, retaining curtains, frame and white window bars.
+   for(let y=0;y<c.height*.43;y++)for(let x=0;x<c.width;x++){
+    const nx=x/c.width;if(!((nx>.19&&nx<.34)||(nx>.67&&nx<.82)))continue;
+    const i=(y*c.width+x)*4,r=d[i],g=d[i+1],b=d[i+2];
+    if(b>r+18&&g>r+12&&b>g+4)d[i+3]=0;
+   }
+   ctx.putImageData(pixels,0,0);roomLayers[name]=c;
+  }else roomLayers[name]=im;
+  QK='';render();
+ };
+ im.src=ROOM_ASSET_URLS[name];
+}
+function roomAssetsReady(){if(isWhitewoodRoom())return !!whitewoodRoomImage.naturalWidth;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
+function roomWindowAt(x,y){
+ if(isWhitewoodRoom())return x>=RW/2-22&&x<=RW/2+22&&y>=32&&y<=62;
+ if(!roomAssetsReady()){const [sx,sy,sw,sh]=skyRect();return x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh;}
+ const width=Math.max(170,RW),left=(RW-width)/2,extra=width-170;
+ return y>=-2&&y<=37&&((x>=left+20&&x<=left+67)||(x>=left+101+extra&&x<=left+148+extra));
+}
+function drawRoomLayer(k,source,x,y,w,h){
+ const art=styleRoomArt(source,170,h),extra=w-170;
+ if(!extra){k.drawImage(art,x,y,170,h);return;}
+ // Widen only the plain middle wall/floor. Window frames and art retain scale.
+ const scale=art.width/170,half=85*scale;
+ k.drawImage(art,0,0,half,art.height,x,y,85,h);
+ k.drawImage(art,half,0,scale,art.height,x+85,y,extra,h);
+ k.drawImage(art,half,0,half,art.height,x+85+extra,y,85,h);
+}
+function drawAssetRoom(k){
+ if(isWhitewoodRoom()){
+  // Native 384×216 artwork is presented on a 192×108 logical viewport with
+  // integer output pixels in the existing 4× backing store (nearest-neighbor).
+  k.imageSmoothingEnabled=false;k.fillStyle='#000';k.fillRect(0,0,RW,RH);
+  k.drawImage(whitewoodRoomImage,Math.round((RW-192)/2),10,192,108);return;
+ }
+ const look=roomLook(),sky=roomLayers['sky-'+skyNow()];
+ // One fixed room shared by both cameras: portrait shows the centre crop.
+ const w=Math.max(170,RW),h=147,x=Math.round((RW-w)/2),y=-19;
+ k.imageSmoothingEnabled=false;
+ k.fillStyle=SKYC[skyNow()][0];k.fillRect(0,0,RW,RH);
+ const drift=calm?0:Math.floor(Date.now()/240)%w;
+ const skyArt=styleRoomArt(sky,w,58);
+ k.drawImage(skyArt,x-drift,-15,w,58);k.drawImage(skyArt,x-drift+w,-15,w,58);
+ // Separate cloud silhouettes remain visible through both cut-out windows.
+ k.save();k.fillStyle=skyNow()==='night'?'#7783b0':'#f7fcff';k.globalAlpha=skyNow()==='night'?.3:.8;
+ for(const [offset,cy] of [[0,13],[63,24],[121,6]]){const cx=x+((offset+drift)%(w+38))-30;k.fillRect(cx,cy+3,30,6);k.fillRect(cx+6,cy,15,4);}
+ k.restore();
+ drawRoomLayer(k,roomLayers[look.wall+'-wall'],x,y,w,h);
+ drawRoomLayer(k,roomLayers[look.floor+'-floor'],x,y,w,h);
+}
+const previousDecoList=SCR.deco.list;
+SCR.deco.list=()=>[
+ L('벽지 바꾸기','wall1',()=>push('roomWall'),roomNames[roomLook().wall]),
+ L('바닥 바꾸기','floor1',()=>push('roomFloor'),roomNames[roomLook().floor]),
+ ...previousDecoList().filter(row=>!['벽','바닥'].includes(row.l))
+];
+function roomChoiceList(part){return [...Object.entries(roomNames).map(([id,label])=>L(label,part==='wall'?'wall1':'floor1',()=>{
+ state.roomLook=id==='whitewood'?{wall:'whitewood',floor:'whitewood'}:{...roomLook(),[part]:id, ...(isWhitewoodRoom()?{[part==='wall'?'floor':'wall']:'cream'}:{})};
+ // Clear legacy colour overlays only for the surface the user changes.
+ state.eq[part==='wall'?'벽':'바닥']=null;QK='';persist();render();
+},roomLook()[part]===id?'적용 중':'')),BACK()]}
+SCR.roomWall={title:'벽지 선택',list:()=>roomChoiceList('wall')};
+SCR.roomFloor={title:'바닥 선택',list:()=>roomChoiceList('floor')};
+
+// Draw originals straight into a dense backing store, never through 128px.
+function drawDetailedRoom(){
+ const scale=4;
+ if(buf.width!==RW*scale||rc.width!==RW*scale){
+  buf.width=rc.width=RW*scale;buf.height=rc.height=RH*scale;
+ }
+ bx.setTransform(scale,0,0,scale,0,0);
+ bx.imageSmoothingEnabled=false;
+ cat.t++;idle++;
+ if(anim&&--anim.t<=0){const a=anim;anim=null;a.done&&a.done()}
+ scene(true);
+ if(placeNow().place!=='park'){const R=(c,x,y,w,h)=>{bx.fillStyle=c;bx.fillRect(x,y,w,h)};tintAll(bx,skyNow(),R);const [sx,sy,sw,sh]=skyRect();winLight(bx,skyNow(),sx,sy,sw,sh);}
+ drawFurnitureSelection(bx);
+ rx.setTransform(1,0,0,1,0,0);rx.imageSmoothingEnabled=false;rx.clearRect(0,0,rc.width,rc.height);rx.drawImage(buf,0,0);
+ placeBubble();const th=skyNow();if(MODE+skin+th!==shellKey)applyShell();
+}

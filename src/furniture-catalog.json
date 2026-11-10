@@ -1,0 +1,548 @@
+[
+  {
+    "id": "pink_f1",
+    "cat": "가구",
+    "name": "로즈 침대",
+    "price": 450,
+    "spr": "pink_f1",
+    "theme": "pink",
+    "crop": [
+      40,
+      25,
+      265,
+      425
+    ],
+    "size": [
+      48,
+      70
+    ]
+  },
+  {
+    "id": "pink_f2",
+    "cat": "가구",
+    "name": "로즈 커튼창",
+    "price": 180,
+    "spr": "pink_f2",
+    "theme": "pink",
+    "crop": [
+      305,
+      85,
+      310,
+      265
+    ],
+    "size": [
+      44,
+      36
+    ]
+  },
+  {
+    "id": "pink_f3",
+    "cat": "가구",
+    "name": "로즈 화장대",
+    "price": 300,
+    "spr": "pink_f3",
+    "theme": "pink",
+    "crop": [
+      615,
+      45,
+      235,
+      355
+    ],
+    "size": [
+      36,
+      54
+    ]
+  },
+  {
+    "id": "pink_f4",
+    "cat": "가구",
+    "name": "로즈 괘종시계",
+    "price": 250,
+    "spr": "pink_f4",
+    "theme": "pink",
+    "crop": [
+      855,
+      25,
+      140,
+      375
+    ],
+    "size": [
+      22,
+      62
+    ]
+  },
+  {
+    "id": "pink_f5",
+    "cat": "가구",
+    "name": "로즈 티테이블",
+    "price": 220,
+    "spr": "pink_f5",
+    "theme": "pink",
+    "crop": [
+      1000,
+      160,
+      280,
+      240
+    ],
+    "size": [
+      46,
+      38
+    ]
+  },
+  {
+    "id": "pink_f6",
+    "cat": "가구",
+    "name": "로즈 의자",
+    "price": 120,
+    "spr": "pink_f6",
+    "theme": "pink",
+    "crop": [
+      1285,
+      165,
+      125,
+      240
+    ],
+    "size": [
+      22,
+      40
+    ]
+  },
+  {
+    "id": "pink_f7",
+    "cat": "가구",
+    "name": "로즈 소파",
+    "price": 350,
+    "spr": "pink_f7",
+    "theme": "pink",
+    "crop": [
+      15,
+      460,
+      365,
+      230
+    ],
+    "size": [
+      58,
+      36
+    ]
+  },
+  {
+    "id": "pink_f8",
+    "cat": "가구",
+    "name": "로즈 장미조명",
+    "price": 180,
+    "spr": "pink_f8",
+    "theme": "pink",
+    "crop": [
+      380,
+      420,
+      135,
+      270
+    ],
+    "size": [
+      24,
+      48
+    ]
+  },
+  {
+    "id": "pink_f9",
+    "cat": "가구",
+    "name": "로즈 장미꽃병",
+    "price": 100,
+    "spr": "pink_f9",
+    "theme": "pink",
+    "crop": [
+      515,
+      450,
+      175,
+      240
+    ],
+    "size": [
+      28,
+      40
+    ]
+  },
+  {
+    "id": "pink_f10",
+    "cat": "가구",
+    "name": "로즈 장미화분",
+    "price": 80,
+    "spr": "pink_f10",
+    "theme": "pink",
+    "crop": [
+      690,
+      505,
+      108,
+      185
+    ],
+    "size": [
+      20,
+      32
+    ]
+  },
+  {
+    "id": "pink_f11",
+    "cat": "가구",
+    "name": "로즈 하트러그",
+    "price": 120,
+    "spr": "pink_f11",
+    "theme": "pink",
+    "crop": [
+      803,
+      580,
+      130,
+      105
+    ],
+    "size": [
+      36,
+      24
+    ]
+  },
+  {
+    "id": "pink_f12",
+    "cat": "가구",
+    "name": "로즈 일기장",
+    "price": 80,
+    "spr": "pink_f12",
+    "theme": "pink",
+    "crop": [
+      938,
+      572,
+      100,
+      110
+    ],
+    "size": [
+      20,
+      22
+    ]
+  },
+  {
+    "id": "pink_f13",
+    "cat": "가구",
+    "name": "로즈 펼친책",
+    "price": 80,
+    "spr": "pink_f13",
+    "theme": "pink",
+    "crop": [
+      1045,
+      580,
+      130,
+      100
+    ],
+    "size": [
+      28,
+      20
+    ]
+  },
+  {
+    "id": "pink_f14",
+    "cat": "가구",
+    "name": "로즈 찻잔",
+    "price": 80,
+    "spr": "pink_f14",
+    "theme": "pink",
+    "crop": [
+      1180,
+      570,
+      130,
+      110
+    ],
+    "size": [
+      24,
+      22
+    ]
+  },
+  {
+    "id": "pink_f15",
+    "cat": "가구",
+    "name": "로즈 딸기케이크",
+    "price": 100,
+    "spr": "pink_f15",
+    "theme": "pink",
+    "crop": [
+      1310,
+      558,
+      120,
+      120
+    ],
+    "size": [
+      24,
+      24
+    ]
+  },
+  {
+    "id": "cream_f1",
+    "cat": "가구",
+    "name": "크림 침대",
+    "price": 450,
+    "spr": "cream_f1",
+    "theme": "cream",
+    "crop": [
+      35,
+      30,
+      275,
+      440
+    ],
+    "size": [
+      32,
+      53
+    ]
+  },
+  {
+    "id": "cream_f2",
+    "cat": "가구",
+    "name": "크림 커튼창",
+    "price": 180,
+    "spr": "cream_f2",
+    "theme": "cream",
+    "crop": [
+      315,
+      85,
+      300,
+      265
+    ],
+    "size": [
+      44,
+      36
+    ]
+  },
+  {
+    "id": "cream_f3",
+    "cat": "가구",
+    "name": "크림 화장대",
+    "price": 300,
+    "spr": "cream_f3",
+    "theme": "cream",
+    "crop": [
+      620,
+      60,
+      230,
+      340
+    ],
+    "size": [
+      28,
+      42
+    ]
+  },
+  {
+    "id": "cream_f4",
+    "cat": "가구",
+    "name": "크림 괘종시계",
+    "price": 250,
+    "spr": "cream_f4",
+    "theme": "cream",
+    "crop": [
+      855,
+      25,
+      150,
+      370
+    ],
+    "size": [
+      16,
+      42
+    ]
+  },
+  {
+    "id": "cream_f5",
+    "cat": "가구",
+    "name": "크림 원형테이블",
+    "price": 220,
+    "spr": "cream_f5",
+    "theme": "cream",
+    "crop": [
+      1010,
+      165,
+      280,
+      240
+    ],
+    "size": [
+      46,
+      38
+    ]
+  },
+  {
+    "id": "cream_f6",
+    "cat": "가구",
+    "name": "크림 의자",
+    "price": 120,
+    "spr": "cream_f6",
+    "theme": "cream",
+    "crop": [
+      1288,
+      178,
+      126,
+      225
+    ],
+    "size": [
+      14,
+      27
+    ]
+  },
+  {
+    "id": "cream_f7",
+    "cat": "가구",
+    "name": "크림 소파",
+    "price": 350,
+    "spr": "cream_f7",
+    "theme": "cream",
+    "crop": [
+      15,
+      490,
+      405,
+      255
+    ],
+    "size": [
+      48,
+      30
+    ]
+  },
+  {
+    "id": "cream_f8",
+    "cat": "가구",
+    "name": "크림 스탠드",
+    "price": 180,
+    "spr": "cream_f8",
+    "theme": "cream",
+    "crop": [
+      425,
+      458,
+      135,
+      280
+    ],
+    "size": [
+      14,
+      30
+    ]
+  },
+  {
+    "id": "cream_f9",
+    "cat": "가구",
+    "name": "크림 초록화분",
+    "price": 80,
+    "spr": "cream_f9",
+    "theme": "cream",
+    "crop": [
+      560,
+      490,
+      160,
+      250
+    ],
+    "size": [
+      20,
+      29
+    ]
+  },
+  {
+    "id": "cream_f10",
+    "cat": "가구",
+    "name": "크림 원형쿠션",
+    "price": 100,
+    "spr": "cream_f10",
+    "theme": "cream",
+    "crop": [
+      720,
+      620,
+      150,
+      120
+    ],
+    "size": [
+      17,
+      12
+    ]
+  },
+  {
+    "id": "cream_f11",
+    "cat": "가구",
+    "name": "크림 책",
+    "price": 80,
+    "spr": "cream_f11",
+    "theme": "cream",
+    "crop": [
+      878,
+      620,
+      120,
+      110
+    ],
+    "size": [
+      20,
+      22
+    ]
+  },
+  {
+    "id": "cream_f12",
+    "cat": "가구",
+    "name": "크림 펼친책",
+    "price": 80,
+    "spr": "cream_f12",
+    "theme": "cream",
+    "crop": [
+      1005,
+      625,
+      130,
+      100
+    ],
+    "size": [
+      28,
+      20
+    ]
+  },
+  {
+    "id": "cream_f13",
+    "cat": "가구",
+    "name": "크림 찻잔",
+    "price": 80,
+    "spr": "cream_f13",
+    "theme": "cream",
+    "crop": [
+      1145,
+      620,
+      135,
+      105
+    ],
+    "size": [
+      24,
+      22
+    ]
+  },
+  {
+    "id": "cream_f14",
+    "cat": "가구",
+    "name": "크림 수국화분",
+    "price": 100,
+    "spr": "cream_f14",
+    "theme": "cream",
+    "crop": [
+      1278,
+      520,
+      152,
+      200
+    ],
+    "size": [
+      26,
+      36
+    ]
+  },
+  {
+    "id": "cream_tea_table",
+    "cat": "가구",
+    "name": "크림 찻잔 테이블",
+    "price": 300,
+    "spr": "cream_tea_table",
+    "theme": "cream",
+    "size": [
+      34,
+      29
+    ]
+  },
+  {
+    "id": "cream_flower_table",
+    "cat": "가구",
+    "name": "크림 수국 테이블",
+    "price": 300,
+    "spr": "cream_flower_table",
+    "theme": "cream",
+    "size": [
+      37,
+      32
+    ]
+  }
+]

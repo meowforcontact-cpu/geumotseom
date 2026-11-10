@@ -9,7 +9,7 @@ function persist(){
   ensureDaily(state);
   const value=snapshot(state),fingerprint=JSON.stringify(value.state)+value.day;
   try{if(fingerprint!==savedFingerprint){localStorage.setItem(KEY,JSON.stringify(value));savedFingerprint=fingerprint}}catch{}
-  if(changedDay&&scr().id==='att')render();
+  if(changedDay&&['att','daily'].includes(scr().id))render();
 }
 function restore(){try{const raw=localStorage.getItem(KEY);if(raw)Object.assign(state,validateSave(JSON.parse(raw),ITEMS))}catch{say('이전 저장을 읽지 못했어요. 진행 파일을 확인해 주세요.')}}
 function exportProgress(){
