@@ -16,6 +16,42 @@ replace("  $('dev').style.width=Math.max(220,w)+'px';fitLCD();",
  "  const device=$('dev');device.style.translate='';device.style.width=Math.max(1,w)+'px';"
  +"if(typeof furnitureTools!=='undefined'&&!furnitureTools.hidden)positionFurnitureDrawer();fitLCD();");
 
+
+// Draw the console's existing pixel-art controls in their own topmost layer.
+// The shell image used to contain buttons, so changing z-index alone could
+// never raise their artwork above a bezel or any overlapping LCD decoration.
+const controlForegroundCode = `
+function renderControllerForeground(source){
+ const host=$('btns');
+ if(!host||MODE!=='console'||!source)return;
+ let layer=host.querySelector('.controller-art-front');
+ if(!layer){
+  layer=document.createElement('canvas');
+  layer.className='controller-art-front';
+  layer.setAttribute('aria-hidden','true');
+  host.prepend(layer);
+ }
+ if(layer.width!==GD.W)layer.width=GD.W;
+ if(layer.height!==GD.H)layer.height=GD.H;
+ const context=layer.getContext('2d');
+ context.clearRect(0,0,GD.W,GD.H);
+ context.imageSmoothingEnabled=false;
+ const copy=(x,y,w,h)=>context.drawImage(source,x,y,w,h,x,y,w,h);
+ // The D-pad cross and its 5px lower shadow form one continuous graphic.
+ copy(9,80,83,92);
+ for(const [key,x,y,r] of GD.btn){
+  if(!['OK','BACK','MENU','HOME','FEED','PLAY'].includes(key))continue;
+  const pad=6,x0=Math.max(0,Math.floor(x-r-pad)),y0=Math.max(0,Math.floor(y-r-pad));
+  const x1=Math.min(GD.W,Math.ceil(x+r+pad)),y1=Math.min(GD.H,Math.ceil(y+r+pad));
+  copy(x0,y0,x1-x0,y1-y0);
+ }
+}
+`;
+replace("function applyShell(){", controlForegroundCode+"\nfunction applyShell(){");
+replace("const shellCache={};let shellKey='';","const shellCache={},shellRasterCache={};let shellKey='';");
+replace("shellCache[shellKey]='url('+c.toDataURL()+')'","shellRasterCache[shellKey]=c;shellCache[shellKey]='url('+c.toDataURL()+')'");
+replace("  $('dev').style.setProperty('--shell',shellCache[shellKey]);",
+ "  $('dev').style.setProperty('--shell',shellCache[shellKey]);\n  renderControllerForeground(shellRasterCache[shellKey]);");
 replace('const E1=[[84,38],[112,-6],[148,30]]','const E1=[[84,38],[112,0],[148,30]]');
 // 4:3 landscape LCD: 240x180 inside the existing 448x262 console.
 // The room remains square, and physical buttons sit outside the frame.
