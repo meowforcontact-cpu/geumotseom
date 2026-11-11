@@ -32,38 +32,46 @@ export function claimAttendance(state,now=Date.now()){
   att.dates.sort();
   return true;
 }
-// One room-coordinate system is used in both portrait and landscape cameras.
-// The default is a curated cream/whitewood SHOWROOM only; furniture mixing is unrestricted.
-const PREVIOUS_FURNITURE_LAYOUT={
-  cream_f1:[-18,48],cream_f8:[20,57],cream_f3:[41,45],cream_f4:[70,45],
-  cream_tea_table:[91,58],cream_f9:[127,58],
-  cream_flower_table:[-16,96],cream_f6:[23,99],cream_f7:[90,91],cream_f10:[119,116]
+// Both device orientations share world coordinates. All furniture themes remain freely mixable.
+const LAYOUT_V1={
+ cream_f1:[-18,48],cream_f8:[20,57],cream_f3:[41,45],cream_f4:[70,45],
+ cream_tea_table:[91,58],cream_f9:[127,58],
+ cream_flower_table:[-16,96],cream_f6:[23,99],cream_f7:[90,91],cream_f10:[119,116]
+};
+const LAYOUT_V2={
+ cream_f1:[12,36],cream_f8:[43,64],cream_f3:[54,40],cream_f4:[80,42],
+ cream_tea_table:[95,57],cream_f9:[109,36],
+ cream_flower_table:[12,92],cream_f6:[44,93],cream_f7:[79,90],cream_f10:[110,114]
 };
 export const DEFAULT_FURNITURE_LAYOUT={
-  cream_f1:[12,36],cream_f8:[43,64],cream_f3:[54,40],cream_f4:[80,42],
-  cream_tea_table:[95,57],cream_f9:[109,36],
-  cream_flower_table:[12,92],cream_f6:[44,93],cream_f7:[79,90],cream_f10:[110,114]
+ cream_f1:[10,38],cream_f8:[42,57],cream_f3:[55,38],cream_f4:[81,40],
+ cream_tea_table:[91,64],cream_f9:[108,38],
+ cream_flower_table:[8,95],cream_f6:[41,100],cream_f7:[89,96],cream_f10:[109,114]
 };
+const SHOWROOM_FURNITURE=['cream_f1','cream_f8','cream_f3','cream_f4','cream_tea_table','cream_f9','cream_flower_table','cream_f7'];
 export function ensureFurnitureLayout(state,items){
-  if(!items.some(i=>i.id==='cream_tea_table'))return false;
-  const retired=new Set(items.filter(i=>i.cat==='가구'&&i.retired).map(i=>i.id));
-  const ownedBefore=state.owned.length,equippedBefore=state.eq.가구.length;
-  state.owned=state.owned.filter(id=>!retired.has(id));
-  state.eq.가구=state.eq.가구.filter(id=>!retired.has(id));
-  if(state.furnitureLayoutVersion===2)return ownedBefore!==state.owned.length||equippedBefore!==state.eq.가구.length;
-  const upgrading=state.furnitureLayoutVersion===1;
-  for(const [id,position] of Object.entries(DEFAULT_FURNITURE_LAYOUT)){
-    if(!upgrading){
-      if(!state.owned.includes(id))state.owned.push(id);
-      if(!state.eq.가구.includes(id))state.eq.가구.push(id);
-    }
-    // Only relocate pristine defaults. Custom user placements and ownership survive.
-    const old=PREVIOUS_FURNITURE_LAYOUT[id],saved=state.pos[id];
-    if(!upgrading||!saved||(saved[0]===old[0]&&saved[1]===old[1]))
-      state.pos[id]=[...position];
-  }
-  state.furnitureLayoutVersion=2;
-  return true;
+ if(!items.some(i=>i.id==='cream_tea_table'))return false;
+ const retired=new Set(items.filter(i=>i.cat==='가구'&&i.retired).map(i=>i.id));
+ const ownedBefore=state.owned.length,equippedBefore=state.eq.가구.length;
+ state.owned=state.owned.filter(id=>!retired.has(id));
+ state.eq.가구=state.eq.가구.filter(id=>!retired.has(id));
+ if(state.furnitureLayoutVersion===3)return ownedBefore!==state.owned.length||equippedBefore!==state.eq.가구.length;
+ const oldVersion=state.furnitureLayoutVersion;
+ const previous=oldVersion===1?LAYOUT_V1:LAYOUT_V2;
+ const oldIds=Object.keys(LAYOUT_V2);
+ const pristineEquipped=oldIds.every(id=>state.eq.가구.includes(id))
+   &&state.eq.가구.every(id=>oldIds.includes(id));
+ for(const [id,pos] of Object.entries(DEFAULT_FURNITURE_LAYOUT)){
+  if(!oldVersion&&!state.owned.includes(id))state.owned.push(id);
+  const saved=state.pos[id],prev=previous[id];
+  if(!saved||!oldVersion||(prev&&saved[0]===prev[0]&&saved[1]===prev[1]))
+   state.pos[id]=[...pos];
+ }
+ // Curated showroom is the first-view equipment list, not an item ownership limit.
+ // Do not remove intentionally placed furniture or theme-mixed sets.
+ if(!oldVersion||pristineEquipped)state.eq.가구=[...SHOWROOM_FURNITURE];
+ state.furnitureLayoutVersion=3;
+ return true;
 }
 export function validateSave(value, items) {
   if (!value || value.version !== 1 || !value.state) throw Error('그못섬 체험판 진행 파일을 골라 주세요.');
@@ -111,7 +119,7 @@ export function validateSave(value, items) {
     }
   }
   if(s.furnitureLayoutVersion!==undefined){
-    if(![1,2].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
+    if(![1,2,3].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
     result.furnitureLayoutVersion=s.furnitureLayoutVersion;
   }
   ensureFurnitureLayout(result,items);
