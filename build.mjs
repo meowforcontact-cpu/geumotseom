@@ -22,10 +22,10 @@ replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
 const shellArtOffsetY=10;
 const consoleDpad={x:50,y:122,reach:21,halfLength:29,halfThickness:11,hitRadius:10.6};
 const consoleFaceButtons=[
-  ['OK',420,122,15,'a','paw','A 확인'],
-  ['BACK',398,144,15,'b','back','B 뒤로'],
-  ['MENU',398,100,15,'x','menu','X 메뉴'],
-  ['HOME',376,122,15,'y','home','Y 홈']
+  ['OK',422,122,14,'a','paw','A 확인'],
+  ['BACK',398,152,14,'b','back','B 뒤로'],
+  ['MENU',398,92,14,'x','menu','X 메뉴'],
+  ['HOME',374,122,14,'y','home','Y 홈']
 ];
 const consoleBottomButtons=[
   ['FEED',64,196,17,'food','bowl','먹이 (길게: 간식 고르기)'],
