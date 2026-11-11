@@ -32,24 +32,37 @@ export function claimAttendance(state,now=Date.now()){
   att.dates.sort();
   return true;
 }
-// Coordinates share the same room in portrait (centre crop) and wide mode.
-export const DEFAULT_FURNITURE_LAYOUT={
+// One room-coordinate system is used in both portrait and landscape cameras.
+// The default is a curated cream/whitewood SHOWROOM only; furniture mixing is unrestricted.
+const PREVIOUS_FURNITURE_LAYOUT={
   cream_f1:[-18,48],cream_f8:[20,57],cream_f3:[41,45],cream_f4:[70,45],
   cream_tea_table:[91,58],cream_f9:[127,58],
   cream_flower_table:[-16,96],cream_f6:[23,99],cream_f7:[90,91],cream_f10:[119,116]
 };
+export const DEFAULT_FURNITURE_LAYOUT={
+  cream_f1:[12,36],cream_f8:[43,64],cream_f3:[54,40],cream_f4:[80,42],
+  cream_tea_table:[95,57],cream_f9:[109,36],
+  cream_flower_table:[12,92],cream_f6:[44,93],cream_f7:[79,90],cream_f10:[110,114]
+};
 export function ensureFurnitureLayout(state,items){
   if(!items.some(i=>i.id==='cream_tea_table'))return false;
   const retired=new Set(items.filter(i=>i.cat==='가구'&&i.retired).map(i=>i.id));
+  const ownedBefore=state.owned.length,equippedBefore=state.eq.가구.length;
   state.owned=state.owned.filter(id=>!retired.has(id));
   state.eq.가구=state.eq.가구.filter(id=>!retired.has(id));
-  if(state.furnitureLayoutVersion===1)return false;
+  if(state.furnitureLayoutVersion===2)return ownedBefore!==state.owned.length||equippedBefore!==state.eq.가구.length;
+  const upgrading=state.furnitureLayoutVersion===1;
   for(const [id,position] of Object.entries(DEFAULT_FURNITURE_LAYOUT)){
-    if(!state.owned.includes(id))state.owned.push(id);
-    if(!state.eq.가구.includes(id))state.eq.가구.push(id);
-    state.pos[id]=[...position];
+    if(!upgrading){
+      if(!state.owned.includes(id))state.owned.push(id);
+      if(!state.eq.가구.includes(id))state.eq.가구.push(id);
+    }
+    // Only relocate pristine defaults. Custom user placements and ownership survive.
+    const old=PREVIOUS_FURNITURE_LAYOUT[id],saved=state.pos[id];
+    if(!upgrading||!saved||(saved[0]===old[0]&&saved[1]===old[1]))
+      state.pos[id]=[...position];
   }
-  state.furnitureLayoutVersion=1;
+  state.furnitureLayoutVersion=2;
   return true;
 }
 export function validateSave(value, items) {
@@ -98,7 +111,7 @@ export function validateSave(value, items) {
     }
   }
   if(s.furnitureLayoutVersion!==undefined){
-    if(s.furnitureLayoutVersion!==1)throw Error('가구 배치를 읽을 수 없어요.');
+    if(![1,2].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
     result.furnitureLayoutVersion=s.furnitureLayoutVersion;
   }
   ensureFurnitureLayout(result,items);
