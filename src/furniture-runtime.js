@@ -36,16 +36,22 @@ shopBody=function(s){
    +'" data-i="'+i+'" role="button" aria-label="'+name+'" title="'+name+'">'+icon(sprite,14)+'</div>').join('')+'</div>';
  if(category==='펫'){
   const species=[['cat','고양이'],['dog','강아지'],['white','토끼'],['angel','천사냥'],['raccoon','너구리']];
-  const grid=species.map(([kind,name])=>{
-   const owned=state.pets.some(p=>p.kind===kind);
-   const status=owned?'보유 중':(kind==='cat'||kind==='dog')?'첫 친구 무료':kind==='angel'?'미션 15일':'획득 미확정';
-   return '<div class="pet-catalog-card" aria-label="'+name+' · '+status+'">'
+  const grid=species.map(([kind,name],idx)=>{
+   const ownerIndex=state.pets.findIndex(p=>p.kind===kind),owned=ownerIndex>=0;
+   const first=needsStarterPet(state)&&(kind==='cat'||kind==='dog');
+   const product=ITEMS.find(i=>i.pet===kind);
+   const buyable=!owned&&!first&&product&&product.price>0&&!product.only&&!product.catalogOnly&&!product.retired;
+   const status=owned?(state.rep===ownerIndex?'대표 펫':'대표로 설정'):first?'첫 펫 무료 선택':
+     buyable?fmt(product.price)+'냥':kind==='angel'?'미션 누적 15일':'획득 조건 미확정';
+   const available=owned||first||buyable;
+   return '<button type="button" class="pet-catalog-card'+(c===n+idx?' sel':'')+'" data-pet-shop="'+kind+'"'
+    +(available?'':' disabled')+' aria-label="'+name+' · '+status+'">'
     +'<canvas data-pet="'+kind+'|1" aria-hidden="true"></canvas>'
-    +'<span class="pet-catalog-name">'+name+'</span><small>'+status+'</small></div>';
+    +'<span class="pet-catalog-name">'+name+'</span><small>'+status+'</small></button>';
   }).join('');
   return cats+'<div class="pet-catalog-grid">'+grid+'</div>'
-    +'<p class="shop-policy-caption">천사냥: 일일 3개 완료 누적 15일 · 유료 판매 아님</p>'
-    +'<div class="row shop-back" data-i="'+n+'">'+icon('ileft',8)+'<span class="l">뒤로</span></div>';
+   +'<p class="shop-policy-caption">첫 펫 고양이·강아지 중 한 마리 무료 · 미확정 상품 판매 안 함</p>'
+   +'<div class="row shop-back" data-pet-shop-back="1">'+icon('ileft',8)+'<span class="l">뒤로</span></div>';
  }
  const offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
  const shown=its.slice(offset,offset+4);
