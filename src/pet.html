@@ -854,7 +854,7 @@ function setMode(m){
   GD.btn.forEach(([k,bx_,by,r,ic,lab])=>{const b=document.createElement('button');b.className='eb';b.dataset.k=k;b.setAttribute('aria-label',lab);b.title=lab;
     Object.assign(b.style,{left:bx_/GD.W*100+'%',top:by/GD.H*100+'%',width:2*r/GD.W*100+'%'});
     if(ic){const c=document.createElement('canvas');paint(c,ic);b.appendChild(c)}B.appendChild(b);bindBtn(b,k)});
-  cat.x=Math.min(cat.x,RW-64);cat.tx=cat.x;QK='';applyShell();render();
+  cat.x=Math.max(-13,Math.min(cat.x,RW-51));cat.tx=cat.x;cat.y=Math.max(45,Math.min(124,cat.y));cat.ty=cat.y;QK='';applyShell();render();
 }
 function fitDev(){
   const vv=window.visualViewport,vw=vv?vv.width:document.documentElement.clientWidth,vh=vv?vv.height:innerHeight;
@@ -1090,6 +1090,16 @@ setInterval(()=>{
 },30000);
 
 // ===== 입력: 화면 직접 누르기, 기기 버튼, 키보드 =====
+function movePetWithPad(k){
+ if(!['U','D','L','R'].includes(k))return;
+ const square=isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park';
+ const inset=(64-(stage()==='egg'?34:38))/2;
+ const maxX=(square?128:RW)-64+inset;
+ if(k==='L'||k==='R')cat.tx=Math.max(-inset,Math.min(maxX,cat.x+(k==='R'?20:-20)));
+ else cat.ty=Math.max(45,Math.min(124,cat.y+(k==='D'?20:-20)));
+ cat.wait=30;
+ if(calm){cat.x=cat.tx;cat.y=cat.ty;}
+}
 function input(k){
   const s=scr(),d=SCR[s.id];idle=0;
   if(k==='HOME'){ui.hc=-1;return goHome()}
@@ -1098,13 +1108,13 @@ function input(k){
   if(k==='FEED'){if(ui.stack[1]&&ui.stack[1].id==='food')return goHome();if(stage()!=='egg')feedHint();return care('eat',1,0)}
   if(k==='PLAY')return care('play');
   if(k==='BACK'){if(s.id!=='home')back();else{ui.hc=-1;render()}return}
-  if(s.id==='home'&&MODE==='console'){if(k==='OK')return state.poop.length&&stage()!=='egg'?cleanPoop(0):petTap();if(stage()==='egg')return;cat.tx=Math.max(0,Math.min(RW-64,cat.x+(k==='R'?24:-24)));cat.wait=30;if(calm)cat.x=cat.tx;return}
+  if(s.id==='home'&&MODE==='console'){if(k==='OK')return state.poop.length&&stage()!=='egg'?cleanPoop(0):petTap();if(stage()==='egg')return;movePetWithPad(k);return}
   if(s.id==='home'){
     if(k==='OK')return state.poop.length&&stage()!=='egg'?cleanPoop(0):petTap();return}
   if(s.id==='shop'){if(k==='OK')return shopOK(s);const n=shopLen(s);s.cur=(s.cur+(k==='R'?1:-1)+n)%n;if(s.cur<CATS.length)s.cat=s.cur;return render()}
   if(s.id==='buy'){if(k==='OK')return buyOK(s);s.cur=1-s.cur;return render()}
   if(s.id==='book'){if(k==='OK')return bookOK(s);const n=bookLen(s);s.cur=(s.cur+(k==='R'?1:-1)+n)%n;if(s.cur<BOOK_TABS.length)s.tab=s.cur;return render()}
-  if(s.id==='place'){if(k==='OK')return petTap();cat.tx=Math.max(0,Math.min(RW-64,cat.x+(k==='R'?24:-24)));cat.wait=30;if(calm)cat.x=cat.tx;return}
+  if(s.id==='place'){if(k==='OK')return petTap();movePetWithPad(k);return}
   if(d.view){if(k==='OK')return d.ok?d.ok(s):back();const n=d.pages?d.pages():1;if(n>1){s.pg=(s.pg+(k==='R'?1:-1)+n)%n;render()}return}
   if(d.grid){const g=d.grid(s);if(k==='OK')return g[s.cur][2]();s.cur=(s.cur+(k==='R'?1:-1)+g.length)%g.length;return render()}
   const it=listOf(s);if(k==='OK')return it[s.cur].go();s.cur=(s.cur+(k==='R'?1:-1)+it.length)%it.length;render();
