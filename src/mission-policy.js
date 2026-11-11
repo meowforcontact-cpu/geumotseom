@@ -35,26 +35,43 @@ function missionPick(period,id){
  persist();render();
 }
 function missionArchiveView(){
- return '<div class="mission-economy-note">2026-11-06 승인 경제안 · 최신 일일/주간 7개 선택과 목표·보상은 아직 통합되지 않았습니다. 이 금액으로 자동 지급하지 않습니다.</div>'
-  +Object.entries(ECONOMY_ARCHIVE).map(([period,rows])=>'<div class="mission-economy-list"><strong>'+({daily:'일일',weekly:'주간',season:'시즌'}[period])+'</strong>'+rows.map(([name,n])=>'<div>'+name+' <span>'+fmt(n)+' 냐냐냥 / '+fmt(n)+' XP</span></div>').join('')+'</div>').join('');
+ const titles={daily:'일일 보상안',weekly:'주간 보상안',season:'시즌 보상안'};
+ return '<p class="mission-archive-head">2026.11.06 승인안 · 실제 자동 지급은 미연동</p>'
+  +Object.entries(ECONOMY_ARCHIVE).map(([period,rows])=>
+    '<section class="mission-economy-list"><strong>'+titles[period]+'</strong>'
+    +rows.map(([name,n])=>'<div><span>'+name+'</span><span>'+fmt(n)+'냥 / XP</span></div>').join('')
+    +'</section>').join('');
 }
 function missionNotebookView(s){
  if(s.notebookTab==='history')return notebookHistoryView(s);
  const tab=['daily','weekly','season','economy'].includes(s.missionTab)?s.missionTab:'daily';
  const tabs=[['daily','일일'],['weekly','주간'],['season','시즌'],['economy','보상안']];
  let panel='';
- if(tab==='economy')panel=missionArchiveView();
- else if(tab==='season')panel='<div class="mission-note">시즌 미션</div><div class="mission-line">첫 출격 <span>목표 확인 중</span></div><div class="mission-note">천사냥: 일일 미션 3개 완수 누적 15일 보상 · 연속일 조건 없음. 운영 지급은 미연동입니다.</div>';
+ if(tab==='economy')panel='<div class="mission-scroll-body">'+missionArchiveView()+'</div>';
+ else if(tab==='season')panel='<div class="mission-scroll-body">'
+  +'<p class="mission-section-caption">시즌 미션</p>'
+  +'<div class="mission-season-row"><span>첫 출격</span><span>조건 확인 중</span></div>'
+  +'<p class="mission-section-caption">천사냥 보상</p>'
+  +'<p class="mission-help">일일 미션 3개 완료를 누적 15일 달성 · 연속일 필요 없음</p>'
+  +'<p class="mission-help">실제 지급 기능은 미연동입니다.</p></div>';
  else{
   const plan=missionPlan(tab),count=plan.choices.length;
-  panel='<div class="mission-summary">선택 '+count+'/3 · '+(tab==='daily'?'매일 0시(KST) 갱신':'매주 월요일 갱신')+'</div>'
-   +'<div class="mission-choice-scroll">'+MISSION_CHOICES.map(m=>{
-    const checked=plan.choices.includes(m.id);
-    return '<button type="button" class="mission-choice'+(checked?' picked':'')+'" data-mission-pick="'+m.id+'" data-mission-period="'+tab+'" aria-pressed="'+checked+'" aria-label="'+m.name+(checked?' 선택됨':' 선택하기')+'"><span class="mission-check">'+(checked?'✓':'□')+'</span><span>'+m.name+'</span><span class="mission-hint">'+(checked?'선택됨':'선택')+'</span></button>';
-   }).join('')+'</div>'
-   +'<div class="mission-note">선택은 이 기기에 저장됩니다. Discord 인정 활동 집계 및 실제 지급은 서버 연결이 확인될 때까지 표시하지 않습니다.</div>';
+  panel='<div class="mission-plan-meta"><strong>선택 '+count+' / 3</strong><span>'
+    +(tab==='daily'?'매일 0시 갱신':'매주 월요일 갱신')+'</span></div>'
+   +'<div class="mission-choice-scroll" role="group" aria-label="'+(tab==='daily'?'일일':'주간')+' 미션 선택">'
+   +MISSION_CHOICES.map(m=>{
+      const checked=plan.choices.includes(m.id);
+      return '<button type="button" class="mission-choice'+(checked?' picked':'')+'" data-mission-pick="'+m.id+'" data-mission-period="'+tab+'" aria-pressed="'+checked+'">'
+       +'<span class="mission-check" aria-hidden="true">'+(checked?'✓':'□')+'</span>'
+       +'<span class="mission-choice-name">'+m.name+'</span>'
+       +'<span class="mission-hint">'+(checked?'완료':'선택')+'</span></button>';
+    }).join('')+'</div>'
+   +'<p class="mission-footnote">기기에 선택 저장 · 서버 집계/지급 미연동</p>';
  }
- return '<section class="mission-config" aria-label="그못섬 미션"><nav class="mission-period-tabs">'+tabs.map(([key,label])=>'<button type="button" data-mission-tab="'+key+'" aria-pressed="'+(key===tab)+'">'+label+'</button>').join('')+'</nav><div class="mission-content">'+panel+'</div></section>';
+ return '<section class="mission-config" aria-label="그못섬 미션">'
+ +'<nav class="mission-period-tabs" aria-label="미션 종류">'+tabs.map(([key,label])=>
+ '<button type="button" data-mission-tab="'+key+'" aria-pressed="'+(key===tab)+'">'+label+'</button>').join('')+'</nav>'
+ +'<div class="mission-content">'+panel+'</div></section>';
 }
 dailyNotebookView=missionNotebookView;
 SCR.daily={title:'미션',pages:()=>1,view:missionNotebookView,ok:()=>{}};
