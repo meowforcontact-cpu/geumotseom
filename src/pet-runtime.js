@@ -90,28 +90,9 @@ async function loadPets(){
   })));
   spriteCache.clear();render();
 }
-const whitewoodCatImages={};
-const whitewoodFrames={};let whitewoodCatInitialized=false;
-function whitewoodCatFrame(dir){
- if(!whitewoodCatInitialized){
-  whitewoodCatInitialized=true;
-  for(const [name,url] of Object.entries(WHITEWOOD_ASSETS.cat)){
-   const image=new Image();image.onload=()=>{QK='';render()};image.src=url;whitewoodCatImages[name]=image;
-  }
- }
- const source=whitewoodCatImages[dir];if(!source?.naturalWidth)return null;
- if(whitewoodFrames[dir])return whitewoodFrames[dir];
- const c=document.createElement('canvas');c.width=c.height=64;
- const k=c.getContext('2d');k.imageSmoothingEnabled=false;
- // 96 -> 48 is an exact 1:2 nearest pixel mapping; 8px inset keeps the
- // existing pet position, click area and interaction calculations unchanged.
- k.drawImage(source,8,16,48,48);whitewoodFrames[dir]=c;return c;
-}
 function petSprite(kind,expression,theme=skin){
- if(kind==='cat'&&isWhitewoodRoom()){
-  const direction=Math.abs(cat.x-cat.tx)>.5?(cat.tx>cat.x?'east':'west'):'south';
-  return whitewoodCatFrame(direction)||petFrames[theme][kind]?.[0]||rabbitCanvas(128,128);
- }
+  // Use the same theme-specific master and logical sprite size in every room.
+  // Whitewood rooms must not replace the cat with a smaller, differently colored asset.
   if(!kind||kind==='white')return rabbitSprite(expression,theme);
   return petFrames[theme][kind]?.[RABBIT_STATES[expression]??0]||rabbitCanvas(128,128);
 }
