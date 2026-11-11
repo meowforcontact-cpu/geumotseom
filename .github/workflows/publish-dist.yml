@@ -24,19 +24,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Generate up-to-date public bundle
+      - name: Generate public bundle from source
         run: npm run build
-      - name: Validate functionality before publishing
+      - name: Verify console button geometry and rendering
+        run: node --test test/controller-foreground-layout.test.mjs test/controller-single-layer.test.mjs test/console-button-geometry.test.mjs
+      - name: Validate complete functionality
         run: npm test
-      - name: Commit built static assets for GitHub-connected deployment
+      - name: Commit tested static assets for GitHub-connected deploy
         shell: bash
         run: |
-          if [[ -z "$(git status --porcelain -- dist/)" ]]; then
+          git add -f dist/index.html dist/storage.mjs dist/_headers dist/api/connection integration/worker-built.mjs
+          if git diff --cached --quiet; then
             echo "dist/ is already current"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A dist/
-          git commit -m "build: update static dist for published room"
+          git commit -m "build: publish tested UI from current main [skip ci]"
           git push origin HEAD:main
