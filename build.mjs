@@ -7,13 +7,15 @@ const replace=(before,after)=>{if(!html.includes(before))throw Error('원본 변
 replace("tintAll(k,t,R)\n  winLight(k,t,sx,sy,sw,sh);", "/* Room lighting is composited after furniture and pet. */");
 replace("(vh-padT-14)*GD.W/GD.H,1040", "(vh-padT-48)*GD.W/GD.H,1040");
 replace('const E1=[[84,38],[112,-6],[148,30]]','const E1=[[84,38],[112,0],[148,30]]');
-// Widen the physical display and camera together: 288/190 = 194/128.
-replace('bez:[96,48,256,194]','bez:[80,50,288,190]');
-replace('mg:4,rw:170,stw:234','mg:4,rw:194,stw:270');
-replace('rr(x,y,90,32,358,238,10),hole=(x,y)=>x>=98&&x<=349','rr(x,y,72,32,376,238,10),hole=(x,y)=>x>=80&&x<=367');
-replace('rr(x,y,95,37,353,233,7)','rr(x,y,77,37,371,233,7)');
-replace('rr(x,y-1,95,37,353,233,7)','rr(x,y-1,77,37,371,233,7)');
-replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,77,37,371,233,7)');
+// 4:3 landscape LCD: 240x180 inside the existing 448x262 console.
+// The room remains square, and physical buttons sit outside the frame.
+// Drawing coordinates are shifted down by OY=10 in makeConsole().
+replace('bez:[96,48,256,194]','bez:[104,52,240,180]');
+replace('rr(x,y,90,32,358,238,10),hole=(x,y)=>x>=98&&x<=349&&y>=40&&y<=229',
+ 'rr(x,y,96,34,352,232,10),hole=(x,y)=>x>=104&&x<=343&&y>=42&&y<=221');
+replace('rr(x,y,95,37,353,233,7)','rr(x,y,100,38,348,228,7)');
+replace('rr(x,y-1,95,37,353,233,7)','rr(x,y-1,100,38,348,228,7)');
+replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
 replace('const DC=[45,112],dH=(x,y,o)=>rr(x,y,10,99+o,80,125+o,6),dV=(x,y,o)=>rr(x,y,32,77+o,58,147+o,6)',
  'const DC=[36,112],dH=(x,y,o)=>rr(x,y,7,101+o,65,123+o,5),dV=(x,y,o)=>rr(x,y,25,83+o,47,141+o,5)');
 replace('v>=-31&&v<=-23&&Math.abs(u)<=(v+31)*.9','v>=-25&&v<=-19&&Math.abs(u)<=(v+25)*.9');
