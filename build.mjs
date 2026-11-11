@@ -103,9 +103,6 @@ replace("const shopItems=s=>ITEMS.filter(i=>i.cat===CATS[s.cat||0][0]);","const 
 replace("if(i.only)return say(i.only+'이에요');","if(i.catalogOnly)return say('실제 디스코드 역할 연동 확인 전에는 구매할 수 없어요');if(i.only)return say(i.only+'이에요');");
 replace("const icon=(k,px,cls)=>", "const legacyIcon=(k,px,cls)=>");
 replace('const CATS=', 'function icon(k,px,cls){return FURNITURE_URLS[k]?furnitureIcon(k,px,cls):legacyIcon(k,px,cls)}\nconst CATS=');
-replace("const pf=id=>{", "const pf=id=>{return drawFurniture(k,id);");
-replace("state.pos[id][1]+FS<=FLOOR+4", "(furnitureRenderBounds(id)?.y??0)+(furnitureRenderBounds(id)?.height??FS)<=cat.y");
-replace("state.pos[id][1]+FS>FLOOR+4", "(furnitureRenderBounds(id)?.y??0)+(furnitureRenderBounds(id)?.height??FS)>cat.y");
 replace('<html>','<html lang="ko">');
 // Show the signed-in Discord name on the ID card instead of the placeholder.
 replace("d={name:'나',rep:p.name","d={name:(typeof account!=='undefined'&&account&&account.name)||'나',rep:p.name");
@@ -185,6 +182,7 @@ html=html.slice(0,roomStart)+"  if(roomAssetsReady()){drawAssetRoom(k)}else{R('#
 replace('for(let i=0;i<d.length;i+=4){const key=', 'if(!roomAssetsReady())for(let i=0;i<d.length;i+=4){const key=');
 replace('function draw(){','function draw(){\n  if(!roomAssetsReady()&&placeNow().place!=="park"){\n    if(rc.width!==RW||rc.height!==RH){rc.width=RW;rc.height=RH;}\n    rx.setTransform(1,0,0,1,0,0);rx.fillStyle="#f4f0eb";rx.fillRect(0,0,rc.width,rc.height);return;\n  }\n  if(roomAssetsReady()&&placeNow().place!=="park")return drawDetailedRoom();\n  if(buf.width!==RW){rc.width=buf.width=RW;rc.height=buf.height=RH;bx.setTransform(1,0,0,1,0,0);}');
 replace('</script>',`${await readFile('src/whitewood-assets.js','utf8')}\n${await readFile('src/art-style.js','utf8')}\n${await readFile('src/room-assets.js','utf8')}\n${await readFile('src/furniture-runtime.js','utf8')}\n${await readFile('src/room-interactions.js','utf8')}\n${await readFile('src/diary-menu.js','utf8')}\n${await readFile('src/mission-policy.js','utf8')}\n${await readFile('src/starter-pet.js','utf8')}\naddEventListener('pagehide',persist);\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});\n</script>`);
+replace('</script>',(await readFile('src/room-depth-public.js','utf8'))+'\n</script>');
 await mkdir('dist',{recursive:true});
 await writeFile('dist/index.html',html);
 await copyFile('src/storage.mjs','dist/storage.mjs');

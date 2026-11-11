@@ -144,8 +144,7 @@ rc.addEventListener('pointerdown',e=>{
   if(furnitureEdit)beginFurnitureDrag(roomPress,id);
   else roomPress.timer=setTimeout(()=>{if(roomPress?.pointer===e.pointerId)beginFurnitureDrag(roomPress,id)},450);
  }else{
-  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=cat.y-size;
-  if(!furnitureEdit&&p.x>=px&&p.x<px+size&&p.y>=py&&p.y<py+size){
+  if(!furnitureEdit&&roomDepthPetAt(p.x,p.y)){
    roomPress.pet=true;roomPress.active=true;
    roomPress.petOffset=[p.x-(cat.x+32),p.y-(cat.y-size/2)];
   }else if(!furnitureEdit){

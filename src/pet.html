@@ -520,6 +520,7 @@ function winLight(k,t,sx,sy,sw,sh){
   const cx=sx+sw/2,cy=sy+sh/2,g=k.createRadialGradient(cx,cy,sw*.45,cx,cy,sw*.95);g.addColorStop(0,L[0]);g.addColorStop(1,'rgba(0,0,0,0)');
   k.save();k.beginPath();k.rect(0,0,RW,RH);k.rect(sx-1,sy-1,sw+2,sh+2);k.clip('evenodd');k.globalCompositeOperation='screen';k.globalAlpha=L[1];k.fillStyle=g;k.fillRect(0,0,RW,RH);k.restore();k.globalAlpha=1}
 function scene(withPet){
+  if(withPet)advanceRoomPetForDepth();
   const k=bx,[sx,sy,sw,sh]=skyRect(),t=skyNow(),R=(c,x,y,w,h)=>{k.fillStyle=c;k.fillRect(x,y,w,h)},pl=placeNow();
   k.globalAlpha=1;k.globalCompositeOperation='source-over';
   if(pl.place==='park'){drawPark(k,t);if(withPet)drawPet(k);return}
@@ -542,11 +543,7 @@ function scene(withPet){
   if(pl.place==='friend'){if(withPet){drawFriend(k,pl.fi);drawPet(k)}return}
   const fl=state.eq['가구'];
   if(t==='night'&&fl.includes('m2')){const p=fpos('m2'),gr=k.createRadialGradient(p[0]+16,p[1]+10,2,p[0]+16,p[1]+10,32);gr.addColorStop(0,'rgba(255,225,140,.5)');gr.addColorStop(1,'rgba(255,225,140,0)');k.fillStyle=gr;k.fillRect(0,0,RW,RH)}
-  const pf=id=>{const sp=item(id).spr,big=S[sp+'16'],p=fpos(id);put(k,big||S[sp],p[0],p[1],big?2:4)};
-  fl.filter(id=>state.pos[id][1]+FS<=FLOOR+4).forEach(pf);
-  state.poop.forEach(x=>put(k,S.ipoop,poopX(x),FLOOR-12,2));
-  if(withPet)drawPet(k);
-  fl.filter(id=>state.pos[id][1]+FS>FLOOR+4).forEach(pf);
+  drawRoomDepthSorted(k,withPet);
 }
 function expr(){
   const st=stage(),f=Math.floor(cat.t/3);
@@ -557,19 +554,8 @@ function expr(){
   return f%10===9?'blink':'normal';
 }
 function drawPet(k){
-  const st=stage(),ex=expr(),f=Math.floor(cat.t/3),still=calm||st==='egg'||ex==='sleep'||anim;
-  if(!still){
-    const dx=cat.tx-cat.x,dy=cat.ty-cat.y,dist=Math.hypot(dx,dy);
-    if(dist>.5){
-      const speed=Math.min(1,dist);
-      cat.x+=dx/dist*speed;cat.y+=dy/dist*speed;
-    }else if(--cat.wait<0){
-      const inset=(64-38)/2;
-      cat.tx=-inset+Math.random()*(RW-64+2*inset);
-      cat.ty=45+Math.random()*79;
-      cat.wait=20+Math.floor(Math.random()*35);
-    }
-  }
+  const st=stage(),ex=expr(),f=Math.floor(cat.t/3);
+  // Move once before sorting the scene, never while painting a sorted entry.
   const x=Math.round(cat.x);
   k.save();k.translate(0,Math.round(cat.y)-FLOOR);
   drawGroundShadow(k,x);
