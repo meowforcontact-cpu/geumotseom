@@ -831,7 +831,7 @@ const DEVS={
         ['FEED',63,215,17,0,'먹이 (길게: 간식 고르기)'],['PLAY',385,215,17,0,'놀이']]}
 };
 let MODE='',GD=null;
-const pickMode=()=>{const w=innerWidth,h=innerHeight;return (w>h&&w>=560)||w>=900?'console':'egg'};
+const pickMode=()=>{const w=innerWidth,h=innerHeight;return w>h?'console':'egg'};
 function setMode(m){
   MODE=m;GD=DEVS[m];RW=GD.rw;DX=(RW-128)/2;
   rc.width=RW;rc.height=RH;buf.width=RW;buf.height=RH;rx.imageSmoothingEnabled=false;bx.imageSmoothingEnabled=false;
