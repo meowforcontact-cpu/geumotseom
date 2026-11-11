@@ -44,7 +44,8 @@ function drawAssetRoom(k){
   // Native 384×216 artwork is presented on a 192×108 logical viewport with
   // integer output pixels in the existing 4× backing store (nearest-neighbor).
   k.imageSmoothingEnabled=false;k.fillStyle='#000';k.fillRect(0,0,RW,RH);
-  const wide=RW>200, roomW=wide?216:192, roomH=wide?122:108;\n  k.drawImage(whitewoodRoomImage,Math.round((RW-roomW)/2),wide?4:10,roomW,roomH);return;
+  const wide=RW>200, roomW=wide?216:192, roomH=wide?122:108;
+  k.drawImage(whitewoodRoomImage,Math.round((RW-roomW)/2),wide?4:10,roomW,roomH);return;
  }
  const look=roomLook(),sky=roomLayers['sky-'+skyNow()];
  // One fixed room shared by both cameras: portrait shows the centre crop.
