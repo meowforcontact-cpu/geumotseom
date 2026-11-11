@@ -1,23 +1,43 @@
-name: Verify room build and camera placement
+name: Verify and publish game build
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: geumotseom-build-main
+  cancel-in-progress: true
 jobs:
   room-build-and-test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build public room bundle
+      - name: Build actual public room bundle
         run: npm run build
-      - name: Test room assets, depth sorting and placement
-        run: node --test test/selected-room-assets.test.mjs test/public-room-depth.test.mjs test/room-placement.test.mjs
-      - name: Run complete regression suite
+      - name: Check generated console geometry and asset behavior
+        run: node --test test/controller-foreground-layout.test.mjs test/controller-single-layer.test.mjs test/console-button-geometry.test.mjs test/selected-room-assets.test.mjs test/public-room-depth.test.mjs test/room-placement.test.mjs
+      - name: Run full regression suite
         run: npm test
+      - name: Publish tested dist (Cloudflare auto-deploy input)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/index.html dist/storage.mjs dist/_headers dist/api/connection integration/worker-built.mjs
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: publish verified generated game files [skip ci]"
+            git push origin HEAD:main
+          else
+            echo "Public build files already match sources."
+          fi

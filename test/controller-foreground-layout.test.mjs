@@ -15,5 +15,5 @@ test('foreground button artwork follows the scaled handheld geometry',async()=>{
  }
  const renderer=await readFile(new URL('../build.mjs',import.meta.url),'utf8');
  assert.match(renderer,/host\.prepend\(layer\)/,'foreground art must live in the scaled control host');
- assert.match(renderer,/renderControllerForeground\(shellRasterCache\[shellKey\]\)/);
+ assert.match(renderer,/renderControllerForeground\(shellRasterCache\[shellKey\],shellBlankRasterCache\[shellKey\]\)/);
 });
