@@ -255,3 +255,13 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 }
 .egg .diary-spread.show-profile .diary-profile strong{font-size:10px;line-height:13px}
 .egg .diary-spread.show-profile .diary-link{font-size:9px;line-height:12px}
+
+/* Keep portrait hearts and hunger legible above the room artwork. */
+.egg .st.home .sb{
+  position:relative;z-index:2;box-sizing:border-box;height:18px;
+  background:#f3f1ec;border-bottom:1px solid #a9b8cd;
+  color:#354c74;padding:2px 6px 0
+}
+:root[data-skin="pink"] .egg .st.home .sb{
+  background:#fbf0f3;border-bottom-color:#cca6ba;color:#82506f
+}
