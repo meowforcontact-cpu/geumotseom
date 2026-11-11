@@ -42,7 +42,7 @@ shopBody=function(s){
    const product=ITEMS.find(i=>i.pet===kind);
    const buyable=!owned&&!first&&product&&product.price>0&&!product.only&&!product.catalogOnly&&!product.retired;
    const status=owned?(state.rep===ownerIndex?'대표 펫':'대표로 설정'):first?'첫 펫 무료 선택':
-     buyable?fmt(product.price)+'냥':kind==='angel'?'미션 누적 15일':'획득 조건 미확정';
+     buyable?fmt(product.price)+'냥':kind==='angel'?'미션 누적 15일':'가격·획득 조건 미확정';
    const available=owned||first||buyable;
    return '<button type="button" class="pet-catalog-card'+(c===n+idx?' sel':'')+'" data-pet-shop="'+kind+'"'
     +' aria-disabled="'+(!available)+'" aria-label="'+name+' · '+status+'">'
@@ -50,7 +50,7 @@ shopBody=function(s){
     +'<span class="pet-catalog-name">'+name+'</span><small>'+status+'</small></button>';
   }).join('');
   return cats+'<div class="pet-catalog-grid">'+grid+'</div>'
-   +'<p class="shop-policy-caption">첫 펫 고양이·강아지 중 한 마리 무료 · 미확정 상품 판매 안 함</p>'
+   +'<p class="shop-policy-caption">첫 친구 1마리 무료 · 이후 가격 확정 펫만 구매</p>'
    +'<div class="row shop-back" data-pet-shop-back="1">'+icon('ileft',8)+'<span class="l">뒤로</span></div>';
  }
  const offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
