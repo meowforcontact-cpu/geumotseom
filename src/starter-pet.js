@@ -15,7 +15,8 @@ function petShopAction(kind){
  const p=ITEMS.find(i=>i.pet===kind);
  if(p&&Number.isSafeInteger(p.price)&&p.price>0&&!p.only&&!p.catalogOnly&&!p.retired){
   if(state.coins<p.price)return say('냐냐냥이 부족해요');
-  return push('buy',{item:p,cur:1});
+  // First focus goes to Buy, not Cancel; the actual charge is made only after confirmation.
+  return push('buy',{item:p,cur:0});
  }
  say(kind==='angel'?'일일 미션 3개 완료 누적 15일 보상이에요':'획득 조건과 가격이 아직 확정되지 않았어요');
 }
@@ -27,7 +28,13 @@ function finishStarterChoice(kind){
   persist();
   goHome();
   say((kind==='cat'?'고양이':'강아지')+'를 첫 친구로 선택했어요!');
- }catch(error){if(starterModal){const note=starterModal.querySelector('[role="alert"]');if(note)note.textContent=error.message;}else say(error.message);}
+ }catch(error){
+  if(starterModal){
+   const note=starterModal.querySelector('[role="alert"]');
+   if(note)note.textContent=error.message;
+   starterModal.querySelectorAll('[data-starter-kind]').forEach(button=>button.disabled=false);
+  }else say(error.message);
+ }
 }
 function showStarterChoice(){
  if(!needsStarterPet(state))return false;
@@ -39,7 +46,7 @@ function showStarterChoice(){
  +'<div class="starter-choice-options">'+[['cat','고양이'],['dog','강아지']].map(([kind,label])=>
  '<button type="button" data-starter-kind="'+kind+'"><img src="'+PET_ASSETS[skin][kind]+'" alt="" />'
  +'<strong>'+label+'</strong><small>무료 선택</small></button>').join('')+'</div>'
- +'<p class="starter-choice-note">첫 친구는 한 마리만 무료로 지급됩니다.</p><p role="alert"></p></div>';
+ +'<p class="starter-choice-note">첫 친구는 한 마리만 무료로 지급됩니다. 이후 펫은 상점이나 미션을 통해 획득할 수 있습니다.</p><p role="alert"></p></div>';
  mask.addEventListener('click',e=>{
   const button=e.target.closest('[data-starter-kind]');if(!button)return;
   for(const b of mask.querySelectorAll('[data-starter-kind]'))b.disabled=true;
@@ -63,6 +70,7 @@ document.addEventListener('click',e=>{
  if(!card&&!backButton)return;
  e.preventDefault();e.stopImmediatePropagation();
  if(backButton)return back();
+ if(card.disabled)return;
  const i=SHOP_SPECIES.indexOf(card.dataset.petShop);
  if(i<0)return;
  scr().cur=CATS.length+i;
