@@ -50,3 +50,6 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 .bk{min-width:16px;min-height:16px;display:grid;place-items:center;touch-action:manipulation}
 .bk:focus-visible{outline:1px dashed var(--ink);outline-offset:-2px}
 @media(prefers-reduced-motion:reduce){.diary-spread *{animation:none!important;transition:none!important}}
+
+/* The game canvas owns touch drags; native page panning cancels iOS pointermove. */
+#room{touch-action:none!important;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
