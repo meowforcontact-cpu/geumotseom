@@ -1,7 +1,23 @@
 // Original PNGs remain separate so wallpaper and flooring can be mixed.
 const roomLayers={};
 const roomNames={cream:'크림블루',pink:'핑크장식',whitewood:'화이트 우드 방'};
-const whitewoodRoomImage=new Image();whitewoodRoomImage.onload=()=>{QK='';render()};whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
+const whitewoodRoomImage=new Image();
+let whitewoodSquareImage=null;
+// Preserve original square pixels while adding floor depth for the portrait camera.
+function prepareWhitewoodSquare(image){
+ const c=document.createElement('canvas');c.width=384;c.height=280;
+ const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+ g.drawImage(image,0,0,384,137,0,0,384,137);
+ g.drawImage(image,0,137,384,64,0,137,384,64);
+ g.drawImage(image,0,137,384,79,0,201,384,79);
+ return c;
+}
+whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);QK='';render()};
+whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
+function whitewoodRoomView(){
+ const size=116;
+ return {x:Math.round((RW-size)/2),y:10,size,scale:size/128};
+}
 const isWhitewoodRoom=()=>roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
 function roomLook(){return state.roomLook||{wall:'whitewood',floor:'whitewood'}}
 for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.map(t=>'sky-'+t)]){
@@ -23,9 +39,9 @@ for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.m
  };
  im.src=ROOM_ASSET_URLS[name];
 }
-function roomAssetsReady(){if(isWhitewoodRoom())return !!whitewoodRoomImage.naturalWidth;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
+function roomAssetsReady(){if(isWhitewoodRoom())return !!whitewoodSquareImage;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
 function roomWindowAt(x,y){
- if(isWhitewoodRoom())return x>=RW/2-22&&x<=RW/2+22&&y>=32&&y<=62;
+ if(isWhitewoodRoom())return x>=49&&x<=82&&y>=10&&y<=40;
  if(!roomAssetsReady()){const [sx,sy,sw,sh]=skyRect();return x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh;}
  const width=Math.max(170,RW),left=(RW-width)/2,extra=width-170;
  return y>=-2&&y<=37&&((x>=left+20&&x<=left+67)||(x>=left+101+extra&&x<=left+148+extra));
@@ -41,11 +57,10 @@ function drawRoomLayer(k,source,x,y,w,h){
 }
 function drawAssetRoom(k){
  if(isWhitewoodRoom()){
-  // Native 384×216 artwork is presented on a 192×108 logical viewport with
-  // integer output pixels in the existing 4× backing store (nearest-neighbor).
-  k.imageSmoothingEnabled=false;k.fillStyle='#000';k.fillRect(0,0,RW,RH);
-  const wide=RW>200, roomW=wide?216:192, roomH=wide?122:108;
-  k.drawImage(whitewoodRoomImage,Math.round((RW-roomW)/2),wide?4:10,roomW,roomH);return;
+  k.imageSmoothingEnabled=false;
+  k.fillStyle='#000';k.fillRect(0,0,RW,RH);
+  if(whitewoodSquareImage)k.drawImage(whitewoodSquareImage,50,0,284,280,0,0,128,128);
+  return;
  }
  const look=roomLook(),sky=roomLayers['sky-'+skyNow()];
  // One fixed room shared by both cameras: portrait shows the centre crop.
@@ -86,9 +101,28 @@ function drawDetailedRoom(){
  bx.imageSmoothingEnabled=false;
  cat.t++;idle++;
  if(anim&&--anim.t<=0){const a=anim;anim=null;a.done&&a.done()}
- scene(true);
- if(placeNow().place!=='park'){const R=(c,x,y,w,h)=>{bx.fillStyle=c;bx.fillRect(x,y,w,h)};tintAll(bx,skyNow(),R);const [sx,sy,sw,sh]=skyRect();winLight(bx,skyNow(),sx,sy,sw,sh);}
- drawFurnitureSelection(bx);
- rx.setTransform(1,0,0,1,0,0);rx.imageSmoothingEnabled=false;rx.clearRect(0,0,rc.width,rc.height);rx.drawImage(buf,0,0);
- placeBubble();const th=skyNow();if(MODE+skin+th!==shellKey)applyShell();
+ const contained=isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park';
+ if(contained){
+  const view=whitewoodRoomView(),savedRW=RW,savedDX=DX;
+  bx.fillStyle='#000';bx.fillRect(0,0,RW,RH);
+  bx.save();
+  bx.setTransform(scale*view.scale,0,0,scale*view.scale,scale*view.x,scale*view.y);
+  RW=128;DX=0;
+  cat.x=Math.max(0,Math.min(64,cat.x));
+  cat.tx=Math.max(0,Math.min(64,cat.tx));
+  try{scene(true);drawFurnitureSelection(bx)}
+  finally{RW=savedRW;DX=savedDX;bx.restore()}
+ }else{
+  scene(true);
+  if(placeNow().place!=='park'){
+   const R=(c,x,y,w,h)=>{bx.fillStyle=c;bx.fillRect(x,y,w,h)};
+   tintAll(bx,skyNow(),R);
+   const [sx,sy,sw,sh]=skyRect();winLight(bx,skyNow(),sx,sy,sw,sh);
+  }
+  drawFurnitureSelection(bx);
+ }
+ rx.setTransform(1,0,0,1,0,0);rx.imageSmoothingEnabled=false;
+ rx.clearRect(0,0,rc.width,rc.height);rx.drawImage(buf,0,0);
+ placeBubble();
+ const th=skyNow();if(MODE+skin+th!==shellKey)applyShell();
 }
