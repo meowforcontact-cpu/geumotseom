@@ -16,8 +16,8 @@ function prepareWhitewoodSquare(image){
 whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);QK='';render()};
 whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
 function whitewoodRoomView(){
- const size=116;
- return {x:Math.round((RW-size)/2),y:10,size,scale:size/128};
+ const size=MODE==='egg'?128:116;
+ return {x:Math.round((RW-size)/2),y:MODE==='egg'?0:6,size,scale:size/128};
 }
 const isWhitewoodRoom=()=>roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
 function roomLook(){return state.roomLook||{wall:'whitewood',floor:'whitewood'}}
@@ -59,7 +59,7 @@ function drawRoomLayer(k,source,x,y,w,h){
 function drawAssetRoom(k){
  if(isWhitewoodRoom()){
   k.imageSmoothingEnabled=false;
-  k.fillStyle='#000';k.fillRect(0,0,RW,RH);
+  k.fillStyle=MODE==='egg'?'#f4f0eb':'#000';k.fillRect(0,0,RW,RH);
   if(whitewoodSquareImage)k.drawImage(whitewoodSquareImage,50,0,284,276,0,0,128,128);
   return;
  }
@@ -105,7 +105,7 @@ function drawDetailedRoom(){
  const contained=isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park';
  if(contained){
   const view=whitewoodRoomView(),savedRW=RW,savedDX=DX;
-  bx.fillStyle='#000';bx.fillRect(0,0,RW,RH);
+  bx.fillStyle=MODE==='egg'?'#f4f0eb':'#000';bx.fillRect(0,0,RW,RH);
   bx.save();
   bx.setTransform(scale*view.scale,0,0,scale*view.scale,scale*view.x,scale*view.y);
   RW=128;DX=0;
