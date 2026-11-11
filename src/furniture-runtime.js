@@ -13,8 +13,9 @@ function furnitureRenderBounds(id, position){
  const width=Math.max(8,Math.round(w*factor));
  const height=Math.max(8,Math.round(h*factor));
  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
- const x=whitewood?clamp(p[0],3,125-width):p[0]+DX;
- const y=whitewood?clamp(p[1],34,125-height):p[1];
+ // The room boundary is the only placement limit; wall area and furniture overlap are allowed.
+ const x=whitewood?clamp(p[0],0,Math.max(0,128-width)):clamp(p[0]+DX,0,Math.max(0,RW-width));
+ const y=clamp(p[1],0,Math.max(0,RH-height));
  return {x:Math.round(x),y:Math.round(y),width,height,sourceWidth:w,sourceHeight:h};
 }
 function drawFurniture(k,id){
