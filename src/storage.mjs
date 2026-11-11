@@ -136,6 +136,25 @@ export function validateSave(value, items) {
   ensureFurnitureLayout(result,items);
   return result;
 }
+// One free starter per save. Do not reset legacy pets, wallets or furniture.
+export function needsStarterPet(state){
+ return !['cat','dog'].some(kind=>state.pets?.some(p=>p.kind===kind))
+   && !['p2','p3'].some(id=>state.owned?.includes(id));
+}
+export function claimStarterPet(state,kind,{preserveLegacy=true}={}){
+ if(!['cat','dog'].includes(kind))throw Error('고양이 또는 강아지를 선택해 주세요.');
+ if(!needsStarterPet(state))throw Error('첫 펫은 이미 선택했어요.');
+ const id=kind==='cat'?'p3':'p2';
+ const pet={name:kind==='cat'?'고양이':'강아지',kind,hatched:false,taps:0};
+ if(!preserveLegacy&&state.pets.length===1&&state.pets[0].kind==='white'
+    &&!state.pets[0].hatched&&state.pets[0].taps===0){
+   state.pets=[pet];state.rep=0;
+ }else{
+   state.pets.push(pet);state.rep=state.pets.length-1;
+ }
+ state.owned.push(id);
+ return pet;
+}
 export function ensureDaily(state,today=day()){
   if(!state.daily||state.daily.day!==today)state.daily={day:today,feed:false,play:false};
   return state.daily;
