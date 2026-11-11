@@ -169,7 +169,7 @@ export function recordDailyAction(state,action,today=day()){
 export function snapshot(state) {return {version:1,day:day(),savedAt:new Date().toISOString(),state:{...state,log:state.log.slice(0,100)}};}
 export function purchase(state, product) {
   if (!product || product.retired) throw Error('판매하지 않는 상품이에요.');
-  if (product.only) throw Error('별도 획득 조건이 있는 상품이에요.');
+  if (product.only) throw Error('별도 획득 조건이 있어 구매할 수 없는 상품이에요.');
   if (product.catalogOnly) throw Error('실제 역할 연동 전에는 구매할 수 없는 상품이에요.');
   if (state.owned.includes(product.id)) throw Error('이미 가지고 있어요.');
   if (!integer(product.price,0,100000000) || state.coins < product.price) throw Error('냐냐냥이 부족해요.');
