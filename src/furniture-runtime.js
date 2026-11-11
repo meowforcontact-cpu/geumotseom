@@ -29,15 +29,41 @@ function drawFurniture(k,id){
  k.drawImage(whitewood?art:styleRoomArt(image,b.sourceWidth,b.sourceHeight),b.x,b.y,b.width,b.height);
 }
 shopBody=function(s){
- const its=shopItems(s),n=CATS.length,c=s.cur,offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
- const category=CATS[s.cat||0][0];
- if(category==='펫')return '<div class="cats">'+CATS.map(([nm,sp],i)=>'<div class="ct'+(i===(s.cat||0)?' on':'')+(c===i?' sel':'')+'" data-i="'+i+'">'+icon(sp,14)+'</div>').join('')+'</div>'
-  +'<div class="shop-policy-note">첫 친구는 고양이·강아지 중 한 마리 무료 선택<br>천사냥: 일일미션 3개 완수 누적 15일<br>토끼·너구리: 가격/획득 경로 미확정</div>'
-  +'<div class="row" data-i="'+n+'">'+icon('ileft',8)+'뒤로</div>';
-
- let h='<div class="cats">'+CATS.map(([nm,sp],i)=>'<div class="ct'+(i===(s.cat||0)?' on':'')+(c===i?' sel':'')+'" data-i="'+i+'" title="'+nm+'">'+icon(sp,14)+'</div>').join('')+'</div><div class="prods'+(CATS[s.cat||0][0]==='펫'?' pet-products':'')+'">';
- for(let j=offset;j<offset+4;j++){const i=its[j];if(!i){h+='<div></div>';continue}const own=state.owned.includes(i.id);h+='<div class="pd'+(c===n+j?' sel':'')+'" data-i="'+(n+j)+'">'+icon(i.spr,30)+'<span class="n">'+esc(i.name)+'</span><span class="p">'+(own?'보유 중':i.only||(fmt(i.price)+'냥'+(i.catalogOnly?' · 연동 전':category==='가구'?' · 체험가':'')))+'</span></div>';}
- return h+'</div><div class="furniture-pages"><button type="button" data-fpage="-1" aria-label="이전 상품">◀</button><span>'+Math.floor(offset/4+1)+' / '+Math.max(1,Math.ceil(its.length/4))+'</span><button type="button" data-fpage="1" aria-label="다음 상품">▶</button></div><div class="row" data-i="'+(n+its.length)+'">'+icon('ileft',8)+'뒤로</div>';
+ const its=shopItems(s),n=CATS.length,c=s.cur,category=CATS[s.cat||0][0];
+ const cats='<div class="cats" aria-label="상점 카테고리">'
+  +CATS.map(([name,sprite],i)=>'<div class="ct'+(i===(s.cat||0)?' on':'')+(c===i?' sel':'')
+   +'" data-i="'+i+'" role="button" aria-label="'+name+'" title="'+name+'">'+icon(sprite,14)+'</div>').join('')+'</div>';
+ if(category==='펫'){
+  const species=[['cat','고양이'],['dog','강아지'],['white','토끼'],['angel','천사냥'],['raccoon','너구리']];
+  const grid=species.map(([kind,name])=>{
+   const owned=state.pets.some(p=>p.kind===kind);
+   const status=owned?'보유 중':(kind==='cat'||kind==='dog')?'첫 친구 무료':kind==='angel'?'미션 15일':'획득 미확정';
+   return '<div class="pet-catalog-card" aria-label="'+name+' · '+status+'">'
+    +'<canvas data-pet="'+kind+'|1" aria-hidden="true"></canvas>'
+    +'<span class="pet-catalog-name">'+name+'</span><small>'+status+'</small></div>';
+  }).join('');
+  return cats+'<div class="pet-catalog-grid">'+grid+'</div>'
+    +'<p class="shop-policy-caption">천사냥: 일일 3개 완료 누적 15일 · 유료 판매 아님</p>'
+    +'<div class="row shop-back" data-i="'+n+'">'+icon('ileft',8)+'<span class="l">뒤로</span></div>';
+ }
+ const offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
+ const shown=its.slice(offset,offset+4);
+ const products=shown.length
+  ?shown.map((i,j)=>{
+    const own=state.owned.includes(i.id);
+    const status=own?'보유 중':i.only?i.only:fmt(i.price)+'냥';
+    const hint=i.catalogOnly?'연동 전':i.cat==='가구'?'체험가':'';
+    return '<div class="pd'+(c===n+offset+j?' sel':'')+'" data-i="'+(n+offset+j)+'" aria-label="'+esc(i.name)+' '+status+'">'
+      +'<div class="shop-product-art">'+icon(i.spr,28)+'</div><span class="n">'+esc(i.name)+'</span>'
+      +'<span class="p">'+status+'</span>'+(hint?'<small class="shop-product-hint">'+hint+'</small>':'')+'</div>';
+   }).join('')
+  :'<p class="shop-empty">현재 등록된 상품이 없습니다.</p>';
+ const pages=Math.max(1,Math.ceil(its.length/4));
+ return cats+'<div class="prods count-'+shown.length+'">'+products+'</div>'
+  +'<div class="furniture-pages"><button type="button" data-fpage="-1" aria-label="이전 상품" '+(pages<2?'disabled':'')+'>◀</button>'
+  +'<span>'+(Math.floor(offset/4)+1)+' / '+pages+'</span>'
+  +'<button type="button" data-fpage="1" aria-label="다음 상품" '+(pages<2?'disabled':'')+'>▶</button></div>'
+  +'<div class="row shop-back" data-i="'+(n+its.length)+'">'+icon('ileft',8)+'<span class="l">뒤로</span></div>';
 };
 $('lcd').addEventListener('click',e=>{const button=e.target.closest('[data-fpage]');if(!button||scr().id!=='shop')return;const s=scr(),its=shopItems(s),pages=Math.ceil(its.length/4);if(!pages)return;const page=s.cur>=CATS.length&&s.cur<CATS.length+its.length?Math.floor((s.cur-CATS.length)/4):0;s.cur=CATS.length+((page+Number(button.dataset.fpage)+pages)%pages)*4;render();});
 const previousFurnitureList=SCR.decoCat.list;
