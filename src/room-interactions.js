@@ -1,9 +1,27 @@
 let furnitureEdit=null,roomPress=null,suppressRoomClick=false;
-const furnitureTools=document.createElement('div');
-furnitureTools.className='furniture-tools';furnitureTools.hidden=true;
-furnitureTools.setAttribute('role','group');furnitureTools.setAttribute('aria-label','가구 위치 편집');
-furnitureTools.innerHTML='<button type="button" data-edit="done">완료</button><button type="button" data-edit="store">보관</button><button type="button" data-edit="bag">가구 가방</button><button type="button" data-edit="cancel">취소</button>';
-$('lcdwrap').append(furnitureTools);
+let furnitureBagPage=0,furnitureEditSnapshot=null;
+const furnitureTools=document.createElement('section');
+furnitureTools.className='furniture-tools furniture-drawer';
+furnitureTools.hidden=true;
+furnitureTools.setAttribute('role','region');
+furnitureTools.setAttribute('aria-label','가구 가방');
+document.body.append(furnitureTools);
+function positionFurnitureDrawer(){
+ if(furnitureTools.hidden)return;
+ const device=$('dev'),viewWidth=window.innerWidth,viewHeight=window.innerHeight;
+ device.style.translate='';
+ const width=furnitureTools.offsetWidth,first=device.getBoundingClientRect();
+ const missing=Math.max(0,width+10-(viewWidth-first.right));
+ const shift=Math.min(missing,Math.max(0,first.left-8));
+ if(shift)device.style.translate='-'+Math.round(shift)+'px 0';
+ const rect=device.getBoundingClientRect();
+ const left=Math.max(8,Math.min(rect.right+8,viewWidth-width-8));
+ const height=furnitureTools.offsetHeight;
+ const top=Math.max(8,Math.min(rect.top+(rect.height-height)/2,viewHeight-height-8));
+ furnitureTools.style.left=Math.round(left)+'px';
+ furnitureTools.style.top=Math.round(top)+'px';
+}
+addEventListener('resize',()=>{if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer)});
 const roomPoint=e=>{
  const r=rc.getBoundingClientRect();
  let x=(e.clientX-r.left)/r.width*RW,y=(e.clientY-r.top)/r.height*RH;
@@ -19,21 +37,72 @@ function roomFurnitureAt(x,y){
   return b&&x>=b.x&&x<b.x+b.width&&y>=b.y&&y<b.y+b.height;
  });
 }
+function renderFurnitureDrawer(){
+ if(!furnitureEdit)return;
+ const owned=state.owned.map(item).filter(i=>i&&i.cat==='가구'&&!i.retired).reverse();
+ const pages=Math.max(1,Math.ceil(owned.length/4));
+ furnitureBagPage=Math.max(0,Math.min(furnitureBagPage,pages-1));
+ const selected=item(furnitureEdit.id);
+ const tiles=owned.slice(furnitureBagPage*4,furnitureBagPage*4+4).map(i=>
+  '<button type="button" class="furniture-drawer__item'+(furnitureEdit.id===i.id?' is-selected':'')+'" data-drawer-item="'+i.id+'" aria-pressed="'+(furnitureEdit.id===i.id)+'" aria-label="'+esc(i.name)+(isOn(i)?' · 배치됨':' · 보관 중')+'">'
+  +furnitureIcon(i.id,28)+'<span>'+esc(i.name)+'</span><small>'+(furnitureEdit.id===i.id?'선택됨':isOn(i)?'배치됨':'보관 중')+'</small></button>'
+ ).join('');
+ furnitureTools.innerHTML=
+  '<div class="furniture-drawer__heading"><strong>가구 가방</strong><span>'+owned.length+'개</span></div>'
+  +'<p class="furniture-drawer__caption">'+esc(selected?.name||'가구')+' 위치 편집</p>'
+  +'<div class="furniture-drawer__grid" role="group" aria-label="보유 가구">'
+  +(tiles||'<span class="furniture-drawer__empty">보유한 가구가 없습니다.</span>')+'</div>'
+  +'<div class="furniture-drawer__pages"><button type="button" data-drawer-page="-1" aria-label="이전 가구" '+(!furnitureBagPage?'disabled':'')+'>‹</button><span>'+(furnitureBagPage+1)+' / '+pages+'</span><button type="button" data-drawer-page="1" aria-label="다음 가구" '+(furnitureBagPage>=pages-1?'disabled':'')+'>›</button></div>'
+  +'<div class="furniture-drawer__actions"><button type="button" data-edit="done">완료</button><button type="button" data-edit="store">보관</button><button type="button" data-edit="cancel">취소</button></div>';
+ if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer);
+}
 function startFurnitureEdit(id){
  const i=item(id);if(!i)return;
- const [w,h]=i.size||[FS,FS];
+ if(!furnitureEditSnapshot){
+  furnitureEditSnapshot={
+   equipped:[...state.eq.가구],
+   positions:Object.fromEntries(Object.entries(state.pos).map(([key,p])=>[key,[...p]]))
+  };
+ }
+ if(furnitureEdit&&furnitureEdit.id!==id)state.pos[furnitureEdit.id]=[...furnitureEdit.draft];
+ const [,h]=i.size||[FS,FS];
  furnitureEdit={id,draft:[...(state.pos[id]||[32,106-h])]};
+ const owned=state.owned.map(item).filter(x=>x&&x.cat==='가구'&&!x.retired).reverse();
+ furnitureBagPage=Math.max(0,Math.floor(owned.findIndex(x=>x.id===id)/4));
  furnitureTools.hidden=false;
- say('가구를 손가락으로 옮긴 뒤 완료를 눌러 주세요.');
+ renderFurnitureDrawer();
+ say('가구를 움직인 뒤 완료를 눌러 주세요.');
 }
 function finishFurnitureEdit(action){
  if(!furnitureEdit)return;
- if(action==='done')state.pos[furnitureEdit.id]=[...furnitureEdit.draft];
- if(action==='store')state.eq.가구=state.eq.가구.filter(id=>id!==furnitureEdit.id);
- furnitureEdit=null;furnitureTools.hidden=true;persist();render();
- if(action==='bag')push('furnitureBag');
+ if(action==='cancel'&&furnitureEditSnapshot){
+  state.eq.가구=[...furnitureEditSnapshot.equipped];
+  state.pos=Object.fromEntries(Object.entries(furnitureEditSnapshot.positions).map(([key,p])=>[key,[...p]]));
+ }else{
+  if(action==='done')state.pos[furnitureEdit.id]=[...furnitureEdit.draft];
+  if(action==='store')state.eq.가구=state.eq.가구.filter(id=>id!==furnitureEdit.id);
+ }
+ furnitureEdit=null;furnitureEditSnapshot=null;furnitureBagPage=0;
+ furnitureTools.hidden=true;$('dev').style.translate='';
+ persist();render();
 }
-furnitureTools.addEventListener('click',e=>{const action=e.target.closest('[data-edit]')?.dataset.edit;if(action)finishFurnitureEdit(action)});
+furnitureTools.addEventListener('click',e=>{
+ const button=e.target.closest('button');
+ if(!button||button.disabled)return;
+ const action=button.dataset.edit;
+ if(action){finishFurnitureEdit(action);return}
+ if(button.dataset.drawerPage){
+  furnitureBagPage+=Number(button.dataset.drawerPage);
+  renderFurnitureDrawer();return;
+ }
+ const id=button.dataset.drawerItem;
+ if(!id)return;
+ const i=item(id);
+ if(!i||!state.owned.includes(id))return;
+ if(!isOn(i))equip(i,true);
+ startFurnitureEdit(id);
+ persist();render();
+});
 function beginFurnitureDrag(press,id){
  if(!furnitureEdit||furnitureEdit.id!==id)startFurnitureEdit(id);
  if(!furnitureEdit)return;
@@ -94,7 +163,7 @@ rc.addEventListener('pointermove',e=>{
  }
  if(!roomPress.active&&moved){
   clearTimeout(roomPress.timer);
-  if(roomPress.id)beginFurnitureDrag(roomPress,roomPress.id);
+  if(roomPress.id&&furnitureEdit)beginFurnitureDrag(roomPress,roomPress.id);
   else {roomPress.moved=true;return}
  }
  if(!roomPress.active||!furnitureEdit)return;
@@ -117,7 +186,7 @@ rc.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{if(furnitureEdit&&e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();finishFurnitureEdit('cancel');}},true);
 function drawFurnitureSelection(k){
  if(!furnitureEdit)return;
- if(scr().id!=='home'){furnitureEdit=null;furnitureTools.hidden=true;return;}
+ if(scr().id!=='home'){finishFurnitureEdit('cancel');return;}
  const b=furnitureRenderBounds(furnitureEdit.id,furnitureEdit.draft);if(!b)return;
  k.save();k.strokeStyle=skin==='pink'?'#b87598':'#60729f';k.lineWidth=.5;k.setLineDash([2,1]);
  k.strokeRect(b.x-1,b.y-1,b.width+2,b.height+2);k.restore();
