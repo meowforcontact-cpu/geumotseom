@@ -10,7 +10,15 @@ function drawFurniture(k,id){
  const art=isWhitewoodRoom()?(whitewoodFurnitureImages[id]||image):image;
  k.imageSmoothingEnabled=false;
  // Do not run PixelLab art through the old smoothing/outline-quantization filter.
- k.drawImage(isWhitewoodRoom()?art:styleRoomArt(image,w,h),p[0]+DX,p[1],w,h);
+ const whitewood=isWhitewoodRoom();
+ const factor=whitewood?.78:1;
+ const drawW=Math.max(8,Math.round(w*factor)),drawH=Math.max(8,Math.round(h*factor));
+ // Keep the original furniture foot position while fitting art inside the room.
+ const roomLeft=Math.round((RW-(RW>200?216:192))/2)+6;
+ const roomRight=RW-roomLeft-6;
+ const px=whitewood?Math.max(roomLeft,Math.min(roomRight-drawW,p[0]+DX+(w-drawW)/2)):p[0]+DX;
+ const py=whitewood?Math.max(34,Math.min(124-drawH,p[1]+h-drawH)):p[1];
+ k.drawImage(whitewood?art:styleRoomArt(image,w,h),Math.round(px),Math.round(py),drawW,drawH);
 }
 shopBody=function(s){
  const its=shopItems(s),n=CATS.length,c=s.cur,offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
