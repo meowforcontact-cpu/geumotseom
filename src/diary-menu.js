@@ -23,7 +23,7 @@ function landscapeProfile(){
  const stats=fields.map(([label,value])=>
   '<div class="landscape-diary__stat"><span>'+label+'</span><strong>'+value+'</strong></div>').join('');
  return '<section class="landscape-diary__left" aria-label="내 정보와 오늘의 활동">'
-  +'<div class="landscape-diary__left-title">MY ROOM <span>· PROFILE</span></div>'
+  +'<div class="landscape-diary__left-title">그못섬 <span>· PROFILE</span></div>'
   +'<div class="landscape-diary__identity"><button type="button" class="landscape-diary__portrait" data-diary-profile aria-label="내 프로필 열기">'
   +'<canvas data-pet="'+p.kind+'|'+(p.hatched?1:0)+'"></canvas></button>'
   +'<div class="landscape-diary__identity-copy"><small>닉네임</small><strong>'+esc(p.name)+'</strong>'
