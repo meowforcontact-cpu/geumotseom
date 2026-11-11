@@ -68,3 +68,6 @@ function openPhoto(){
 }
 const previousPhotoDecoList=SCR.deco.list;
 SCR.deco.list=()=>[L('사진 찍기','ipaw',openPhoto,'확대·이동·PNG 저장'),...previousPhotoDecoList()];
+
+// Direct access from the console X menu, even outside the decorating submenu.
+MENU_ALL.push(['사진 찍기','npaw',openPhoto]);
