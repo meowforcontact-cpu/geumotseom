@@ -18,7 +18,10 @@ function sortRoomDepthEntries(entries){
 function roomDepthFurnitureArt(id){
  const product=item(id),image=furnitureImages[id];
  if(!product||product.retired||!image?.complete||!image.naturalWidth)return null;
- if(isWhitewoodRoom())return whitewoodFurnitureImages[id]?.naturalWidth?whitewoodFurnitureImages[id]:image;
+ if(isWhitewoodRoom()){
+  const master=whitewoodFurnitureImages[id]?.naturalWidth?whitewoodFurnitureImages[id]:image;
+  return isPinkAtticRoom()?atticFurnitureArt(master):master;
+ }
  const [w,h]=product.size||[FS,FS];return styleRoomArt(image,w,h);
 }
 function roomDepthPetBounds(){

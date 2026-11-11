@@ -20,7 +20,8 @@ function drawFurniture(k,id){
  const product=item(id),image=furnitureImages[id];
  if(!product||product.retired||!image?.complete||!image.naturalWidth)return;
  const whitewood=isWhitewoodRoom();
- const art=whitewood?(whitewoodFurnitureImages[id]?.naturalWidth?whitewoodFurnitureImages[id]:image):image;
+ const master=whitewoodFurnitureImages[id]?.naturalWidth?whitewoodFurnitureImages[id]:image;
+ const art=whitewood?(isPinkAtticRoom()?atticFurnitureArt(master):master):image;
  const b=furnitureRenderBounds(id,furnitureEdit?.id===id?furnitureEdit.draft:null);
  if(!b)return;
  k.imageSmoothingEnabled=false;
