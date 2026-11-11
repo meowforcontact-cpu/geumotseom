@@ -46,7 +46,7 @@ replace("()=>state.att.streak,7","()=>state.att.bestStreak||state.att.streak,7")
 replace("()=>state.owned.length>1?1:0","()=>state.firstPurchase||state.log.some(r=>r[0].endsWith(' 구매')&&/^-\\d/.test(r[1]))?1:0");
 replace("state.coins=r.coins;state.owned=r.owned;state.log.unshift([i.name+' 구매'","state.coins=r.coins;state.owned=r.owned;state.firstPurchase=true;state.log.unshift([i.name+' 구매'");
 replace("p.kind+'|'+(own&&pp.hatched?1:0)","p.kind+'|'+(!own||pp.hatched?1:0)");
-replace("on:own&&pet().kind===p.kind,go:","on:own&&pet().kind===p.kind,how:'상점 → 펫에서 '+p.name+' 알을 살 수 있어요',go:");
+replace("on:own&&pet().kind===p.kind,go:","on:own&&pet().kind===p.kind,how:p.kind==='angel'?'일일 미션 3개 완료 누적 15일 보상':p.kind==='cat'||p.kind==='dog'?'첫 친구 무료 선택 · 이후 획득 경로 미확정':'가격·획득 경로 미확정',go:");
 // Preserve the supplied device, artwork, palette, menus and responsive layout.
 const titlePolicyProducts=[
  {id:'title_solid',cat:'칭호',name:'단색 칭호',price:500000,spr:'crown',catalogOnly:true},
