@@ -1084,7 +1084,7 @@ function movePetWithPad(k){
  if(!['U','D','L','R'].includes(k))return;
  const square=isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park';
  const inset=(64-(stage()==='egg'?34:38))/2;
- const maxX=(square?128:RW)-64+inset;
+ const maxX=(square?whitewoodWorldWidth():RW)-64+inset;
  if(k==='L'||k==='R')cat.tx=Math.max(-inset,Math.min(maxX,cat.x+(k==='R'?20:-20)));
  else cat.ty=Math.max(45,Math.min(124,cat.y+(k==='D'?20:-20)));
  cat.wait=30;

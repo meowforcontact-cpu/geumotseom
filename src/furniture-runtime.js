@@ -1,6 +1,6 @@
 const furnitureImages={};
 const whitewoodFurnitureImages={};
-for(const [id,url] of Object.entries(WHITEWOOD_ASSETS.furniture)){const image=new Image();image.onload=()=>{QK='';render()};image.src=url;whitewoodFurnitureImages[id]=image;}
+for(const [id,url] of Object.entries(WHITEWOOD_ASSETS.furniture)){const image=new Image();image.onload=()=>{QK='';render()};image.src=url;whitewoodFurnitureImages[id]=image;FURNITURE_URLS[id]=url;}
 for(const product of FURNITURE_CATALOG){const im=new Image();im.onload=()=>{QK='';render()};im.src=FURNITURE_URLS[product.id];furnitureImages[product.id]=im;}
 function furnitureIcon(id,px,cls){return '<img class="furniture-art '+(cls||'')+'" alt="" src="'+FURNITURE_URLS[id]+'" style="width:'+px+'px;height:'+px+'px;object-fit:contain">'}
 // Rendering and hit testing share the same rectangle; furniture is never resized by theme choice.
@@ -9,12 +9,12 @@ function furnitureRenderBounds(id, position){
  if(!product||product.retired)return null;
  const [w,h]=product.size||[FS,FS];
  const p=position||state.pos[id]||[32,106-h];
- const whitewood=isWhitewoodRoom(),factor=whitewood?.78:1;
+ const whitewood=isWhitewoodRoom(),factor=1;
  const width=Math.max(8,Math.round(w*factor));
  const height=Math.max(8,Math.round(h*factor));
  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
  // The room boundary is the only placement limit; wall area and furniture overlap are allowed.
- const x=whitewood?clamp(p[0],0,Math.max(0,128-width)):clamp(p[0]+DX,0,Math.max(0,RW-width));
+ const x=whitewood?clamp(p[0],0,Math.max(0,whitewoodWorldWidth()-width)):clamp(p[0]+DX,0,Math.max(0,RW-width));
  const y=clamp(p[1],0,Math.max(0,RH-height));
  return {x:Math.round(x),y:Math.round(y),width,height,sourceWidth:w,sourceHeight:h};
 }

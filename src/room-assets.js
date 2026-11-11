@@ -3,22 +3,17 @@ const roomLayers={};
 const roomNames={cream:'크림블루',pink:'핑크장식',whitewood:'화이트 우드 방'};
 const whitewoodRoomImage=new Image();
 let whitewoodSquareImage=null;
-// Preserve original square pixels while adding floor depth for the portrait camera.
+// Selected 4:3 background is used in full. No square crop or stretched room.
 function prepareWhitewoodSquare(image){
- const c=document.createElement('canvas');c.width=384;c.height=276;
- const g=c.getContext('2d');g.imageSmoothingEnabled=false;
- // Repeat only interior floor planks; do not duplicate the bottom frame.
- g.drawImage(image,0,0,384,140,0,0,384,140);
- for(let row=0;row<3;row++)g.drawImage(image,0,140,384,20,0,140+row*20,384,20);
- g.drawImage(image,0,140,384,76,0,200,384,76);
- return c;
+ return image;
 }
-whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);QK='';render()};
+whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);if(isWhitewoodRoom()&&cat.x===32&&cat.tx===32)cat.x=cat.tx=53;QK='';render()};
 whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
 function whitewoodRoomView(){
- const size=MODE==='egg'?128:116;
- return {x:Math.round((RW-size)/2),y:MODE==='egg'?0:6,size,scale:size/128};
+ const size=whitewoodWorldWidth(),scale=Math.min(RW/size,1);
+ return {x:Math.round((RW-size*scale)/2),y:0,size,scale};
 }
+function whitewoodWorldWidth(){return 170}
 const isWhitewoodRoom=()=>roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
 function roomLook(){return state.roomLook||{wall:'whitewood',floor:'whitewood'}}
 for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.map(t=>'sky-'+t)]){
@@ -42,7 +37,7 @@ for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.m
 }
 function roomAssetsReady(){if(isWhitewoodRoom())return !!whitewoodSquareImage;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
 function roomWindowAt(x,y){
- if(isWhitewoodRoom())return x>=49&&x<=82&&y>=10&&y<=40;
+ if(isWhitewoodRoom())return x>=whitewoodWorldWidth()*.39&&x<=whitewoodWorldWidth()*.61&&y>=2&&y<=23;
  if(!roomAssetsReady()){const [sx,sy,sw,sh]=skyRect();return x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh;}
  const width=Math.max(170,RW),left=(RW-width)/2,extra=width-170;
  return y>=-2&&y<=37&&((x>=left+20&&x<=left+67)||(x>=left+101+extra&&x<=left+148+extra));
@@ -59,8 +54,13 @@ function drawRoomLayer(k,source,x,y,w,h){
 function drawAssetRoom(k){
  if(isWhitewoodRoom()){
   k.imageSmoothingEnabled=false;
-  k.fillStyle=MODE==='egg'?'#f4f0eb':'#000';k.fillRect(0,0,RW,RH);
-  if(whitewoodSquareImage)k.drawImage(whitewoodSquareImage,50,0,284,276,0,0,128,128);
+  k.fillStyle='#eeebe5';k.fillRect(0,0,RW,RH);
+  if(whitewoodSquareImage){
+   k.drawImage(whitewoodSquareImage,0,0,RW,RH);
+   // Portrait reveals additional floor below the complete 4:3 room.
+   if(MODE==='egg')for(let y=RH;y<whitewoodWorldWidth();y+=32)
+    k.drawImage(whitewoodSquareImage,0,whitewoodSquareImage.height-192,whitewoodSquareImage.width,192,0,y,RW,32);
+  }
   return;
  }
  const look=roomLook(),sky=roomLayers['sky-'+skyNow()];
@@ -108,11 +108,11 @@ function drawDetailedRoom(){
   bx.fillStyle=MODE==='egg'?'#f4f0eb':'#000';bx.fillRect(0,0,RW,RH);
   bx.save();
   bx.setTransform(scale*view.scale,0,0,scale*view.scale,scale*view.x,scale*view.y);
-  RW=128;DX=0;
-  // Square-room movement: the visible 38px sprite may reach every floor edge.
+  RW=whitewoodWorldWidth();DX=0;
+  // Shared 4:3 world; sprite feet may reach every floor edge.
   const inset=(64-(stage()==='egg'?34:38))/2;
-  cat.x=Math.max(-inset,Math.min(64+inset,cat.x));
-  cat.tx=Math.max(-inset,Math.min(64+inset,cat.tx));
+  cat.x=Math.max(-inset,Math.min(RW-64+inset,cat.x));
+  cat.tx=Math.max(-inset,Math.min(RW-64+inset,cat.tx));
   cat.y=Math.max(45,Math.min(124,cat.y));
   cat.ty=Math.max(45,Math.min(124,cat.ty));
   try{scene(true);drawFurnitureSelection(bx)}

@@ -48,40 +48,42 @@ const LAYOUT_V3={
  cream_tea_table:[91,64],cream_f9:[108,38],
  cream_flower_table:[8,95],cream_f6:[41,100],cream_f7:[89,96],cream_f10:[109,114]
 };
-export const DEFAULT_FURNITURE_LAYOUT={
+const LAYOUT_V4={
  cream_f1:[11,35],cream_f8:[17,79],cream_f3:[54,37],cream_f4:[80,40],
  cream_tea_table:[93,67],cream_f9:[105,38],
  cream_flower_table:[10,94],cream_f6:[42,100],cream_f7:[85,94],cream_f10:[109,114]
 };
+export const DEFAULT_FURNITURE_LAYOUT={
+ cream_f1:[9,29],cream_f8:[43,32],cream_f3:[65,28],cream_f4:[97,28],
+ cream_tea_table:[130,60],cream_f9:[140,29],
+ cream_flower_table:[14,94],cream_f6:[52,99],cream_f7:[112,94],cream_f10:[87,111]
+};
 const SHOWROOM_FURNITURE_V3=['cream_f1','cream_f8','cream_f3','cream_f4','cream_tea_table','cream_f9','cream_flower_table','cream_f7'];
 // Visual demo only. All furniture stays owned and every theme remains mixable.
-const SHOWROOM_FURNITURE=['cream_f1','cream_f3','cream_f4','cream_f9','cream_tea_table','cream_flower_table','cream_f7'];
+const SHOWROOM_FURNITURE_V4=['cream_f1','cream_f3','cream_f4','cream_f9','cream_tea_table','cream_flower_table','cream_f7'];
+const SHOWROOM_FURNITURE=Object.keys(DEFAULT_FURNITURE_LAYOUT);
 export function ensureFurnitureLayout(state,items){
  if(!items.some(i=>i.id==='cream_tea_table'))return false;
  const retired=new Set(items.filter(i=>i.cat==='가구'&&i.retired).map(i=>i.id));
  const ownedBefore=state.owned.length,equippedBefore=state.eq.가구.length;
  state.owned=state.owned.filter(id=>!retired.has(id));
  state.eq.가구=state.eq.가구.filter(id=>!retired.has(id));
- if(state.furnitureLayoutVersion===4)
+ if(state.furnitureLayoutVersion===5)
   return ownedBefore!==state.owned.length||equippedBefore!==state.eq.가구.length;
  const oldVersion=state.furnitureLayoutVersion;
- const previous=oldVersion===1?LAYOUT_V1:oldVersion===2?LAYOUT_V2:LAYOUT_V3;
- const eqOriginal=oldVersion===3?SHOWROOM_FURNITURE_V3:Object.keys(LAYOUT_V2);
+ const previous=oldVersion===1?LAYOUT_V1:oldVersion===2?LAYOUT_V2:oldVersion===3?LAYOUT_V3:LAYOUT_V4;
+ const eqOriginal=oldVersion===4?SHOWROOM_FURNITURE_V4:oldVersion===3?SHOWROOM_FURNITURE_V3:Object.keys(LAYOUT_V2);
  const defaultEquipment=state.eq.가구.length===eqOriginal.length
   &&state.eq.가구.every(id=>eqOriginal.includes(id));
- const defaultPositions=eqOriginal.every(id=>{
-  const prev=previous[id],saved=state.pos[id];
-  return !saved||!!prev&&(saved[0]===prev[0]&&saved[1]===prev[1]);
- });
  for(const [id,pos] of Object.entries(DEFAULT_FURNITURE_LAYOUT)){
-  if(!oldVersion&&!state.owned.includes(id))state.owned.push(id);
+  if((!oldVersion||defaultEquipment)&&!state.owned.includes(id))state.owned.push(id);
   const saved=state.pos[id],prev=previous[id];
   if(!oldVersion||!saved||(prev&&saved[0]===prev[0]&&saved[1]===prev[1]))
    state.pos[id]=[...pos];
  }
- if(!oldVersion||(defaultEquipment&&defaultPositions))
+ if(!oldVersion||defaultEquipment)
   state.eq.가구=[...SHOWROOM_FURNITURE];
- state.furnitureLayoutVersion=4;
+ state.furnitureLayoutVersion=5;
  return true;
 }
 export function validateSave(value, items) {
@@ -130,7 +132,7 @@ export function validateSave(value, items) {
     }
   }
   if(s.furnitureLayoutVersion!==undefined){
-    if(![1,2,3,4].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
+    if(![1,2,3,4,5].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
     result.furnitureLayoutVersion=s.furnitureLayoutVersion;
   }
   ensureFurnitureLayout(result,items);
