@@ -9,8 +9,9 @@ function petShopAction(kind){
   say('대표 펫을 변경했어요');
   return;
  }
- if(needsStarterPet(state)&&(kind==='cat'||kind==='dog')){
-  return finishStarterChoice(kind);
+ if(needsStarterPet(state)){
+  if(kind==='cat'||kind==='dog')return finishStarterChoice(kind);
+  return showStarterChoice();
  }
  const p=ITEMS.find(i=>i.pet===kind);
  if(p&&Number.isSafeInteger(p.price)&&p.price>0&&!p.only&&!p.catalogOnly&&!p.retired){
@@ -55,6 +56,34 @@ function showStarterChoice(){
  starterModal=mask;document.body.append(mask);
  return true;
 }
+// The original store renders only four generic product slots. Pet species need
+// their own visible, scrollable cards; the same actions must work by tap and pad.
+function petShopStatus(kind){
+ if(state.pets.some(p=>p.kind===kind))return '보유 중 · 대표 선택';
+ if(needsStarterPet(state)&&(kind==='cat'||kind==='dog'))return '첫 친구 무료';
+ if(kind==='angel')return '미션 15일 보상';
+ const product=ITEMS.find(i=>i.pet===kind);
+ if(product&&Number.isSafeInteger(product.price)&&product.price>0&&!product.only&&!product.catalogOnly&&!product.retired)
+  return fmt(product.price)+'냥 · 구매';
+ return '가격·획득 경로 미확정';
+}
+const beforePetShopBody=shopBody;
+shopBody=function(s){
+ if(CATS[s.cat||0]?.[0]!=='펫')return beforePetShopBody(s);
+ const n=CATS.length;
+ const tabs='<div class="cats" role="tablist" aria-label="상점 종류">'+CATS.map(([label,sprite],i)=>
+  '<div class="ct'+(i===(s.cat||0)?' on':'')+(s.cur===i?' sel blink':'')+'" data-i="'+i+'" role="tab" aria-selected="'+(i===(s.cat||0))+'" aria-label="'+label+'">'+icon(sprite,14)+'</div>').join('')+'</div>';
+ const cards=SHOP_SPECIES.map((kind,i)=>{
+  const name=({cat:'고양이',dog:'강아지',white:'토끼',angel:'천사냥',raccoon:'너구리'})[kind];
+  const url=PET_ASSETS[skin]?.[kind];
+  const portrait=url?'<img src="'+url+'" alt="" />':'<canvas data-pet="'+kind+'|1" aria-hidden="true"></canvas>';
+  return '<button type="button" class="pet-catalog-card'+(s.cur===n+i?' sel':'')+'" data-pet-shop="'+kind+'" aria-label="'+name+' · '+petShopStatus(kind)+'">'
+   +portrait+'<span class="pet-catalog-name">'+name+'</span><small>'+petShopStatus(kind)+'</small></button>';
+ }).join('');
+ return tabs+'<div class="pet-catalog-grid" role="group" aria-label="펫 목록">'+cards+'</div>'
+  +'<p class="shop-policy-caption">첫 펫: 고양이·강아지 중 1마리 무료</p>'
+  +'<button type="button" class="row shop-back" data-pet-shop-back>'+icon('ileft',8)+'<span class="l">뒤로</span></button>';
+};
 const earlierShopOK=shopOK;
 shopOK=function(s){
  if(CATS[s.cat||0]?.[0]!=='펫')return earlierShopOK(s);
