@@ -435,3 +435,15 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 .st:has(.pet-catalog-grid) .pet-catalog-card{width:100%;cursor:pointer}
 .st:has(.pet-catalog-grid) .pet-catalog-name{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .st:has(.pet-catalog-grid) .shop-back{appearance:none;color:var(--ink);background:var(--cell);border:1px solid var(--edge,var(--dash));width:100%;text-align:left}
+
+/* Console controls are real foreground pixels, not artwork trapped in the shell.
+   The bezel and its visual effects can no longer cover the round buttons. */
+.dev{isolation:isolate}
+.dev::after{z-index:2}
+.dev .bezel{z-index:1}
+.dev .btns{z-index:20!important;overflow:visible}
+.dev .btns>.controller-art-front{
+ position:absolute;inset:0;display:block;width:100%;height:100%;
+ z-index:0;pointer-events:none;image-rendering:pixelated;
+}
+.dev .btns>.eb{z-index:1}
