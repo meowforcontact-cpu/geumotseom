@@ -16,15 +16,43 @@ replace('rr(x,y,90,32,358,238,10),hole=(x,y)=>x>=98&&x<=349&&y>=40&&y<=229',
 replace('rr(x,y,95,37,353,233,7)','rr(x,y,100,38,348,228,7)');
 replace('rr(x,y-1,95,37,353,233,7)','rr(x,y-1,100,38,348,228,7)');
 replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
+// One console-layout specification controls both the rendered plastic buttons
+// and their real HTML pointer targets (448×262 shell pixel coordinates).
+// In makeConsole(), the raster drawing uses y - 10; the DOM uses full y.
+const shellArtOffsetY=10;
+const consoleDpad={x:50,y:142,reach:21,halfLength:29,halfThickness:11,hitRadius:10.6};
+const consoleFaceButtons=[
+  ['OK',423,142,12.5,'a','paw','A 확인'],
+  ['BACK',399,166,12.5,'b','back','B 뒤로'],
+  ['MENU',399,118,12.5,'x','menu','X 메뉴'],
+  ['HOME',375,142,12.5,'y','home','Y 홈']
+];
+const consoleBottomButtons=[
+  ['FEED',52,215,17,'food','bowl','먹이 (길게: 간식 고르기)'],
+  ['PLAY',396,215,17,'play','yarn','놀이']
+];
+const consoleArtButtons=[...consoleFaceButtons,...consoleBottomButtons]
+  .map(([,x,y,r,fill,glyph])=>[x,y-shellArtOffsetY,r,fill,glyph]);
+const {x:padX,y:padY,reach:padReach,halfLength:padLen,halfThickness:padThick,hitRadius:padRadius}=consoleDpad;
+const consoleHitButtons=[
+  ['U',padX,padY-padReach,padRadius,0,'위'],
+  ['D',padX,padY+padReach,padRadius,0,'아래'],
+  ['L',padX-padReach,padY,padRadius,0,'왼쪽'],
+  ['R',padX+padReach,padY,padRadius,0,'오른쪽'],
+  ...[...consoleFaceButtons,...consoleBottomButtons].map(([code,x,y,r,,,label])=>[code,x,y,r,0,label])
+];
+const padArtY=padY-shellArtOffsetY;
 replace('const DC=[45,112],dH=(x,y,o)=>rr(x,y,10,99+o,80,125+o,6),dV=(x,y,o)=>rr(x,y,32,77+o,58,147+o,6)',
- 'const DC=[36,112],dH=(x,y,o)=>rr(x,y,7,101+o,65,123+o,5),dV=(x,y,o)=>rr(x,y,25,83+o,47,141+o,5)');
-replace('v>=-31&&v<=-23&&Math.abs(u)<=(v+31)*.9','v>=-25&&v<=-19&&Math.abs(u)<=(v+25)*.9');
-replace("const BT=[[425,108,14.5,'a','paw'],[404.5,129,14.5,'b','back'],[404.5,87,14.5,'x','menu'],[384,108,14.5,'y','home']",
- "const BT=[[430,108,11.9,'a','paw'],[412,126,11.9,'b','back'],[412,90,11.9,'x','menu'],[394,108,11.9,'y','home']");
-replace("btn:[['L',45,99,13,0,'위'],['R',45,145,13,0,'아래'],['L',22,122,13,0,'왼쪽'],['R',68,122,13,0,'오른쪽'],",
- "btn:[['U',36,103,10.66,0,'위'],['D',36,141,10.66,0,'아래'],['L',17,122,10.66,0,'왼쪽'],['R',55,122,10.66,0,'오른쪽'],");
-replace("['OK',425,118,15,0,'A 확인'],['BACK',404.5,139,15,0,'B 뒤로'],['MENU',404.5,97,15,0,'X 메뉴'],['HOME',384,118,15,0,'Y 홈']",
- "['OK',430,118,12.3,0,'A 확인'],['BACK',412,136,12.3,0,'B 뒤로'],['MENU',412,100,12.3,0,'X 메뉴'],['HOME',394,118,12.3,0,'Y 홈']");
+ 'const DC='+JSON.stringify([padX,padArtY])+',dH=(x,y,o)=>rr(x,y,'+
+ [padX-padLen,padArtY-padThick,padX+padLen,padArtY+padThick,5].map((v,i)=>i===1||i===3?v+'+o':v).join(',')+
+ '),dV=(x,y,o)=>rr(x,y,'+
+ [padX-padThick,padArtY-padLen,padX+padThick,padArtY+padLen,5].map((v,i)=>i===1||i===3?v+'+o':v).join(',')+')');
+replace('v>=-31&&v<=-23&&Math.abs(u)<=(v+31)*.9',
+ 'v>=-'+(padLen-4)+'&&v<=-'+(padLen-10)+'&&Math.abs(u)<=(v+'+(padLen-4)+')*.9');
+replace("const BT=[[425,108,14.5,'a','paw'],[404.5,129,14.5,'b','back'],[404.5,87,14.5,'x','menu'],[384,108,14.5,'y','home'],[63,205,17,'food','bowl'],[385,205,17,'play','yarn']]",
+ 'const BT='+JSON.stringify(consoleArtButtons));
+replace("btn:[['L',45,99,13,0,'위'],['R',45,145,13,0,'아래'],['L',22,122,13,0,'왼쪽'],['R',68,122,13,0,'오른쪽'],\n        ['OK',425,118,15,0,'A 확인'],['BACK',404.5,139,15,0,'B 뒤로'],['MENU',404.5,97,15,0,'X 메뉴'],['HOME',384,118,15,0,'Y 홈'],\n        ['FEED',63,215,17,0,'먹이 (길게: 간식 고르기)'],['PLAY',385,215,17,0,'놀이']]",
+ 'btn:'+JSON.stringify(consoleHitButtons));
 replace("ArrowUp:'L',ArrowDown:'R'","ArrowUp:'U',ArrowDown:'D'");
 const bindStart=html.indexOf('function bindBtn(b,k){'),bindEnd=html.indexOf("\naddEventListener('keydown'",bindStart);
 if(bindStart<0||bindEnd<0)throw Error('Device input boundary missing');
