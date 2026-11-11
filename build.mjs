@@ -46,9 +46,14 @@ replace("state.coins=r.coins;state.owned=r.owned;state.log.unshift([i.name+' 구
 replace("p.kind+'|'+(own&&pp.hatched?1:0)","p.kind+'|'+(!own||pp.hatched?1:0)");
 replace("on:own&&pet().kind===p.kind,go:","on:own&&pet().kind===p.kind,how:'상점 → 펫에서 '+p.name+' 알을 살 수 있어요',go:");
 // Preserve the supplied device, artwork, palette, menus and responsive layout.
+const titlePolicyProducts=[
+ {id:'title_solid',cat:'칭호',name:'단색 칭호',price:500000,spr:'crown',catalogOnly:true},
+ {id:'title_gradient',cat:'칭호',name:'그라데이션 칭호',price:1500000,spr:'crown',catalogOnly:true,seasonLimit:5}
+];
 const furnitureCatalog=JSON.parse(await readFile('src/furniture-catalog.json','utf8'));
 const furnitureUrls=Object.fromEntries(await Promise.all(furnitureCatalog.map(async p=>[p.id,'data:image/png;base64,'+(await readFile('src/art/furniture/'+p.id+'.png')).toString('base64')])));
 replace("const shopItems=s=>ITEMS.filter(i=>i.cat===CATS[s.cat||0][0]);","const shopItems=s=>ITEMS.filter(i=>!i.retired&&!i.only&&i.cat===CATS[s.cat||0][0]);");
+replace("if(i.only)return say(i.only+'이에요');","if(i.catalogOnly)return say('실제 디스코드 역할 연동 확인 전에는 구매할 수 없어요');if(i.only)return say(i.only+'이에요');");
 replace("const icon=(k,px,cls)=>", "const legacyIcon=(k,px,cls)=>");
 replace('const CATS=', 'function icon(k,px,cls){return FURNITURE_URLS[k]?furnitureIcon(k,px,cls):legacyIcon(k,px,cls)}\nconst CATS=');
 replace("const pf=id=>{", "const pf=id=>{return drawFurniture(k,id);");
@@ -114,7 +119,7 @@ const start=html.indexOf('// 서버 연동 지점:');
 const end=html.indexOf('\nconst state=',start);
 if(start<0||end<0)throw Error('상점 경계 없음');
 html=html.slice(0,start)+`const ShopAPI={mode:'demo',async load(){return {coins:1500,earned:1000,owned:['m1']}},async buy(id){return purchase(state,item(id))}};\n`+html.slice(end);
-replace('const state=',`const FURNITURE_CATALOG=${JSON.stringify(furnitureCatalog)};\nconst FURNITURE_URLS=${JSON.stringify(furnitureUrls)};\nITEMS.filter(i=>i.cat==='가구').forEach(i=>i.retired=true);ITEMS.push(...FURNITURE_CATALOG);\nconst state=`);
+replace('const state=',`const FURNITURE_CATALOG=${JSON.stringify(furnitureCatalog)};\nconst FURNITURE_URLS=${JSON.stringify(furnitureUrls)};\nITEMS.filter(i=>i.cat==='가구').forEach(i=>i.retired=true);ITEMS.push(...FURNITURE_CATALOG);\nITEMS.find(i=>i.id==='t1').retired=true;ITEMS.find(i=>i.id==='p1').price=0;ITEMS.find(i=>i.id==='p1').only='일일 미션 3개 완수 누적 15일 보상';\nITEMS.push(...${JSON.stringify(titlePolicyProducts)});\nconst state=`);
 replace('<script>',`<style>${await readFile('src/ui-phase1.css','utf8')}</style>`+'<script type="module">\nimport {KEY,day,validateSave,snapshot,purchase,ensureDaily,recordDailyAction,syncAttendance,claimAttendance,ensureFurnitureLayout} from "./storage.mjs";');
 replace("startAnim('eat',18);return say('냠냠!')", "recordDaily('feed');startAnim('eat',18);return say('냠냠!')");
 replace("startAnim('play',20);return say('신난다!')", "recordDaily('play');startAnim('play',20);return say('신난다!')");
@@ -134,7 +139,7 @@ if(roomStart<0||roomEnd<0)throw Error('Room background boundary missing');
 html=html.slice(0,roomStart)+'  if(roomAssetsReady()){drawAssetRoom(k)}else{\n'+html.slice(roomStart,roomEnd)+'  }\n'+html.slice(roomEnd);
 replace('for(let i=0;i<d.length;i+=4){const key=', 'if(!roomAssetsReady())for(let i=0;i<d.length;i+=4){const key=');
 replace('function draw(){','function draw(){\n  if(roomAssetsReady()&&placeNow().place!=="park")return drawDetailedRoom();\n  if(buf.width!==RW){rc.width=buf.width=RW;rc.height=buf.height=RH;bx.setTransform(1,0,0,1,0,0);}');
-replace('</script>',`${await readFile('src/whitewood-assets.js','utf8')}\n${await readFile('src/art-style.js','utf8')}\n${await readFile('src/room-assets.js','utf8')}\n${await readFile('src/furniture-runtime.js','utf8')}\n${await readFile('src/room-interactions.js','utf8')}\n${await readFile('src/diary-menu.js','utf8')}\naddEventListener('pagehide',persist);\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});\n</script>`);
+replace('</script>',`${await readFile('src/whitewood-assets.js','utf8')}\n${await readFile('src/art-style.js','utf8')}\n${await readFile('src/room-assets.js','utf8')}\n${await readFile('src/furniture-runtime.js','utf8')}\n${await readFile('src/room-interactions.js','utf8')}\n${await readFile('src/diary-menu.js','utf8')}\n${await readFile('src/mission-policy.js','utf8')}\naddEventListener('pagehide',persist);\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});\n</script>`);
 await mkdir('dist',{recursive:true});
 await writeFile('dist/index.html',html);
 await copyFile('src/storage.mjs','dist/storage.mjs');
