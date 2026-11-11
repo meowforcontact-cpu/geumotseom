@@ -21,6 +21,8 @@ replace("  $('dev').style.width=Math.max(220,w)+'px';fitLCD();",
 // The shell image used to contain buttons, so changing z-index alone could
 // never raise their artwork above a bezel or any overlapping LCD decoration.
 const controlForegroundCode = `
+// Render only genuine D-pad/button pixels above the bezel, never square pieces
+// of the console background. Adjacent buttons must not erase each other.
 function renderControllerForeground(source){
  const host=$('btns');
  if(!host||MODE!=='console'||!source)return;
@@ -34,17 +36,31 @@ function renderControllerForeground(source){
  if(layer.width!==GD.W)layer.width=GD.W;
  if(layer.height!==GD.H)layer.height=GD.H;
  const context=layer.getContext('2d');
- context.clearRect(0,0,GD.W,GD.H);
- context.imageSmoothingEnabled=false;
- const copy=(x,y,w,h)=>context.drawImage(source,x,y,w,h,x,y,w,h);
- // The D-pad cross and its 5px lower shadow form one continuous graphic.
- copy(9,80,83,92);
- for(const [key,x,y,r] of GD.btn){
+ const sourcePixels=source.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
+ const output=context.createImageData(GD.W,GD.H);
+ const copyPixel=(x,y)=>{
+  const i=(y*GD.W+x)*4;
+  output.data[i]=sourcePixels[i];
+  output.data[i+1]=sourcePixels[i+1];
+  output.data[i+2]=sourcePixels[i+2];
+  output.data[i+3]=sourcePixels[i+3];
+ };
+ // The left cross is isolated from the screen and the other buttons.
+ for(let y=80;y<172;y++)for(let x=9;x<92;x++)copyPixel(x,y);
+ // Extract the actual circular button and its 4px lower shadow with an
+ // exact pixel mask. Do not copy any surrounding rectangular background.
+ for(const [key,cx,cy,r] of GD.btn){
   if(!['OK','BACK','MENU','HOME','FEED','PLAY'].includes(key))continue;
-  const pad=6,x0=Math.max(0,Math.floor(x-r-pad)),y0=Math.max(0,Math.floor(y-r-pad));
-  const x1=Math.min(GD.W,Math.ceil(x+r+pad)),y1=Math.min(GD.H,Math.ceil(y+r+pad));
-  copy(x0,y0,x1-x0,y1-y0);
+  const x0=Math.max(0,Math.floor(cx-r-2)),x1=Math.min(GD.W,Math.ceil(cx+r+2));
+  const y0=Math.max(0,Math.floor(cy-r-2)),y1=Math.min(GD.H,Math.ceil(cy+r+6));
+  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
+   const dx=x+.5-cx,dy=y+.5-cy;
+   const onFace=dx*dx+dy*dy<=(r+.25)*(r+.25);
+   const onShadow=dy>0&&dx*dx+(dy-4)*(dy-4)<=(r+.75)*(r+.75);
+   if(onFace||onShadow)copyPixel(x,y);
+  }
  }
+ context.putImageData(output,0,0);
 }
 `;
 replace("function applyShell(){", controlForegroundCode+"\nfunction applyShell(){");
