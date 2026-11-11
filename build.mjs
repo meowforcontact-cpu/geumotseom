@@ -72,6 +72,10 @@ replace("else{col=pTH[0];if(x%6===3&&y%6===3)col=pTH[1];if([[100,35],[348,35],[1
 replace("if(!frameO(x,y-2)||!frameO(x-2,y))col=mixc(pTH[0],'#ffffff',.65);if(NB2.some(([p,q])=>Math.abs(p)+Math.abs(q)<=2&&!frameO(x+p,y+q)))col=C.out",
  "if(!frameO(x,y-1)||!frameO(x-1,y))col=mixc(C.bezel,'#ffffff',.58);else if(!frameO(x+1,y)||!frameO(x,y+1))col=C.out");
 
+// Restore the actual console shell fill behind the LCD. The old C.panel
+// branch painted a large near-white rectangle outside the blue bezel.
+replace("if(inPanel&&!frameO(x,y)){col=C.panel;\n          if(!face(x,y-3))col=mixc(col,'#ffffff',.9);if(!face(x,y+2))col=C.body[3]}",
+ "if(inPanel&&!frameO(x,y)){/* seamless original body gradient */}");
 replace("sid==='home'&&x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh", "sid==='home'&&roomWindowAt(x,y)");
 replace("const item=id=>",`ITEMS.push(...${JSON.stringify(PET_PRODUCTS)});\nconst item=id=>`);
 replace("const PETS=[{kind:'white',name:'기본 냥이'},{kind:'angel',name:'천사냥'}];",`const PETS=${JSON.stringify(PET_CATALOG)};`);
