@@ -8,8 +8,8 @@ test('pink attic reference art is 4:3 WebP and separated from movable decoration
  assert.equal(data.toString('ascii',8,12),'WEBP');
  const view=data.toString('ascii',12,16);
  assert.equal(view,'VP8 ');
- const width=((data[26]&63)<<8)|data[27];
- const height=((data[28]&63)<<8)|data[29];
+ const width=data[26]|((data[27]&63)<<8);
+ const height=data[28]|((data[29]&63)<<8);
  assert.equal(width,170);assert.equal(height,128);
 });
 test('pink room is an opt-in theme and legacy save validates',async()=>{
