@@ -114,7 +114,7 @@ export function validateSave(value, items) {
     if(!s.missionPlans||typeof s.missionPlans!=='object'||Array.isArray(s.missionPlans)||Object.keys(s.missionPlans).some(k=>!['daily','weekly'].includes(k)))throw Error('선택한 미션을 읽을 수 없어요.');
     result.missionPlans={};
     for(const [period,plan] of Object.entries(s.missionPlans)){
-      if(!plan||!validDay(plan.period)||plan.period>value.day||!Array.isArray(plan.choices)||plan.choices.length!==3||new Set(plan.choices).size!==3||plan.choices.some(id=>!allowed.has(id)))throw Error('선택한 미션을 읽을 수 없어요.');
+      if(!plan||!validDay(plan.period)||plan.period>value.day||!Array.isArray(plan.choices)||plan.choices.length>3||new Set(plan.choices).size!==3||plan.choices.some(id=>!allowed.has(id)))throw Error('선택한 미션을 읽을 수 없어요.');
       result.missionPlans[period]={period:plan.period,choices:[...plan.choices]};
     }
   }
