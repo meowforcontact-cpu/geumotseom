@@ -6,6 +6,16 @@ html=html.replace(/<link href="https:\/\/fonts\.googleapis\.com[^"]*" rel="style
 const replace=(before,after)=>{if(!html.includes(before))throw Error('원본 변경 확인 필요: '+before.slice(0,65));html=html.replace(before,after)};
 replace("tintAll(k,t,R)\n  winLight(k,t,sx,sy,sw,sh);", "/* Room lighting is composited after furniture and pet. */");
 replace("(vh-padT-14)*GD.W/GD.H,1040", "(vh-padT-48)*GD.W/GD.H,1040");
+/* Keep the entire handheld inside the iPad's visible viewport, not flush
+   against the screen edge. When a furniture drawer is open, every resize
+   must reapply the shared left-drawer layout rather than restoring an
+   oversized console with an old translation. */
+replace("const w=MODE==='egg'?Math.min(vw-16,(vh-padT-14)*GD.W/GD.H,560):Math.min(vw-16,(vh-padT-48)*GD.W/GD.H,1040);",
+ "const w=MODE==='egg'?Math.min(vw-32,(vh-padT-14)*GD.W/GD.H,560):Math.min(vw-48,Math.max(1,vh-padT-48)*GD.W/GD.H,1040);");
+replace("  $('dev').style.width=Math.max(220,w)+'px';fitLCD();",
+ "  const device=$('dev');device.style.translate='';device.style.width=Math.max(1,w)+'px';"
+ +"if(typeof furnitureTools!=='undefined'&&!furnitureTools.hidden)positionFurnitureDrawer();fitLCD();");
+
 replace('const E1=[[84,38],[112,-6],[148,30]]','const E1=[[84,38],[112,0],[148,30]]');
 // 4:3 landscape LCD: 240x180 inside the existing 448x262 console.
 // The room remains square, and physical buttons sit outside the frame.
