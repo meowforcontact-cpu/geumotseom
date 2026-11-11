@@ -193,3 +193,44 @@
 .notebook-pagination button:disabled{opacity:.25;cursor:default}
 .daily-notebook.turning{animation:none;transform:none;pointer-events:none}
 .daily-notebook.turning .community-paper,.daily-notebook.turning .history-paper{transform-origin:left center;animation:notebook-turn .18s ease-in forwards}
+
+
+/* Room edit: the bag pops out to the right of the game console, not inside the LCD. */
+.furniture-tools.furniture-drawer{
+ position:fixed;inset:auto auto auto auto;right:auto;bottom:auto;
+ transform:none;z-index:2147483645;display:flex;flex-direction:column;
+ align-items:stretch;gap:5px;width:clamp(164px,24vw,208px);
+ max-height:calc(100dvh - 16px);overflow-y:auto;overscroll-behavior:contain;
+ box-sizing:border-box;padding:7px;border:2px solid var(--ink);
+ background:var(--bar);color:var(--ink);box-shadow:3px 4px 0 var(--dash);
+ font:10px/13px Galmuri9,monospace;white-space:normal;pointer-events:auto;
+}
+.furniture-tools.furniture-drawer[hidden]{display:none}
+.furniture-drawer__heading{display:flex;align-items:center;justify-content:space-between;gap:5px;border-bottom:1px dotted var(--dash);padding:0 0 4px}
+.furniture-drawer__heading strong{font:12px/16px Galmuri9,monospace}
+.furniture-drawer__heading span{font:9px/12px Galmuri9,monospace;opacity:.8}
+.furniture-drawer__caption{margin:0;font:9px/12px Galmuri9,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.furniture-drawer__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;min-height:96px}
+.furniture-drawer .furniture-drawer__item{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:1px;min-height:48px;min-width:0;padding:2px;
+ border:1px dashed var(--dash);background:var(--cell);
+ color:var(--ink);font:9px/11px Galmuri9,monospace;text-align:center;
+}
+.furniture-drawer .furniture-drawer__item.is-selected{border:2px solid var(--ink);background:var(--selbg);color:var(--selfg)}
+.furniture-drawer__item .furniture-art{display:block;width:25px!important;height:25px!important;object-fit:contain;image-rendering:pixelated}
+.furniture-drawer__item span,.furniture-drawer__item small{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.furniture-drawer__item small{font:8px/10px Galmuri9,monospace}
+.furniture-drawer__pages{display:flex;justify-content:space-between;align-items:center;gap:5px;font:9px/12px Galmuri9,monospace}
+.furniture-drawer .furniture-drawer__pages button{width:26px;min-height:22px}
+.furniture-drawer__actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;border-top:1px dotted var(--dash);padding-top:5px}
+.furniture-drawer .furniture-drawer__actions button{min-width:0;min-height:27px;padding:2px;font:10px/12px Galmuri9,monospace}
+.furniture-drawer .furniture-drawer__actions button[data-edit=done]{background:var(--selbg);color:var(--selfg)}
+.furniture-drawer button:disabled{opacity:.35;cursor:default}
+.furniture-drawer button:focus-visible{outline:2px dashed var(--ink);outline-offset:1px}
+.furniture-drawer__empty{grid-column:1/-1;align-self:center;text-align:center;font:9px/13px Galmuri9,monospace}
+@media(max-height:360px){
+ .furniture-tools.furniture-drawer{gap:3px;padding:5px}
+ .furniture-drawer .furniture-drawer__item{min-height:40px}
+ .furniture-drawer__item .furniture-art{width:19px!important;height:19px!important}
+}
