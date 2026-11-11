@@ -984,7 +984,7 @@ function profBody(fi){
 const listOf=s=>SCR[s.id].list(s);
 // 상점: 커서 순서 = 카테고리 6개 → 현재 카테고리 상품 → 뒤로 (화면을 직접 눌러도 됨)
 const shopItems=s=>ITEMS.filter(i=>i.cat===CATS[s.cat||0][0]);
-const shopLen=s=>CATS.length+shopItems(s).length+1;
+const shopLen=s=>CATS.length+(CATS[s.cat||0]?.[0]==='펫'?5:shopItems(s).length)+1;
 function shopBody(s){
   const its=shopItems(s),c=s.cur,n=CATS.length;
   let h='<div class="cats">'+CATS.map(([nm,sp],i)=>'<div class="ct'+(i===(s.cat||0)?' on':'')+(c===i?' sel blink':'')+'" data-i="'+i+'">'+icon(sp,14)+'</div>').join('')+'</div><div class="prods">';
