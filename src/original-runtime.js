@@ -2,7 +2,7 @@
 let savedFingerprint='',activeDay=day(),resetting=false;
 let account=null,accountRevision=null,connectionReady=false;
 function persist(){
-  if(resetting)return;
+  if(resetting||needsStarterPet(state))return;
   const changedDay=activeDay!==day();
   syncAttendance(state);
   if(activeDay!==day()){state.sent=[];activeDay=day()}
