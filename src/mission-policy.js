@@ -64,7 +64,7 @@ function missionNotebookView(s){
       return '<button type="button" class="mission-choice'+(checked?' picked':'')+'" data-mission-pick="'+m.id+'" data-mission-period="'+tab+'" aria-pressed="'+checked+'">'
        +'<span class="mission-check" aria-hidden="true">'+(checked?'✓':'□')+'</span>'
        +'<span class="mission-choice-name">'+m.name+'</span>'
-       +'<span class="mission-hint">'+(checked?'완료':'선택')+'</span></button>';
+       +'<span class="mission-hint">'+(checked?'선택됨':'선택')+'</span></button>';
     }).join('')+'</div>'
    +'<p class="mission-footnote">기기에 선택 저장 · 서버 집계/지급 미연동</p>';
  }
