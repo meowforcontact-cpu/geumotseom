@@ -6,7 +6,7 @@ const source=await readFile(new URL('../src/navigation-v9.js',import.meta.url),'
 function harness(){
  const original='{"version":1,"state":{"coins":321}}',memory=new Map([['save',original],['pikaSkin','pink'],['pikaSnd','0']]);
  const ui={stack:[{id:'home'}]},state={sent:[],coins:321},SCR={menu:{},set:{list:()=>[]},save:{list:()=>[]},att:{ok(){}},daily:{right:()=>''}},F={act:[],out:[]};
- const ctx=vm.createContext({KEY:'save',localStorage:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)},SCR,F,state,ui,document:{addEventListener(){}},push:id=>ui.stack.push({id}),goHome:()=>ui.stack.splice(1),render(){},persist(){},L:(label,ic,go)=>({label,go}),BACK:()=>({label:'뒤로'}),icon:()=>'',esc:x=>x});
+ const ctx=vm.createContext({KEY:'save',localStorage:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)},SCR,F,S:{},state,ui,document:{addEventListener(){}},push:id=>ui.stack.push({id}),goHome:()=>ui.stack.splice(1),render(){},persist(){},L:(label,ic,go)=>({label,go}),BACK:()=>({label:'뒤로'}),icon:()=>'',esc:x=>x});
  ctx.homeHTML=()=>'<div class="bd"></div>';
  ctx.body=()=>'';
  vm.runInContext(source,ctx);return {memory,ui,state,SCR,run:s=>vm.runInContext(s,ctx),original};
