@@ -1044,7 +1044,7 @@ function render(){
   document.querySelectorAll('#lcd canvas[data-fpet]').forEach(c=>{const fi=+c.dataset.fpet;c.width=c.height=32;drawUser(c.getContext('2d'),'normal',0,fi%2?'pink':'blue',false,'basic',FRIEND_EYE[fi])});
   document.querySelectorAll('#lcd canvas[data-pet]').forEach(c=>{const [kd,ht]=c.dataset.pet.split('|');c.width=c.height=32;c.getContext('2d').drawImage(sprite(ht==='1'?'child':'egg',ht==='1'?'normal':'idle',0,kd),0,0)});
   fitLCD();placeBubble();
-  $('sr').textContent=home?'피카의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
+  $('sr').textContent=home?'그못섬의 방. '+(ui.hc>=0?HOME_ICONS[ui.hc][0]+' 선택됨. ':'')+(ui.bub&&Date.now()<ui.bubT?ui.bub:''):$('lcd').innerText.replace(/\s+/g,' ').trim();
 }
 function fitLCD(){
   const wrap=$('lcdwrap'),w=wrap.clientWidth,h=wrap.clientHeight,st=$('st');if(!w||!st||!GD)return;
