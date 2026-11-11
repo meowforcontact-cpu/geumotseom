@@ -57,8 +57,8 @@ replace("if(i.only)return say(i.only+'이에요');","if(i.catalogOnly)return say
 replace("const icon=(k,px,cls)=>", "const legacyIcon=(k,px,cls)=>");
 replace('const CATS=', 'function icon(k,px,cls){return FURNITURE_URLS[k]?furnitureIcon(k,px,cls):legacyIcon(k,px,cls)}\nconst CATS=');
 replace("const pf=id=>{", "const pf=id=>{return drawFurniture(k,id);");
-replace("state.pos[id][1]+FS<=FLOOR+4", "(state.pos[id]?.[1]??74)+(item(id)?.size?.[1]??FS)<=FLOOR+4");
-replace("state.pos[id][1]+FS>FLOOR+4", "(state.pos[id]?.[1]??74)+(item(id)?.size?.[1]??FS)>FLOOR+4");
+replace("state.pos[id][1]+FS<=FLOOR+4", "(furnitureRenderBounds(id)?.y??0)+(furnitureRenderBounds(id)?.height??FS)<=cat.y");
+replace("state.pos[id][1]+FS>FLOOR+4", "(furnitureRenderBounds(id)?.y??0)+(furnitureRenderBounds(id)?.height??FS)>cat.y");
 replace('<html>','<html lang="ko">');
 // Show the signed-in Discord name on the ID card instead of the placeholder.
 replace("d={name:'나',rep:p.name","d={name:(typeof account!=='undefined'&&account&&account.name)||'나',rep:p.name");
@@ -94,7 +94,7 @@ if(legacyStart<0||legacyEnd<0)throw Error('Legacy cat fallback boundary missing'
 html=html.slice(0,legacyStart)+html.slice(legacyEnd);
 replace(",...Object.values(UTH[sk]).slice(1)",'');
 replace("if(anim)return {eat:'eat',play:'play',pet:'happy',clean:'happy',cure:'happy',hello:'happy',no:'sad'}[anim.type]||'happy';","if(anim)return {eat:'eat',play:'play',pet:'happy',clean:'happy',cure:'happy',hello:'hello',no:'sad'}[anim.type]||'happy';\n  if(state.poop.length)return 'embarrassed';");
-replace("return f%10===9?'blink':'normal';","if(!calm&&Math.abs(cat.x-cat.tx)>.5)return 'walk';\n  return 'normal';");
+replace("return f%10===9?'blink':'normal';","if(!calm&&(Math.abs(cat.x-cat.tx)>.5||Math.abs(cat.y-cat.ty)>.5))return 'walk';\n  return 'normal';");
 replace("0,kd),0,0)","0,kd),0,0,32,32)");
 // Keep room coordinates unchanged but rasterize at 3x so the original eye
 // highlights are not destroyed by an intermediate 64px sprite reduction.
