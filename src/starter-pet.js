@@ -1,6 +1,6 @@
 // First pet selection and interactive pet shop. Existing saves are not reset.
 const SHOP_SPECIES=['cat','dog','white','angel','raccoon'];
-let starterModal=null,starterPreserveLegacy=true;
+let starterModal=null,starterPreserveLegacy=false;
 function petShopAction(kind){
  const index=state.pets.findIndex(p=>p.kind===kind);
  if(index>=0){
@@ -40,7 +40,7 @@ function finishStarterChoice(kind){
 function showStarterChoice(){
  if(!needsStarterPet(state))return false;
  if(starterModal)return true;
- try{starterPreserveLegacy=Boolean(localStorage.getItem(KEY));}catch{starterPreserveLegacy=true;}
+ try{starterPreserveLegacy=Boolean(localStorage.getItem(KEY));}catch{starterPreserveLegacy=false;}
  const mask=document.createElement('section');mask.className='starter-choice-mask';mask.setAttribute('role','dialog');
  mask.setAttribute('aria-modal','true');mask.setAttribute('aria-label','첫 펫 고르기');
  mask.innerHTML='<div class="starter-choice-panel"><h2>그못섬 첫 친구</h2><p>고양이와 강아지 중 한 마리를 무료로 선택해 주세요.</p>'
