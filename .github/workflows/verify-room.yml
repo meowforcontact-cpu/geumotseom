@@ -19,3 +19,5 @@ jobs:
         run: npm run build
       - name: Test room assets, depth sorting and placement
         run: node --test test/selected-room-assets.test.mjs test/public-room-depth.test.mjs test/room-placement.test.mjs
+      - name: Run complete regression suite
+        run: npm test
