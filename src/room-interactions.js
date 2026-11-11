@@ -6,21 +6,29 @@ furnitureTools.hidden=true;
 furnitureTools.setAttribute('role','region');
 furnitureTools.setAttribute('aria-label','가구 가방');
 document.body.append(furnitureTools);
+// Keep the edit drawer on the D-pad side, OUTSIDE the console and LCD.
+// Refit the whole console when space is tight instead of drawing over the room.
 function positionFurnitureDrawer(){
  if(furnitureTools.hidden)return;
  const device=$('dev'),viewWidth=window.innerWidth,viewHeight=window.innerHeight;
+ const gap=12,margin=12;
  device.style.translate='';
- const width=furnitureTools.offsetWidth,first=device.getBoundingClientRect();
- const missing=Math.max(0,width+10-(viewWidth-first.right));
- const shift=Math.min(missing,Math.max(0,first.left-8));
- if(shift)device.style.translate='-'+Math.round(shift)+'px 0';
+ fitDev(); // Recover the unedited device width before computing a new layout.
+ const naturalWidth=device.getBoundingClientRect().width;
+ const drawerWidth=furnitureTools.offsetWidth;
+ const maxWidth=Math.max(196,viewWidth-drawerWidth-gap-margin*2);
+ device.style.width=Math.min(naturalWidth,maxWidth)+'px';
+ // The page centers the device; moving by half the drawer allowance reserves
+ // a full drawer-width gap on the left while keeping the right edge onscreen.
+ device.style.translate=Math.round((drawerWidth+gap)/2)+'px 0';
  const rect=device.getBoundingClientRect();
- const left=Math.max(8,Math.min(rect.right+8,viewWidth-width-8));
+ const left=Math.max(8,Math.min(rect.left-drawerWidth-gap,viewWidth-drawerWidth-8));
  const height=furnitureTools.offsetHeight;
  const top=Math.max(8,Math.min(rect.top+(rect.height-height)/2,viewHeight-height-8));
  furnitureTools.style.left=Math.round(left)+'px';
  furnitureTools.style.top=Math.round(top)+'px';
 }
+
 addEventListener('resize',()=>{if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer)});
 const roomPoint=e=>{
  const r=rc.getBoundingClientRect();
@@ -83,7 +91,7 @@ function finishFurnitureEdit(action){
   if(action==='store')state.eq.가구=state.eq.가구.filter(id=>id!==furnitureEdit.id);
  }
  furnitureEdit=null;furnitureEditSnapshot=null;furnitureBagPage=0;
- furnitureTools.hidden=true;$('dev').style.translate='';
+ furnitureTools.hidden=true;$('dev').style.translate='';fitDev();
  persist();render();
 }
 furnitureTools.addEventListener('click',e=>{
