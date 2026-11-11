@@ -155,6 +155,13 @@ const INKS={blue:'#26307a',pink:'#9b5d7a'};
 // 테마별 픽셀 색 (핑크 테마에서는 별·그림자까지 핑크 계열로)
 function applyPal(sk){PAL.z=sk==='pink'?'#d0668a':'#6f8fd6';PAL.d=INKS[sk];PAL.b=sk==='pink'?'#f08ab0':'#6f93ee';PAL.l=sk==='pink'?'#fde0ea':'#dfe6fa';PAL.m=sk==='pink'?'#b07d95':'#6b76b3'}
 const shadowC=()=>skin==='pink'?'rgba(140,50,90,.22)':'rgba(20,40,110,.22)';
+// Small stepped ground shadow, centered on the pet's feet (64px world slot).
+function drawGroundShadow(ctx,x,ground=FLOOR){
+  ctx.fillStyle=shadowC();
+  ctx.fillRect(x+27,ground-3,10,1);
+  ctx.fillRect(x+24,ground-2,16,2);
+  ctx.fillRect(x+27,ground,10,1);
+}
 
 // ===== 팔레트와 8x8 / 16x16 도트 =====
 const PAL={z:skin==='pink'?'#d0668a':'#6f8fd6',d:INKS[skin],m:'#6b76b3',l:'#dfe6fa',a:'#f08ab0',b:'#6f93ee',y:'#f3c94f',Y:'#fff3b0',g:'#4f9a6c',G:'#2f7a58',w:'#b58a5a',k:'#fff',t:'#ecd0a8',s:'#c99a64',r:'#ffd3e2',p:'#ff9fc0',n:'#9a6a48'};
@@ -491,7 +498,7 @@ const poopX=x=>Math.min(x+DX,RW-16);
 function drawFriend(k,fi){
   const f=Math.floor(cat.t/3),key='f'+fi+skin+(f%2)+(f%10===9?'b':'');let c=spriteCache.get(key);
   if(!c){c=document.createElement('canvas');c.width=c.height=32;drawUser(c.getContext('2d'),f%10===9?'blink':'normal',f%2,fi%2?'pink':'blue',!calm,'basic',FRIEND_EYE[fi]);spriteCache.set(key,c)}
-  const x=RW-70;k.fillStyle=shadowC();k.fillRect(x+16,FLOOR-2,32,3);k.drawImage(c,x,CY,64,64);
+  const x=RW-70;drawGroundShadow(k,x);k.drawImage(c,x,CY,64,64);
 }
 const placeNow=()=>{const s=scr();return s.id==='place'?s:{place:'home'}};
 const FRIEND_TINT=['#c9f0dc','#e6d9ff','#ffe3c9','#d9f2ff'],FRIEND_EYE=['dot3','tiny','line','tall'];
@@ -568,7 +575,7 @@ function drawPet(k){
   }
   const x=Math.round(cat.x);
   k.save();k.translate(0,Math.round(cat.y)-FLOOR);
-  k.fillStyle=shadowC();k.fillRect(x+16,FLOOR-2,32,3);
+  drawGroundShadow(k,x);
   k.drawImage(sprite(st,ex,f,pet().kind),x,CY,64,64);
   if(st!=='egg'&&state.eq['칭호'])put(k,S.crown,x+24,CY-6,2);
   if(anim){
