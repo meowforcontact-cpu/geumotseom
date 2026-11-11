@@ -22,10 +22,10 @@ replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
 const shellArtOffsetY=10;
 const consoleDpad={x:50,y:122,reach:21,halfLength:29,halfThickness:11,hitRadius:10.6};
 const consoleFaceButtons=[
-  ['OK',428,122,15,'a','paw','A 확인'],
-  ['BACK',406,144,15,'b','back','B 뒤로'],
-  ['MENU',406,100,15,'x','menu','X 메뉴'],
-  ['HOME',384,122,15,'y','home','Y 홈']
+  ['OK',420,122,15,'a','paw','A 확인'],
+  ['BACK',398,144,15,'b','back','B 뒤로'],
+  ['MENU',398,100,15,'x','menu','X 메뉴'],
+  ['HOME',376,122,15,'y','home','Y 홈']
 ];
 const consoleBottomButtons=[
   ['FEED',64,196,17,'food','bowl','먹이 (길게: 간식 고르기)'],
@@ -59,6 +59,16 @@ if(bindStart<0||bindEnd<0)throw Error('Device input boundary missing');
 html=html.slice(0,bindStart)+(await readFile('src/device-input.js','utf8'))+html.slice(bindEnd);
 
 replace("if(x===84||x===85||x===363||x===364)col=x%2?'#ffffff':mixc(C.body[2],C.out,.4);\n        else if(inPanel&&!frameO(x,y)){col=C.panel;", "if(inPanel&&!frameO(x,y)){");
+// No decorative dots, rivets or pixel confetti around the LCD.
+// Keep the surrounding body flat; use crisp bands on the actual bezel.
+replace("col=C.panel;if(x%12===6&&y%12===6)col=C.dot;if((x%24===18&&y%24===18)||(x%24===19&&y%24===18)||(x%24===18&&y%24===19))col=mixc(TH[1],'#ffffff',.3);",
+ "col=C.panel;");
+replace("if(ins){col=C.bezel;if(!rr(x,y-1,95,37,353,233,7)||!rr(x-1,y,95,37,353,233,7))col=mixc(C.bezel,'#ffffff',.4);else if(hole(x,y+1)||hole(x+1,y))col=mixc(C.bezel,'#000000',.1)}",
+ "if(ins){col=C.bezel;const highlight=rr(x,y,102,40,346,226,6);"
+ +"if(!highlight)col=mixc(C.bezel,'#ffffff',.74);"
+ +"else if(hole(x-1,y)||hole(x+1,y)||hole(x,y-1)||hole(x,y+1))col=mixc(C.bezel,C.out,.72)}");
+replace("else{col=pTH[0];if(x%6===3&&y%6===3)col=pTH[1];if([[100,35],[348,35],[160,235],[224,235],[288,235]].some(([p,q])=>(Math.abs(x-p)<=1&&y===q)||(x===p&&Math.abs(y-q)<=1)))col=pTH[2];",
+ "else{col=mixc(C.bezel,C.out,.16);");
 replace("sid==='home'&&x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh", "sid==='home'&&roomWindowAt(x,y)");
 replace("const item=id=>",`ITEMS.push(...${JSON.stringify(PET_PRODUCTS)});\nconst item=id=>`);
 replace("const PETS=[{kind:'white',name:'기본 냥이'},{kind:'angel',name:'천사냥'}];",`const PETS=${JSON.stringify(PET_CATALOG)};`);
