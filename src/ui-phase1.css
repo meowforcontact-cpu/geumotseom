@@ -74,3 +74,184 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 .mission-economy-list span{white-space:nowrap}
 
 .shop-policy-note{display:flex;flex-direction:column;justify-content:center;min-height:76px;padding:6px 4px;border:1px dotted var(--dash);background:var(--cell);color:var(--ink);font:9px/17px Galmuri9,monospace;text-align:center}
+
+/* v2: LCD-safe mission, store and profile layout. Avoid v9 absolute-position rules. */
+.st:has(.mission-config) .bd{
+  box-sizing:border-box;min-height:0;overflow:hidden!important;
+  padding:3px 4px!important;display:flex;flex-direction:column;gap:0
+}
+.st:has(.mission-config) .bd>.c{
+  box-sizing:border-box;min-width:0;width:100%;max-width:100%;
+  min-height:0;height:100%;overflow:hidden;flex:1;
+  display:flex;flex-direction:column;align-items:stretch!important;
+  justify-content:flex-start!important;gap:0!important;text-align:left
+}
+.mission-config,.mission-config *{box-sizing:border-box}
+.mission-config{
+  position:relative;display:flex;flex-direction:column;flex:1;
+  width:100%;min-width:0;max-width:100%;height:100%;min-height:0;
+  overflow:hidden;gap:3px;color:var(--ink);font:9px/12px Galmuri9,monospace
+}
+.mission-config .mission-period-tabs{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  width:100%;height:18px;min-height:18px;flex:none;gap:2px
+}
+.mission-config .mission-period-tabs button{
+  appearance:none;box-sizing:border-box;min-width:0;width:100%;height:18px;
+  overflow:hidden;white-space:nowrap;text-align:center;
+  padding:0;border:1px solid var(--edge,var(--dash));
+  background:var(--paper,var(--cell));color:var(--ink);
+  font:8px/15px Galmuri9,monospace!important;letter-spacing:-.35px
+}
+.mission-config .mission-period-tabs button[aria-pressed="true"]{
+  background:var(--selbg);color:var(--selfg);border-color:var(--ink)
+}
+.mission-config .mission-content{
+  position:relative;min-width:0;max-width:100%;min-height:0;
+  flex:1;display:flex;flex-direction:column;
+  overflow:hidden;gap:2px;padding:0
+}
+.mission-config .mission-plan-meta{
+  position:static!important;flex:none;width:100%;height:15px;
+  display:flex;align-items:center;justify-content:space-between;gap:3px;
+  padding:0 1px;border-bottom:1px dotted var(--edge);
+  font:8px/12px Galmuri9,monospace!important;white-space:nowrap
+}
+.mission-config .mission-plan-meta strong{font-weight:400}
+.mission-config .mission-plan-meta span{overflow:hidden;text-overflow:ellipsis}
+.mission-config .mission-choice-scroll{
+  display:flex;flex:1;flex-direction:column;gap:3px;
+  min-height:0;max-width:100%;overflow-x:hidden;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  touch-action:pan-y;padding:1px 1px 3px;scrollbar-width:thin
+}
+.mission-config .mission-choice{
+  appearance:none;display:flex;align-items:center;flex:none;
+  min-width:0;width:100%;height:22px;min-height:22px;
+  border:1px solid var(--edge,var(--dash));
+  border-radius:0;background:var(--paper,var(--cell));color:var(--ink);
+  padding:1px 4px;gap:5px;text-align:left;
+  font:9px/13px Galmuri9,monospace!important;white-space:nowrap
+}
+.mission-config .mission-choice.picked{
+  border-color:var(--ink);background:var(--selected,var(--bar));color:var(--ink)
+}
+.mission-config .mission-check{flex:none;width:10px;line-height:12px}
+.mission-config .mission-choice-name{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.mission-config .mission-hint{flex:none;font:8px/12px Galmuri9,monospace!important;opacity:.75;margin:0}
+.mission-config .mission-footnote{
+  position:static;flex:none;min-width:0;width:100%;
+  margin:1px 0 0;max-height:20px;overflow:hidden;white-space:normal;
+  text-align:center;color:var(--muted,var(--off));
+  font:8px/10px Galmuri9,monospace!important
+}
+.mission-config .mission-scroll-body{
+  flex:1;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;
+  padding:2px 3px;word-break:keep-all;text-align:left
+}
+.mission-config .mission-archive-head,.mission-config .mission-section-caption{
+  position:static;margin:0 0 5px;font:8px/12px Galmuri9,monospace!important
+}
+.mission-config .mission-section-caption{border-bottom:1px dotted var(--edge);margin-top:4px}
+.mission-config .mission-help{margin:3px 0;font:9px/14px Galmuri9,monospace!important}
+.mission-config .mission-season-row{display:flex;justify-content:space-between;gap:5px;font:9px/13px Galmuri9,monospace!important}
+.mission-config .mission-economy-list{padding:2px 0 5px;border-bottom:1px dotted var(--edge)}
+.mission-config .mission-economy-list strong{display:block;font:9px/13px Galmuri9,monospace!important}
+.mission-config .mission-economy-list>div{
+  display:flex;justify-content:space-between;gap:3px;padding:2px 0;
+  font:8px/11px Galmuri9,monospace!important
+}
+.mission-config .mission-economy-list>div span:first-child{flex:1;min-width:0}
+.mission-config .mission-economy-list>div span:last-child{flex:none;white-space:nowrap}
+
+/* Store pages: show actual products rather than empty grid placeholders. */
+.st:has(.prods) .bd,.st:has(.pet-catalog-grid) .bd{
+  min-height:0;overflow:hidden!important;display:flex;flex-direction:column;
+  padding:2px 4px!important;gap:2px!important
+}
+.st:has(.prods) .cats,.st:has(.pet-catalog-grid) .cats{
+  flex:none;width:100%;height:22px
+}
+.st:has(.prods) .prods{
+  flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));gap:3px;overflow:hidden
+}
+.st:has(.prods) .prods.count-1,.st:has(.prods) .prods.count-2{grid-template-rows:minmax(0,1fr)}
+.st:has(.prods) .prods.count-1{grid-template-columns:minmax(0,1fr)}
+.st:has(.prods) .pd{
+  min-height:0;min-width:0;overflow:hidden;box-sizing:border-box;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:3px 2px;gap:2px;border:1px dashed var(--edge,var(--dash));
+  text-align:center;font:9px/12px Galmuri9,monospace!important
+}
+.st:has(.prods) .pd.sel{border:1px solid var(--ink)}
+.st:has(.prods) .pd .shop-product-art{
+  flex:none;display:grid;place-items:center;min-height:27px;
+  max-height:31px;width:100%;overflow:hidden
+}
+.st:has(.prods) .pd .shop-product-art :is(canvas,img){
+  display:block;max-height:30px!important;max-width:34px!important;
+  height:30px!important;width:30px!important;object-fit:contain;image-rendering:pixelated
+}
+.st:has(.prods) .pd .n{
+  display:block;width:100%;min-width:0;max-width:100%;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font:9px/11px Galmuri9,monospace!important
+}
+.st:has(.prods) .pd .p{
+  display:block;flex:none;max-width:100%;white-space:nowrap;
+  font:8px/11px Galmuri9,monospace!important
+}
+.st:has(.prods) .pd .shop-product-hint{font:8px/10px Galmuri9,monospace!important}
+.st:has(.prods) .furniture-pages{flex:none;height:13px!important;min-height:13px}
+.st:has(.prods) .shop-back,.st:has(.pet-catalog-grid) .shop-back{
+  flex:none;height:14px!important;min-height:14px;margin:0;line-height:12px
+}
+.st:has(.pet-catalog-grid) .pet-catalog-grid{
+  box-sizing:border-box;flex:1;min-height:0;width:100%;overflow-y:auto;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:30px;gap:2px;padding:1px;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y
+}
+.pet-catalog-card{
+  box-sizing:border-box;min-width:0;min-height:0;
+  display:grid;grid-template-columns:20px minmax(0,1fr);
+  grid-template-rows:14px 11px;align-content:center;
+  column-gap:3px;border:1px solid var(--edge,var(--dash));
+  padding:1px 2px;overflow:hidden;text-align:left;background:var(--cell)
+}
+.pet-catalog-card canvas{
+  grid-column:1;grid-row:1/3;width:20px!important;height:20px!important;
+  image-rendering:pixelated;align-self:center
+}
+.pet-catalog-card .pet-catalog-name{
+  grid-column:2;grid-row:1;font:9px/13px Galmuri9,monospace!important;white-space:nowrap
+}
+.pet-catalog-card small{
+  grid-column:2;grid-row:2;white-space:nowrap;
+  font:7px/10px Galmuri9,monospace!important;opacity:.8
+}
+.st:has(.pet-catalog-grid) .shop-policy-caption{
+  flex:none;height:12px;min-height:12px;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;
+  margin:0;text-align:center;font:8px/12px Galmuri9,monospace!important
+}
+/* Let the pet portrait use the available diary height. */
+.egg .diary-spread.show-profile{
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:15px minmax(0,1fr)
+}
+.egg .diary-spread.show-profile .diary-profile{
+  display:flex;justify-content:center;align-items:center;
+  min-height:0;overflow:hidden;padding:4px 6px;gap:4px
+}
+.egg .diary-spread.show-profile .diary-polaroid{
+  box-sizing:border-box;width:78px;min-height:78px;
+  padding:5px 3px;gap:2px
+}
+.egg .diary-spread.show-profile .diary-polaroid canvas{
+  width:51px!important;height:51px!important
+}
+.egg .diary-spread.show-profile .diary-profile strong{font-size:10px;line-height:13px}
+.egg .diary-spread.show-profile .diary-link{font-size:9px;line-height:12px}
