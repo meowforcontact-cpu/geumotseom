@@ -9,14 +9,12 @@ function furnitureRenderBounds(id, position){
  if(!product||product.retired)return null;
  const [w,h]=product.size||[FS,FS];
  const p=position||state.pos[id]||[32,106-h];
- const whitewood=isWhitewoodRoom();
- const factor=whitewood?.78:1;
+ const whitewood=isWhitewoodRoom(),factor=whitewood?.78:1;
  const width=Math.max(8,Math.round(w*factor));
  const height=Math.max(8,Math.round(h*factor));
- const roomLeft=Math.round((RW-(RW>200?216:192))/2)+6;
- const roomRight=RW-roomLeft-6;
- const x=whitewood?Math.max(roomLeft,Math.min(roomRight-width,p[0]+DX+(w-width)/2)):p[0]+DX;
- const y=whitewood?Math.max(34,Math.min(124-height,p[1]+h-height)):p[1];
+ const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+ const x=whitewood?clamp(p[0],3,125-width):p[0]+DX;
+ const y=whitewood?clamp(p[1],34,125-height):p[1];
  return {x:Math.round(x),y:Math.round(y),width,height,sourceWidth:w,sourceHeight:h};
 }
 function drawFurniture(k,id){
