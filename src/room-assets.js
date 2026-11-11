@@ -5,11 +5,12 @@ const whitewoodRoomImage=new Image();
 let whitewoodSquareImage=null;
 // Preserve original square pixels while adding floor depth for the portrait camera.
 function prepareWhitewoodSquare(image){
- const c=document.createElement('canvas');c.width=384;c.height=280;
+ const c=document.createElement('canvas');c.width=384;c.height=276;
  const g=c.getContext('2d');g.imageSmoothingEnabled=false;
- g.drawImage(image,0,0,384,137,0,0,384,137);
- g.drawImage(image,0,137,384,64,0,137,384,64);
- g.drawImage(image,0,137,384,79,0,201,384,79);
+ // Repeat only interior floor planks; do not duplicate the bottom frame.
+ g.drawImage(image,0,0,384,140,0,0,384,140);
+ for(let row=0;row<3;row++)g.drawImage(image,0,140,384,20,0,140+row*20,384,20);
+ g.drawImage(image,0,140,384,76,0,200,384,76);
  return c;
 }
 whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);QK='';render()};
@@ -59,7 +60,7 @@ function drawAssetRoom(k){
  if(isWhitewoodRoom()){
   k.imageSmoothingEnabled=false;
   k.fillStyle='#000';k.fillRect(0,0,RW,RH);
-  if(whitewoodSquareImage)k.drawImage(whitewoodSquareImage,50,0,284,280,0,0,128,128);
+  if(whitewoodSquareImage)k.drawImage(whitewoodSquareImage,50,0,284,276,0,0,128,128);
   return;
  }
  const look=roomLook(),sky=roomLayers['sky-'+skyNow()];
