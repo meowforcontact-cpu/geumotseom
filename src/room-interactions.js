@@ -68,7 +68,7 @@ rc.addEventListener('pointerdown',e=>{
   if(furnitureEdit)beginFurnitureDrag(roomPress,id);
   else roomPress.timer=setTimeout(()=>{if(roomPress?.pointer===e.pointerId)beginFurnitureDrag(roomPress,id)},450);
  }else{
-  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=FLOOR-size+(isWhitewoodRoom()?14:0);
+  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=FLOOR-size;
   if(!furnitureEdit&&p.x>=px&&p.x<px+size&&p.y>=py&&p.y<py+size){
    roomPress.pet=true;roomPress.active=true;
   }else if(!furnitureEdit){
