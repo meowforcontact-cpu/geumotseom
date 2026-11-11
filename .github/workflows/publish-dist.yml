@@ -1,0 +1,42 @@
+name: Publish rebuilt static room to tracked dist
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'build.mjs'
+      - 'test/**'
+      - '.github/workflows/publish-dist.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-dist-main
+  cancel-in-progress: true
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate up-to-date public bundle
+        run: npm run build
+      - name: Validate functionality before publishing
+        run: npm test
+      - name: Commit built static assets for GitHub-connected deployment
+        shell: bash
+        run: |
+          if [[ -z "$(git status --porcelain -- dist/)" ]]; then
+            echo "dist/ is already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A dist/
+          git commit -m "build: update static dist for published room"
+          git push origin HEAD:main
