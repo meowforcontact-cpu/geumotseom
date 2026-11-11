@@ -484,7 +484,7 @@ const SKYSAY={
 function skyKey(m){const h=new Date().getHours();if(m==='night')return h>=0&&h<5?'late':'night';return m}
 function skyLine(){const a=SKYSAY[skyKey(skyNow())];return a[Math.floor(Math.random()*a.length)]}
 function skyNow(){if(skyMode!=='auto')return skyMode;const h=new Date().getHours();return h>=5&&h<8?'dawn':h>=8&&h<17?'morning':h>=17&&h<20?'evening':'night'}
-const cat={x:32,tx:32,t:0,wait:0};let anim=null,idle=0;
+const cat={x:32,tx:32,y:FLOOR,ty:FLOOR,t:0,wait:0};let anim=null,idle=0;
 function put(ctx,rows,x,y,s){rows.forEach((r,j)=>[...r].forEach((ch,i)=>{if(PAL[ch]){ctx.fillStyle=PAL[ch];ctx.fillRect(Math.round(x)+i*s,Math.round(y)+j*s,s,s)}}))}
 const fpos=id=>[state.pos[id][0]+DX,state.pos[id][1]];
 const poopX=x=>Math.min(x+DX,RW-16);
@@ -554,8 +554,20 @@ function expr(){
 }
 function drawPet(k){
   const st=stage(),ex=expr(),f=Math.floor(cat.t/3),still=calm||st==='egg'||ex==='sleep'||anim;
-  if(!still){if(Math.abs(cat.x-cat.tx)>.5)cat.x+=Math.sign(cat.tx-cat.x);else if(--cat.wait<0){cat.tx=Math.random()*((placeNow().place==='friend'?RW-60:RW)-64);cat.wait=20+Math.random()*30}}
+  if(!still){
+    const dx=cat.tx-cat.x,dy=cat.ty-cat.y,dist=Math.hypot(dx,dy);
+    if(dist>.5){
+      const speed=Math.min(1,dist);
+      cat.x+=dx/dist*speed;cat.y+=dy/dist*speed;
+    }else if(--cat.wait<0){
+      const inset=(64-38)/2;
+      cat.tx=-inset+Math.random()*(RW-64+2*inset);
+      cat.ty=45+Math.random()*79;
+      cat.wait=20+Math.floor(Math.random()*35);
+    }
+  }
   const x=Math.round(cat.x);
+  k.save();k.translate(0,Math.round(cat.y)-FLOOR);
   k.fillStyle=shadowC();k.fillRect(x+16,FLOOR-2,32,3);
   k.drawImage(sprite(st,ex,f,pet().kind),x,CY,64,64);
   if(st!=='egg'&&state.eq['칭호'])put(k,S.crown,x+24,CY-6,2);
@@ -566,6 +578,7 @@ function drawPet(k){
     if(anim.type==='clean'||(anim.type==='hatch'&&anim.t<=4))[[x-4,CY+6],[x+56,CY+14],[x+28,CY+2]].forEach(([a,b],i)=>{if(calm||(anim.t+i)%2)put(k,S.spark,a,b,1)});
   }
   if(ex==='sleep'||ex==='sleepy')put(k,S.izz,x+58,CY+4+(calm?0:(cat.t>>2)%3),1);
+  k.restore();
 }
 // 색 줄이기: 시간대·꾸미기·테마가 바뀔 때마다 방 기준 10색 + 캐릭터 고정색으로 팔레트를 만듦
 let QP=null,QK='',qmap=new Map();
@@ -1047,7 +1060,7 @@ function placeBubble(){
   const b=$('bub');if(!b)return;const on=ui.bub&&Date.now()<ui.bubT;b.hidden=!on;if(!on)return;
   if(b.textContent!==ui.bub)b.textContent=ui.bub;
   const [,,bw,bh]=GD.bez,mg=GD.mg||1,mxc=RW/bw*mg,myc=RH/bh*mg,kx=GD.stw/(RW-2*mxc),ky=176/(RH-2*myc),st=stage();
-  const x=Math.round(cat.x)+32,y=st==='egg'?CY+20:CY+8;
+  const x=Math.round(cat.x)+32,y=(st==='egg'?CY+20:CY+8)+(Math.round(cat.y)-FLOOR);
   b.style.left=Math.max(34,Math.min(GD.stw-34,(x-mxc)*kx))+'px';b.style.top=Math.max(54,(y-myc)*ky-6)+'px';
 }
 
