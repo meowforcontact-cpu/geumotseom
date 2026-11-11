@@ -54,6 +54,7 @@ function moveFurnitureDraft(press,p){
 }
 rc.addEventListener('pointerdown',e=>{
  if(scr().id!=='home'||e.button!==0||roomPress)return;
+ suppressRoomClick=false;
  const p=roomPoint(e),id=roomFurnitureAt(p.x,p.y);
  if(furnitureEdit&&id!==furnitureEdit.id)return;
  roomPress={pointer:e.pointerId,start:p,last:p,id,active:false,pet:false};
