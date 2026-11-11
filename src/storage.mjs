@@ -119,7 +119,7 @@ export function validateSave(value, items) {
     result.daily=s.daily.day===day()&&value.day===day()?{day:s.daily.day,feed:s.daily.feed,play:s.daily.play}:{day:day(),feed:false,play:false};
   }
   if(s.roomLook!==undefined){
-    if(!s.roomLook||!['cream','pink','whitewood'].includes(s.roomLook.wall)||!['cream','pink','whitewood'].includes(s.roomLook.floor))throw Error('방 배경을 읽을 수 없어요.');
+    if(!s.roomLook||!['cream','pink','whitewood','attic'].includes(s.roomLook.wall)||!['cream','pink','whitewood','attic'].includes(s.roomLook.floor))throw Error('방 배경을 읽을 수 없어요.');
     result.roomLook={wall:s.roomLook.wall,floor:s.roomLook.floor};
   }
   if(s.missionPlans!==undefined){

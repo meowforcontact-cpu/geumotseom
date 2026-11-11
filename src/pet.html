@@ -154,7 +154,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const fmt=n=>n.toLocaleString('ko-KR');
 
 // ===== 테마 (블루 / 핑크) =====
-let skin='blue';try{skin=localStorage.getItem('pikaSkin')||'blue'}catch(e){}
+let skin='pink';try{skin=localStorage.getItem('pikaSkin')||'pink'}catch(e){}
 if(Q.get('skin')==='pink'||Q.get('skin')==='blue')skin=Q.get('skin');
 const INKS={blue:'#26307a',pink:'#9b5d7a'};
 // 테마별 픽셀 색 (핑크 테마에서는 별·그림자까지 핑크 계열로)

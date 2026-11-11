@@ -1,6 +1,6 @@
 // Original PNGs remain separate so wallpaper and flooring can be mixed.
 const roomLayers={};
-const roomNames={cream:'크림블루',pink:'핑크장식',whitewood:'화이트 우드 방'};
+const roomNames={cream:'크림블루',pink:'핑크장식',whitewood:'화이트 우드 방',attic:'겨울 핑크 다락방'};
 const whitewoodRoomImage=new Image();
 let whitewoodSquareImage=null;
 // Selected 4:3 background is used in full. No square crop or stretched room.
@@ -9,13 +9,18 @@ function prepareWhitewoodSquare(image){
 }
 whitewoodRoomImage.onload=()=>{whitewoodSquareImage=prepareWhitewoodSquare(whitewoodRoomImage);if(isWhitewoodRoom()&&cat.x===32&&cat.tx===32)cat.x=cat.tx=53;QK='';render()};
 whitewoodRoomImage.src=WHITEWOOD_ASSETS.room;
+const pinkAtticRoomImage=new Image();
+let pinkAtticReady=false;
+pinkAtticRoomImage.onload=()=>{pinkAtticReady=true;QK='';render()};
+pinkAtticRoomImage.src=WHITEWOOD_ASSETS.attic;
 function whitewoodRoomView(){
  const size=whitewoodWorldWidth(),scale=Math.min(RW/size,1);
  return {x:Math.round((RW-size*scale)/2),y:0,size,scale};
 }
 function whitewoodWorldWidth(){return 170}
-const isWhitewoodRoom=()=>roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
-function roomLook(){return state.roomLook||{wall:'whitewood',floor:'whitewood'}}
+const isPinkAtticRoom=()=>roomLook().wall==='attic'||roomLook().floor==='attic';
+const isWhitewoodRoom=()=>isPinkAtticRoom()||roomLook().wall==='whitewood'||roomLook().floor==='whitewood';
+function roomLook(){return Q.get('room')==='attic'?{wall:'attic',floor:'attic'}:(state.roomLook||{wall:'attic',floor:'attic'})}
 for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.map(t=>'sky-'+t)]){
  const im=new Image();
  im.onload=()=>{
@@ -35,8 +40,9 @@ for(const name of ['cream-wall','cream-floor','pink-wall','pink-floor',...SKY4.m
  };
  im.src=ROOM_ASSET_URLS[name];
 }
-function roomAssetsReady(){if(isWhitewoodRoom())return !!whitewoodSquareImage;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
+function roomAssetsReady(){if(isPinkAtticRoom())return pinkAtticReady;if(isWhitewoodRoom())return !!whitewoodSquareImage;const look=roomLook();return !!(roomLayers[look.wall+'-wall']&&roomLayers[look.floor+'-floor']&&roomLayers['sky-'+skyNow()])}
 function roomWindowAt(x,y){
+ if(isPinkAtticRoom())return (y>=0&&y<=47&&Math.abs(x-85)<=Math.max(0,y*1.0))||((x<16||x>154)&&y<74);
  if(isWhitewoodRoom())return x>=whitewoodWorldWidth()*.39&&x<=whitewoodWorldWidth()*.61&&y>=2&&y<=23;
  if(!roomAssetsReady()){const [sx,sy,sw,sh]=skyRect();return x>=sx&&x<sx+sw&&y>=sy&&y<sy+sh;}
  const width=Math.max(170,RW),left=(RW-width)/2,extra=width-170;
@@ -55,11 +61,12 @@ function drawAssetRoom(k){
  if(isWhitewoodRoom()){
   k.imageSmoothingEnabled=false;
   k.fillStyle='#eeebe5';k.fillRect(0,0,RW,RH);
-  if(whitewoodSquareImage){
-   k.drawImage(whitewoodSquareImage,0,0,RW,RH);
+  const roomImage=isPinkAtticRoom()?pinkAtticRoomImage:whitewoodSquareImage;
+  if(roomImage?.naturalWidth){
+   k.drawImage(roomImage,0,0,RW,RH);
    // Portrait reveals additional floor below the complete 4:3 room.
    if(MODE==='egg')for(let y=RH;y<whitewoodWorldWidth();y+=32)
-    k.drawImage(whitewoodSquareImage,0,whitewoodSquareImage.height-192,whitewoodSquareImage.width,192,0,y,RW,32);
+    k.drawImage(roomImage,0,roomImage.height-48,roomImage.width,48,0,y,RW,32);
   }
   return;
  }
@@ -85,7 +92,7 @@ SCR.deco.list=()=>[
  ...previousDecoList().filter(row=>!['벽','바닥'].includes(row.l))
 ];
 function roomChoiceList(part){return [...Object.entries(roomNames).map(([id,label])=>L(label,part==='wall'?'wall1':'floor1',()=>{
- state.roomLook=id==='whitewood'?{wall:'whitewood',floor:'whitewood'}:{...roomLook(),[part]:id, ...(isWhitewoodRoom()?{[part==='wall'?'floor':'wall']:'cream'}:{})};
+ state.roomLook=(id==='whitewood'||id==='attic')?{wall:id,floor:id}:{...roomLook(),[part]:id, ...(isWhitewoodRoom()?{[part==='wall'?'floor':'wall']:'cream'}:{})};
  // Clear legacy colour overlays only for the surface the user changes.
  state.eq[part==='wall'?'벽':'바닥']=null;QK='';persist();render();
 },roomLook()[part]===id?'적용 중':'')),BACK()]}
