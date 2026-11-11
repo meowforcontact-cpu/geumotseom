@@ -96,8 +96,9 @@ replace("0,kd),0,0)","0,kd),0,0,32,32)");
 replace('rc.width=RW;rc.height=RH;buf.width=RW;buf.height=RH;rx.imageSmoothingEnabled=false;bx.imageSmoothingEnabled=false;',
   'rc.width=RW*3;rc.height=RH*3;buf.width=RW*3;buf.height=RH*3;rx.imageSmoothingEnabled=false;bx.imageSmoothingEnabled=false;bx.setTransform(3,0,0,3,0,0);');
 replace('const im=bx.getImageData(0,0,RW,RH),d=im.data;', 'const im=bx.getImageData(0,0,buf.width,buf.height),d=im.data;');
+// Match the in-room pet to furniture rather than its 128px source canvas.
 replace('k.drawImage(sprite(st,ex,f,pet().kind),x,CY,64,64);',
-  "const hop=!calm&&ex==='play'?-(f%2?3:0):!calm&&ex==='walk'?-(f%2):0;\n  k.drawImage(sprite(st,ex,f,pet().kind),x,CY+hop,64,64);");
+  "const hop=!calm&&ex==='play'?-(f%2?3:0):!calm&&ex==='walk'?-(f%2):0;\n  const petSize=st==='egg'?34:38;\n  const petX=x+(64-petSize)/2;\n  k.drawImage(sprite(st,ex,f,pet().kind),petX,FLOOR-petSize+hop,petSize,petSize);");
 // Preserve the supplied rabbit's eye colors through the room quantizer.
 replace('let v=qmap.get(key);','if(rabbitColors.has(key))continue;let v=qmap.get(key);');
 replace("const qs=Q.get('stage');","Promise.all([loadRabbits(),loadPets()]).catch(error=>{console.error(error);say('캐릭터 로딩 실패 · 새로고침해 주세요');});\nconst qs=Q.get('stage');");
