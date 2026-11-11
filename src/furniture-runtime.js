@@ -45,7 +45,7 @@ shopBody=function(s){
      buyable?fmt(product.price)+'냥':kind==='angel'?'미션 누적 15일':'획득 조건 미확정';
    const available=owned||first||buyable;
    return '<button type="button" class="pet-catalog-card'+(c===n+idx?' sel':'')+'" data-pet-shop="'+kind+'"'
-    +(available?'':' disabled')+' aria-label="'+name+' · '+status+'">'
+    +' aria-disabled="'+(!available)+'" aria-label="'+name+' · '+status+'">'
     +'<canvas data-pet="'+kind+'|1" aria-hidden="true"></canvas>'
     +'<span class="pet-catalog-name">'+name+'</span><small>'+status+'</small></button>';
   }).join('');
