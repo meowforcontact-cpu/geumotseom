@@ -53,3 +53,6 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 
 /* The game canvas owns touch drags; native page panning cancels iOS pointermove. */
 #room{touch-action:none!important;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+/* The home screen prioritizes the room; balance remains available in the shop. */
+.st.home .sb .coin{display:none!important}
