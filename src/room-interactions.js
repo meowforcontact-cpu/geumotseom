@@ -85,7 +85,8 @@ rc.addEventListener('pointermove',e=>{
  if(roomPress.pet){
   if(moved){
    const inset=(64-(stage()==='egg'?34:38))/2;
-   cat.x=cat.tx=Math.round(Math.max(-inset,Math.min(RW-64+inset,p.x-roomPress.petOffset[0]-32)));
+   const right=(isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park'?128:RW);
+   cat.x=cat.tx=Math.round(Math.max(-inset,Math.min(right-64+inset,p.x-roomPress.petOffset[0]-32)));
    cat.y=cat.ty=Math.round(Math.max(45,Math.min(124,p.y-roomPress.petOffset[1]+(stage()==='egg'?17:19))));
    anim={type:'play',t:20};suppressRoomClick=true;e.preventDefault();
   }
