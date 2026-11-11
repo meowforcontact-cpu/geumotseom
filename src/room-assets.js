@@ -109,8 +109,12 @@ function drawDetailedRoom(){
   bx.save();
   bx.setTransform(scale*view.scale,0,0,scale*view.scale,scale*view.x,scale*view.y);
   RW=128;DX=0;
-  cat.x=Math.max(0,Math.min(64,cat.x));
-  cat.tx=Math.max(0,Math.min(64,cat.tx));
+  // Square-room movement: the visible 38px sprite may reach every floor edge.
+  const inset=(64-(stage()==='egg'?34:38))/2;
+  cat.x=Math.max(-inset,Math.min(64+inset,cat.x));
+  cat.tx=Math.max(-inset,Math.min(64+inset,cat.tx));
+  cat.y=Math.max(45,Math.min(124,cat.y));
+  cat.ty=Math.max(45,Math.min(124,cat.ty));
   try{scene(true);drawFurnitureSelection(bx)}
   finally{RW=savedRW;DX=savedDX;bx.restore()}
  }else{
