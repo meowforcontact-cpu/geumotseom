@@ -49,11 +49,10 @@ function moveFurnitureDraft(press,p){
  if(!b)return;
  const whitewood=isWhitewoodRoom();
  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
- const left=whitewood?3:0,right=whitewood?125:RW;
- const minY=whitewood?34:55-b.height;
- const maxY=whitewood?125-b.height:RH-b.height;
- const x=clamp(p.x-press.offset[0],left,Math.max(left,right-b.width));
- const y=clamp(p.y-press.offset[1],minY,Math.max(minY,maxY));
+ // Keep the complete furniture sprite inside the room, without any other placement restriction.
+ const maxX=whitewood?128:RW;
+ const x=clamp(p.x-press.offset[0],0,Math.max(0,maxX-b.width));
+ const y=clamp(p.y-press.offset[1],0,Math.max(0,RH-b.height));
  furnitureEdit.draft=[Math.round(x-(whitewood?0:DX)),Math.round(y)];
  QK='';
 }
@@ -68,9 +67,10 @@ rc.addEventListener('pointerdown',e=>{
   if(furnitureEdit)beginFurnitureDrag(roomPress,id);
   else roomPress.timer=setTimeout(()=>{if(roomPress?.pointer===e.pointerId)beginFurnitureDrag(roomPress,id)},450);
  }else{
-  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=FLOOR-size;
+  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=cat.y-size;
   if(!furnitureEdit&&p.x>=px&&p.x<px+size&&p.y>=py&&p.y<py+size){
    roomPress.pet=true;roomPress.active=true;
+   roomPress.petOffset=[p.x-(cat.x+32),p.y-(cat.y-size/2)];
   }else if(!furnitureEdit){
    roomPress.timer=setTimeout(()=>{if(roomPress?.pointer===e.pointerId){roomPress=null;push('deco')}},550);
   }
@@ -83,7 +83,12 @@ rc.addEventListener('pointermove',e=>{
  const p=roomPoint(e);roomPress.last=p;
  const moved=Math.hypot(p.x-roomPress.start.x,p.y-roomPress.start.y)>3;
  if(roomPress.pet){
-  if(moved){cat.x=cat.tx=Math.round(Math.max(0,Math.min(RW-64,p.x-32)));anim={type:'play',t:20};suppressRoomClick=true;e.preventDefault();}
+  if(moved){
+   const inset=(64-(stage()==='egg'?34:38))/2;
+   cat.x=cat.tx=Math.round(Math.max(-inset,Math.min(RW-64+inset,p.x-roomPress.petOffset[0]-32)));
+   cat.y=cat.ty=Math.round(Math.max(45,Math.min(124,p.y-roomPress.petOffset[1]+(stage()==='egg'?17:19))));
+   anim={type:'play',t:20};suppressRoomClick=true;e.preventDefault();
+  }
   return;
  }
  if(!roomPress.active&&moved){
