@@ -8,7 +8,7 @@ test('published device uses exact shared button art and hitbox coordinates',asyn
  const match=html.match(/const DEVS=([\s\S]*?);\s*let MODE=/);
  assert.ok(match,'compiled device layout');
  const dev=vm.runInNewContext('('+match[1]+')').console;
- const artMatch=html.match(/const BT=(\[[^\n]+\]);/);
+ const artMatch=[...html.matchAll(/const BT=(\[[^\n]+\]);/g)].find(m=>m[1].includes('"paw"'));
  assert.ok(artMatch,'compiled button art positions');
  const art=vm.runInNewContext(artMatch[1]);
  assert.equal(dev.W,448);assert.equal(dev.H,262);
