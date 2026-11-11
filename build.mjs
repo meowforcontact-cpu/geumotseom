@@ -64,7 +64,7 @@ replace("state.pos[id][1]+FS>FLOOR+4", "(furnitureRenderBounds(id)?.y??0)+(furni
 replace('<html>','<html lang="ko">');
 // Show the signed-in Discord name on the ID card instead of the placeholder.
 replace("d={name:'나',rep:p.name","d={name:(typeof account!=='undefined'&&account&&account.name)||'나',rep:p.name");
-replace('<title>피카 다마고치</title>','<title>토모고찌 · 내 방</title>');
+// Canonical app title is authored directly in src/pet.html.
 // Keep the archived original HTML intact; remove its cat renderer from builds.
 const rabbitAssets={};
 await mkdir('dist/assets/rabbits',{recursive:true});
