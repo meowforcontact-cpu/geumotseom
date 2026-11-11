@@ -164,9 +164,9 @@ replace("const qs=null;",`const ROOM_ASSET_URLS=${JSON.stringify(roomUrls)};\nco
 const roomStart=html.indexOf("  R('#dfeaff',0,0,RW,RH);",html.indexOf('function scene(withPet)'));
 const roomEnd=html.indexOf("  if(pl.place==='friend'){k.globalCompositeOperation",roomStart);
 if(roomStart<0||roomEnd<0)throw Error('Room background boundary missing');
-html=html.slice(0,roomStart)+'  if(roomAssetsReady()){drawAssetRoom(k)}else{\n'+html.slice(roomStart,roomEnd)+'  }\n'+html.slice(roomEnd);
+html=html.slice(0,roomStart)+"  if(roomAssetsReady()){drawAssetRoom(k)}else{R('#f4f0eb',0,0,RW,RH)}\n"+html.slice(roomEnd);
 replace('for(let i=0;i<d.length;i+=4){const key=', 'if(!roomAssetsReady())for(let i=0;i<d.length;i+=4){const key=');
-replace('function draw(){','function draw(){\n  if(roomAssetsReady()&&placeNow().place!=="park")return drawDetailedRoom();\n  if(buf.width!==RW){rc.width=buf.width=RW;rc.height=buf.height=RH;bx.setTransform(1,0,0,1,0,0);}');
+replace('function draw(){','function draw(){\n  if(!roomAssetsReady()&&placeNow().place!=="park"){\n    if(rc.width!==RW||rc.height!==RH){rc.width=RW;rc.height=RH;}\n    rx.setTransform(1,0,0,1,0,0);rx.fillStyle="#f4f0eb";rx.fillRect(0,0,rc.width,rc.height);return;\n  }\n  if(roomAssetsReady()&&placeNow().place!=="park")return drawDetailedRoom();\n  if(buf.width!==RW){rc.width=buf.width=RW;rc.height=buf.height=RH;bx.setTransform(1,0,0,1,0,0);}');
 replace('</script>',`${await readFile('src/whitewood-assets.js','utf8')}\n${await readFile('src/art-style.js','utf8')}\n${await readFile('src/room-assets.js','utf8')}\n${await readFile('src/furniture-runtime.js','utf8')}\n${await readFile('src/room-interactions.js','utf8')}\n${await readFile('src/diary-menu.js','utf8')}\n${await readFile('src/mission-policy.js','utf8')}\n${await readFile('src/starter-pet.js','utf8')}\naddEventListener('pagehide',persist);\ndocument.addEventListener('visibilitychange',()=>{if(document.hidden)persist()});\n</script>`);
 await mkdir('dist',{recursive:true});
 await writeFile('dist/index.html',html);
