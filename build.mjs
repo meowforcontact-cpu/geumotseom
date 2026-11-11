@@ -20,16 +20,16 @@ replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
 // and their real HTML pointer targets (448×262 shell pixel coordinates).
 // In makeConsole(), the raster drawing uses y - 10; the DOM uses full y.
 const shellArtOffsetY=10;
-const consoleDpad={x:50,y:142,reach:21,halfLength:29,halfThickness:11,hitRadius:10.6};
+const consoleDpad={x:50,y:122,reach:21,halfLength:29,halfThickness:11,hitRadius:10.6};
 const consoleFaceButtons=[
-  ['OK',423,142,12.5,'a','paw','A 확인'],
-  ['BACK',399,166,12.5,'b','back','B 뒤로'],
-  ['MENU',399,118,12.5,'x','menu','X 메뉴'],
-  ['HOME',375,142,12.5,'y','home','Y 홈']
+  ['OK',428,122,15,'a','paw','A 확인'],
+  ['BACK',406,144,15,'b','back','B 뒤로'],
+  ['MENU',406,100,15,'x','menu','X 메뉴'],
+  ['HOME',384,122,15,'y','home','Y 홈']
 ];
 const consoleBottomButtons=[
-  ['FEED',52,215,17,'food','bowl','먹이 (길게: 간식 고르기)'],
-  ['PLAY',396,215,17,'play','yarn','놀이']
+  ['FEED',64,196,17,'food','bowl','먹이 (길게: 간식 고르기)'],
+  ['PLAY',384,196,17,'play','yarn','놀이']
 ];
 const consoleArtButtons=[...consoleFaceButtons,...consoleBottomButtons]
   .map(([,x,y,r,fill,glyph])=>[x,y-shellArtOffsetY,r,fill,glyph]);
