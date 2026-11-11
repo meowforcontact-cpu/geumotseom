@@ -85,7 +85,9 @@ body{min-height:100svh;overflow:hidden;background:radial-gradient(var(--dotc) 1.
 .lcdwrap{position:relative;width:100%;height:100%;overflow:hidden;background:var(--lcd)}
 .lcdwrap::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:linear-gradient(135deg,rgba(255,255,255,.26) 0,rgba(255,255,255,0) 26%),linear-gradient(90deg,transparent calc(100% - 1px),var(--scan) 0) 0 0/calc(100%/64) 100%,linear-gradient(transparent calc(100% - 1px),var(--scan) 0) 0 0/100% calc(100%/64);box-shadow:inset 0 0 10px var(--vig)}
 #room{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:block;touch-action:manipulation}
-.btns{position:absolute;inset:0;z-index:3;pointer-events:none}
+.btns{position:absolute;inset:0;z-index:20;overflow:visible;pointer-events:none}
+.btns>.controller-art-front{position:absolute;inset:0;display:block;width:100%;height:100%;image-rendering:pixelated;pointer-events:none;z-index:0}
+.btns>.eb{z-index:1}
 .eb{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:auto;border:0;border-radius:50%;background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .eb:hover{background:rgba(255,255,255,.3)}
@@ -699,7 +701,7 @@ const CON_PAL={
    btn:{a:'#ffc3d6',b:'#ffe3ec',x:'#ffd0e0',y:'#ffdbe8',food:'#ffcade',play:'#ffbcd3',home:'#fff4f8'},bow:'#ffcadb',bowk:'#ffb3cb'},
  blue:{out:'#86b3df',body:['#f7fbff','#e6f2fd','#d3e8f9','#c0ddf5'],depth:'#b4d4f1',depth2:'#9cc4ea',bezel:'#86b2dd',panel:'#fbfdff',dot:'#d6e8f8',icon:'#5f92c6',
    btn:{a:'#a9cfff',b:'#e4efff',x:'#c5dcf8',y:'#d4e6fb',food:'#bcd7f7',play:'#b0cff4',home:'#f4f9ff'},bow:'#ffffff',bowk:'#cfe4f8'}};
-function makeConsole(th,sk){
+function makeConsole(th,sk,paintControls=true){
   const C=CON_PAL[sk]||CON_PAL.blue,TH0=SHELL_TH[th]||SHELL_TH.day,OY=10,W=448,H=262,cv=document.createElement('canvas');cv.width=W;cv.height=H;const k=cv.getContext('2d');
   const img=k.createImageData(W,H),D=img.data,N4=[[1,0],[-1,0],[0,1],[0,-1]],NB2=[];for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++){const q=a*a+b*b;if(q&&q<=5)NB2.push([a,b])}   // 2px 외곽선
   const mixc=(a,b,f)=>{const A=hx(a),B=hx(b);f=Math.max(0,Math.min(1,f));return hex(A.map((v,i)=>Math.round(v+(B[i]-v)*f)))};
@@ -710,14 +712,14 @@ function makeConsole(th,sk){
   const rTri=(T,f,r)=>{const Sh=shr(T,f),inside=tri(...Sh);return (x,y)=>{if(inside(x,y))return true;const p=[x+.5,y+.5];return Math.min(segD(p,Sh[0],Sh[1]),segD(p,Sh[1],Sh[2]),segD(p,Sh[2],Sh[0]))<=r}};
   const mx=([x,y])=>[448-x,y];
   const face=(x,y)=>rr(x,y,4,28,444,240,44),depth=(x,y)=>rr(x,y,4,34,444,248,44);
-  const E1=[[84,38],[112,-6],[148,30]],I1=[[96,34],[113,6],[136,30]];
+  const E1=[[84,38],[112,0],[148,30]],I1=[[96,34],[113,6],[136,30]];
   const eL=rTri(E1,.82,8),eR=rTri(E1.map(mx),.82,8),iL=rTri(I1,.72,5),iR=rTri(I1.map(mx),.72,5);
   const ear=(x,y)=>eL(x,y)||eR(x,y),earIn=(x,y)=>iL(x,y)||iR(x,y);
   const solid=(x,y)=>face(x,y)||depth(x,y)||ear(x,y);
-  const frameO=(x,y)=>rr(x,y,90,32,358,238,10),hole=(x,y)=>x>=98&&x<=349&&y>=40&&y<=229;
+  const frameO=(x,y)=>rr(x,y,96,34,352,232,10),hole=(x,y)=>x>=104&&x<=343&&y>=42&&y<=221;
   // 십자키
-  const DC=[45,112],dH=(x,y,o)=>rr(x,y,10,99+o,80,125+o,6),dV=(x,y,o)=>rr(x,y,32,77+o,58,147+o,6),dp=(x,y,o=0)=>dH(x,y,o)||dV(x,y,o);
-  const arrow=(x,y)=>{const X=x+.5-DC[0],Y=y+.5-DC[1];const tr=(u,v)=>v>=-31&&v<=-23&&Math.abs(u)<=(v+31)*.9;return tr(X,Y)||tr(X,-Y)||tr(Y,X)||tr(Y,-X)};
+  const DC=[50,112],dH=(x,y,o)=>rr(x,y,21,101+o,79,123+o,5),dV=(x,y,o)=>rr(x,y,39,83+o,61,141+o,5),dp=(x,y,o=0)=>dH(x,y,o)||dV(x,y,o);
+  const arrow=(x,y)=>{const X=x+.5-DC[0],Y=y+.5-DC[1];const tr=(u,v)=>v>=-25&&v<=-19&&Math.abs(u)<=(v+25)*.9;return tr(X,Y)||tr(X,-Y)||tr(Y,X)||tr(Y,-X)};
   // 버튼 아이콘 11x11
   const IC={
    paw:['...............','....xx...xx....','...xxxx.xxxx...','...xxxx.xxxx...','....xx...xx....','xxx..xxxxx..xxx','xxx.xxxxxxx.xxx','.x.xxxxxxxxx.x.','...xxxxxxxxx...','..xxxxxxxxxxx..','..xxxxx.xxxxx..','..xxxx...xxxx..','...xx.....xx...','...............','...............'],
@@ -727,7 +729,7 @@ function makeConsole(th,sk){
    bowl:['.................','......x..........','.....xxx........x','....xxxxx......xx','..xxxxxxxxx...xxx','.xxxxxx.xxxx.xxxx','.x..xxxx.xxxxxxx.','xx..xxxx.xxxxxx..','xxxxxxxx.xxxxx...','xxxxxxxx.xxxxxx..','.xxxxxx.xxxxxxxx.','.xxxxxxxxxxx.xxxx','..xxxxxxxxx...xxx','....xxxxx......xx','................x','.................','.................'],
    yarn:['......xx.......','...xxxxx.xx....','..xxxxx.xxx....','.xxxxx.xxx.xx..','.xxxx.xxx.xxx..','.xxx.xxx.xxx...','xxx.xxx.xxx.xx.','xx.xxx.xxx.xxx.','..xxx.xxx.xxx..','.xxx.xxx.xxxx..','.xx.xxx.xxxxx..','...xxx.xxxxxx..','...xx.xxxxx..x.','......xx.....x.','...........xx..'],
    home:['...............','.......x.......','......xxx......','.....xxxxx.xx..','....xxxxxxxxx..','...xxxxxxxxxxx.','..xxxxxxxxxxxxx','.xxxxxxxxxxxxx.','...xxxxxxxxx...','...xxxxxxxxx...','...xxx...xxx...','...xxx...xxx...','...xxx...xxx...','...xxx...xxx...','...............']};
-  const BT=[[425,108,14.5,'a','paw'],[404.5,129,14.5,'b','back'],[404.5,87,14.5,'x','menu'],[384,108,14.5,'y','home'],[63,205,17,'food','bowl'],[385,205,17,'play','yarn']];
+  const BT=[[422,112,14,"a","paw"],[398,142,14,"b","back"],[398,82,14,"x","menu"],[374,112,14,"y","home"],[64,186,17,"food","bowl"],[384,186,17,"play","yarn"]];
   const ICO={};for(const k in IC){const n=IC[k].length;let x0=99,x1=-1,y0=99,y1=-1;IC[k].forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='x'){x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)}}));ICO[k]=[Math.floor((n-(x1-x0+1))/2)-x0,Math.floor((n-(y1-y0+1))/2)-y0]}
   const put_=(x,y,c)=>{const i=(y*W+x)*4,p=hx(c);D[i]=p[0];D[i+1]=p[1];D[i+2]=p[2];D[i+3]=255};
   const pTH=[mixc(TH[2],'#ffffff',.2),mixc(TH[1],'#ffffff',.15),TH[3]];
@@ -744,16 +746,16 @@ function makeConsole(th,sk){
         if(x===84||x===85||x===363||x===364)col=x%2?'#ffffff':mixc(C.body[2],C.out,.4);
         else if(inPanel&&!frameO(x,y)){col=C.panel;if(x%12===6&&y%12===6)col=C.dot;if((x%24===18&&y%24===18)||(x%24===19&&y%24===18)||(x%24===18&&y%24===19))col=mixc(TH[1],'#ffffff',.3);
           if(!face(x,y-3))col=mixc(col,'#ffffff',.9);if(!face(x,y+2))col=C.body[3]}
-        else if(frameO(x,y)){const ins=rr(x,y,95,37,353,233,7);
-          if(ins){col=C.bezel;if(!rr(x,y-1,95,37,353,233,7)||!rr(x-1,y,95,37,353,233,7))col=mixc(C.bezel,'#ffffff',.4);else if(hole(x,y+1)||hole(x+1,y))col=mixc(C.bezel,'#000000',.1)}
+        else if(frameO(x,y)){const ins=rr(x,y,100,38,348,228,7);
+          if(ins){col=C.bezel;if(!rr(x,y-1,100,38,348,228,7)||!rr(x-1,y,100,38,348,228,7))col=mixc(C.bezel,'#ffffff',.4);else if(hole(x,y+1)||hole(x+1,y))col=mixc(C.bezel,'#000000',.1)}
           else{col=pTH[0];if(x%6===3&&y%6===3)col=pTH[1];if([[100,35],[348,35],[160,235],[224,235],[288,235]].some(([p,q])=>(Math.abs(x-p)<=1&&y===q)||(x===p&&Math.abs(y-q)<=1)))col=pTH[2];
             if(!frameO(x,y-2)||!frameO(x-2,y))col=mixc(pTH[0],'#ffffff',.65);if(NB2.some(([p,q])=>Math.abs(p)+Math.abs(q)<=2&&!frameO(x+p,y+q)))col=C.out}}
         else{ // 조이콘 위 조작부
-          if(dp(x,y)){const a=arrow(x,y),edge=NB2.some(([p,q])=>Math.abs(p)+Math.abs(q)<=2&&!dp(x+p,y+q));
+          if(paintControls&&dp(x,y)){const a=arrow(x,y),edge=NB2.some(([p,q])=>Math.abs(p)+Math.abs(q)<=2&&!dp(x+p,y+q));
             col=edge?C.out:a?mixc(C.out,'#ffffff',.25):mixc('#ffffff',C.body[2],(y-77)/70*.6);
             if(!edge&&(!dp(x,y-2)||!dp(x-2,y)))col='#ffffff';if(Math.hypot(x+.5-DC[0],y+.5-DC[1])<5)col=mixc(C.body[1],C.out,.25)}
-          else if(dp(x,y,5))col=mixc(C.depth2,C.out,.3);
-          for(const [cx,cy,r,key,ic] of BT){const d=Math.hypot(x+.5-cx,y+.5-cy),dd=Math.hypot(x+.5-cx,y+.5-cy-4);
+          else if(paintControls&&dp(x,y,5))col=mixc(C.depth2,C.out,.3);
+          if(paintControls)for(const [cx,cy,r,key,ic] of BT){const d=Math.hypot(x+.5-cx,y+.5-cy),dd=Math.hypot(x+.5-cx,y+.5-cy-4);
             if(d<=r){const fill=C.btn[key],nd=d/r,tl=(-(x+.5-cx)*.5-(y+.5-cy)*.85)/r;
               col=mixc(fill,'#ffffff',.18+.35*tl);if(nd>.82)col=mixc(fill,C.out,.45);if(y+.5-cy>r*.35&&nd>.55)col=mixc(col,C.out,.15);
               if(((x+.5-(cx-r*.38))/(r*.3))**2+((y+.5-(cy-r*.5))/(r*.17))**2<=1)col='#ffffff';
@@ -848,21 +850,49 @@ function makeEgg(th,sk){
   }
   k.putImageData(img,0,0);return cv;
 }
-const shellCache={};let shellKey='';
+const shellCache={},shellRasterCache={},shellBlankRasterCache={};let shellKey='';
+
+function renderControllerForeground(full,plain){
+ const host=$('btns');
+ if(!host||MODE!=='console'||!full||!plain)return;
+ let layer=host.querySelector('.controller-art-front');
+ if(!layer){
+  layer=document.createElement('canvas');
+  layer.className='controller-art-front';
+  layer.setAttribute('aria-hidden','true');
+  host.prepend(layer);
+ }
+ if(layer.width!==GD.W)layer.width=GD.W;
+ if(layer.height!==GD.H)layer.height=GD.H;
+ const context=layer.getContext('2d');
+ const whole=full.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
+ const background=plain.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
+ const pixels=context.createImageData(GD.W,GD.H);
+ // Only the actual changed button pixels are overlaid. Never copy
+ // surrounding rectangular shell pixels or paint the same button twice.
+ for(let i=0;i<whole.length;i+=4){
+  if(whole[i]===background[i]&&whole[i+1]===background[i+1]
+    &&whole[i+2]===background[i+2]&&whole[i+3]===background[i+3])continue;
+  pixels.data[i]=whole[i];pixels.data[i+1]=whole[i+1];
+  pixels.data[i+2]=whole[i+2];pixels.data[i+3]=whole[i+3];
+ }
+ context.clearRect(0,0,GD.W,GD.H);
+ context.putImageData(pixels,0,0);
+}
+
 function applyShell(){
   const th=skyNow();shellKey=MODE+skin+th;
-  if(!shellCache[shellKey]){let c=MODE==='console'?makeConsole(th,skin):makeEgg(th,skin);shellCache[shellKey]='url('+c.toDataURL()+')'}
+  if(!shellCache[shellKey]){let c=MODE==='console'?makeConsole(th,skin):makeEgg(th,skin);shellRasterCache[shellKey]=c;const plain=MODE==='console'?makeConsole(th,skin,false):c;shellBlankRasterCache[shellKey]=plain;shellCache[shellKey]='url('+plain.toDataURL()+')'}
   $('dev').style.setProperty('--shell',shellCache[shellKey]);
+  renderControllerForeground(shellRasterCache[shellKey],shellBlankRasterCache[shellKey]);
 }
 
 // ===== 기기 배치: 세로 폰 = 다마고치, 가로 화면·컴퓨터 = 게임기 =====
 const DEVS={
  egg:{W:200,H:264,bez:[41,84,118,118],mg:0,rw:128,stw:176,
    btn:[['FEED',72,230,13.5,0,'먹이'],['OK',100,234,13.5,0,'확인 (길게: 뒤로)'],['PLAY',128,230,13.5,0,'놀이']]},
- console:{W:448,H:262,bez:[96,48,256,194],mg:4,rw:170,stw:234,
-   btn:[['L',45,99,13,0,'위'],['R',45,145,13,0,'아래'],['L',22,122,13,0,'왼쪽'],['R',68,122,13,0,'오른쪽'],
-        ['OK',425,118,15,0,'A 확인'],['BACK',404.5,139,15,0,'B 뒤로'],['MENU',404.5,97,15,0,'X 메뉴'],['HOME',384,118,15,0,'Y 홈'],
-        ['FEED',63,215,17,0,'먹이 (길게: 간식 고르기)'],['PLAY',385,215,17,0,'놀이']]}
+ console:{W:448,H:262,bez:[104,52,240,180],mg:4,rw:170,stw:234,
+   btn:[["U",50,101,10.6,0,"위"],["D",50,143,10.6,0,"아래"],["L",29,122,10.6,0,"왼쪽"],["R",71,122,10.6,0,"오른쪽"],["OK",422,122,14,0,"A 확인"],["BACK",398,152,14,0,"B 뒤로"],["MENU",398,92,14,0,"X 메뉴"],["HOME",374,122,14,0,"Y 홈"],["FEED",64,196,17,0,"먹이 (길게: 간식 고르기)"],["PLAY",384,196,17,0,"놀이"]]}
 };
 let MODE='',GD=null;
 const pickMode=()=>{const w=innerWidth,h=innerHeight;return (w>h&&w>=560)||w>=900?'console':'egg'};
@@ -1135,18 +1165,47 @@ let SND=true;try{SND=localStorage.getItem('pikaSnd')!=='0'}catch(e){}
 let AC=null;function beep(f,d){if(!SND)return;d=d||.06;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=f;g.gain.value=.025;o.connect(g);g.connect(AC.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.stop(AC.currentTime+d)}catch(e){}}
 let FH=false;try{FH=!!localStorage.getItem('pikaFH')}catch(e){}
 function feedHint(){if(FH)return;FH=true;try{localStorage.setItem('pikaFH','1')}catch(e){}setTimeout(()=>say('꾹 누르면 간식도 있어!'),1500)}
+// Physical controls own a pointer gesture; compatibility click never runs it twice.
 function bindBtn(b,k){
-  b.addEventListener('pointerdown',()=>beep(k==='OK'?660:k==='HOME'?440:540));
-  if(k!=='OK'&&k!=='FEED'){b.onclick=()=>input(k);return}
-  let t=0,lp=false;
-  b.addEventListener('pointerdown',()=>{lp=false;t=setTimeout(()=>{lp=true;input(k==='OK'?'BACK':'FEEDMENU')},550)});
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>clearTimeout(t)));
-  b.addEventListener('contextmenu',e=>e.preventDefault());
-  b.addEventListener('click',()=>{if(lp){lp=false;return}input(k)});
+ let press=null,ignoreClick=false;
+ const clear=()=>{if(press)clearTimeout(press.timer);press=null;b.classList.remove('is-pressed');};
+ const cancel=()=>{clear();ignoreClick=true;};
+ b.addEventListener('pointerdown',e=>{
+  if(e.button!==0||press||b.disabled)return;
+  e.preventDefault();ignoreClick=false;
+  beep(k==='OK'?660:k==='HOME'?440:540);
+  const p=press={id:e.pointerId,screen:scr(),long:false};
+  b.setPointerCapture(e.pointerId);b.classList.add('is-pressed');
+  if(k==='OK'||k==='FEED')p.timer=setTimeout(()=>{
+   if(press!==p||scr()!==p.screen)return;
+   p.long=true;input(k==='OK'?'BACK':'FEEDMENU');
+  },550);
+ });
+ b.addEventListener('pointerup',e=>{
+  if(!press||e.pointerId!==press.id)return;
+  const p=press,r=b.getBoundingClientRect();
+  const inside=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom;
+  clear();ignoreClick=true;
+  if(!p.long&&inside&&scr()===p.screen&&!b.disabled)input(k);
+ });
+ b.addEventListener('pointermove',e=>{
+  if(!press||e.pointerId!==press.id)return;
+  const r=b.getBoundingClientRect();
+  if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cancel();
+ });
+ b.addEventListener('pointercancel',e=>{if(press&&e.pointerId===press.id)cancel();});
+ b.addEventListener('lostpointercapture',()=>{if(press)cancel()});
+ b.addEventListener('contextmenu',e=>e.preventDefault());
+ b.addEventListener('click',e=>{
+  // detail=0 is keyboard/assistive activation, with no pointerup counterpart.
+  if(ignoreClick&&e.detail!==0){ignoreClick=false;return;}
+  if(!b.disabled)input(k);
+ });
 }
+
 addEventListener('keydown',e=>{
   if(e.target.closest?.('input,textarea,select,[contenteditable]'))return;
-  const k={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'L',ArrowDown:'R',Enter:'OK',' ':'OK',Escape:'BACK',Backspace:'BACK',h:'HOME',b:'BOOK',m:'MENU',f:'FEED',F:'FEEDMENU',p:'PLAY'}[e.key];
+  const k={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D',Enter:'OK',' ':'OK',Escape:'BACK',Backspace:'BACK',h:'HOME',b:'BOOK',m:'MENU',f:'FEED',F:'FEEDMENU',p:'PLAY'}[e.key];
   if(!k)return;if(k==='OK'&&e.target.closest&&e.target.closest('button'))return;e.preventDefault();input(k);
 });
 $('lcd').addEventListener('click',e=>{
