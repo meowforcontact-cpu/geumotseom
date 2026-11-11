@@ -3,22 +3,32 @@ const whitewoodFurnitureImages={};
 for(const [id,url] of Object.entries(WHITEWOOD_ASSETS.furniture)){const image=new Image();image.onload=()=>{QK='';render()};image.src=url;whitewoodFurnitureImages[id]=image;}
 for(const product of FURNITURE_CATALOG){const im=new Image();im.onload=()=>{QK='';render()};im.src=FURNITURE_URLS[product.id];furnitureImages[product.id]=im;}
 function furnitureIcon(id,px,cls){return '<img class="furniture-art '+(cls||'')+'" alt="" src="'+FURNITURE_URLS[id]+'" style="width:'+px+'px;height:'+px+'px;object-fit:contain">'}
+// Rendering and hit testing share the same rectangle; furniture is never resized by theme choice.
+function furnitureRenderBounds(id, position){
+ const product=item(id);
+ if(!product||product.retired)return null;
+ const [w,h]=product.size||[FS,FS];
+ const p=position||state.pos[id]||[32,106-h];
+ const whitewood=isWhitewoodRoom();
+ const factor=whitewood?.78:1;
+ const width=Math.max(8,Math.round(w*factor));
+ const height=Math.max(8,Math.round(h*factor));
+ const roomLeft=Math.round((RW-(RW>200?216:192))/2)+6;
+ const roomRight=RW-roomLeft-6;
+ const x=whitewood?Math.max(roomLeft,Math.min(roomRight-width,p[0]+DX+(w-width)/2)):p[0]+DX;
+ const y=whitewood?Math.max(34,Math.min(124-height,p[1]+h-height)):p[1];
+ return {x:Math.round(x),y:Math.round(y),width,height,sourceWidth:w,sourceHeight:h};
+}
 function drawFurniture(k,id){
  const product=item(id),image=furnitureImages[id];
  if(!product||product.retired||!image?.complete||!image.naturalWidth)return;
- const [w,h]=product.size||[FS,FS],p=furnitureEdit?.id===id?furnitureEdit.draft:state.pos[id]||[32,106-h];
- const art=isWhitewoodRoom()?(whitewoodFurnitureImages[id]||image):image;
- k.imageSmoothingEnabled=false;
- // Do not run PixelLab art through the old smoothing/outline-quantization filter.
  const whitewood=isWhitewoodRoom();
- const factor=whitewood?.78:1;
- const drawW=Math.max(8,Math.round(w*factor)),drawH=Math.max(8,Math.round(h*factor));
- // Keep the original furniture foot position while fitting art inside the room.
- const roomLeft=Math.round((RW-(RW>200?216:192))/2)+6;
- const roomRight=RW-roomLeft-6;
- const px=whitewood?Math.max(roomLeft,Math.min(roomRight-drawW,p[0]+DX+(w-drawW)/2)):p[0]+DX;
- const py=whitewood?Math.max(34,Math.min(124-drawH,p[1]+h-drawH)):p[1];
- k.drawImage(whitewood?art:styleRoomArt(image,w,h),Math.round(px),Math.round(py),drawW,drawH);
+ const art=whitewood?(whitewoodFurnitureImages[id]?.naturalWidth?whitewoodFurnitureImages[id]:image):image;
+ const b=furnitureRenderBounds(id,furnitureEdit?.id===id?furnitureEdit.draft:null);
+ if(!b)return;
+ k.imageSmoothingEnabled=false;
+ // The size, position and hit area must agree on touch devices.
+ k.drawImage(whitewood?art:styleRoomArt(image,b.sourceWidth,b.sourceHeight),b.x,b.y,b.width,b.height);
 }
 shopBody=function(s){
  const its=shopItems(s),n=CATS.length,c=s.cur,offset=c>=n&&c<n+its.length?Math.floor((c-n)/4)*4:0;
