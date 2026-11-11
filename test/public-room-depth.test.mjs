@@ -8,7 +8,7 @@ function harness(){
  const images={a:art(),b:art()},avatar=art(),calls=[];
  const state={eq:{가구:['b','a']},pos:{a:[0,10],b:[0,30]},poop:[]};
  const ctx=vm.createContext({state,cat:{x:0,y:100,tx:0,ty:100,t:0,wait:30},furnitureEdit:null,FS:32,FLOOR:106,RW:128,calm:true,anim:null,
-  furnitureImages:images,whitewoodFurnitureImages:images,item:id=>({id,size:[40,80]}),isWhitewoodRoom:()=>true,
+  furnitureImages:images,whitewoodFurnitureImages:images,item:id=>({id,size:[40,80]}),isWhitewoodRoom:()=>true,isPinkAtticRoom:()=>false,
   furnitureRenderBounds:(id,p)=>({x:(p||state.pos[id])[0],y:(p||state.pos[id])[1],width:40,height:80}),
   stage:()=> 'child',expr:()=> 'normal',pet:()=>({kind:'cat'}),sprite:()=>avatar,
   drawFurniture:(_,id)=>calls.push(id),drawPet:()=>calls.push('pet'),put:()=>calls.push('poop'),poopX:x=>x,S:{ipoop:{}},
@@ -63,3 +63,4 @@ test('movement advances before ordering, and rendering never advances it again',
  h.run('anim={type:"pet"};advanceRoomPetForDepth()');
  assert.equal(h.run('cat.x'),x);assert.equal(h.run('cat.y'),y);
 });
+

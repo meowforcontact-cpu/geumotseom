@@ -66,6 +66,9 @@ replace('const E1=[[84,38],[112,-6],[148,30]]','const E1=[[84,38],[112,0],[148,3
 // The room remains square, and physical buttons sit outside the frame.
 // Drawing coordinates are shifted down by OY=10 in makeConsole().
 replace('bez:[96,48,256,194]','bez:[104,52,240,180]');
+// The former panel extended to x=362 and swallowed the left edge of HOME
+// (centre 374, radius 14) before the controls could be rasterized.
+replace('const inPanel=x>=86&&x<=362;','const inPanel=x>=96&&x<=352;');
 replace('rr(x,y,90,32,358,238,10),hole=(x,y)=>x>=98&&x<=349&&y>=40&&y<=229',
  'rr(x,y,96,34,352,232,10),hole=(x,y)=>x>=104&&x<=343&&y>=42&&y<=221');
 replace('rr(x,y,95,37,353,233,7)','rr(x,y,100,38,348,228,7)');
@@ -265,3 +268,4 @@ await mkdir('outputs',{recursive:true});
 await writeFile('outputs/그못섬-오프라인-체험판.html',offline);
 await import('./integration/build-worker.mjs');
 console.log('Built restored original UI with compatible local saves.');
+

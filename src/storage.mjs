@@ -64,26 +64,15 @@ const SHOWROOM_FURNITURE_V4=['cream_f1','cream_f3','cream_f4','cream_f9','cream_
 const SHOWROOM_FURNITURE=Object.keys(DEFAULT_FURNITURE_LAYOUT);
 export function ensureFurnitureLayout(state,items){
  if(!items.some(i=>i.id==='cream_tea_table'))return false;
- const retired=new Set(items.filter(i=>i.cat==='가구'&&i.retired).map(i=>i.id));
- const ownedBefore=state.owned.length,equippedBefore=state.eq.가구.length;
- state.owned=state.owned.filter(id=>!retired.has(id));
- state.eq.가구=state.eq.가구.filter(id=>!retired.has(id));
- if(state.furnitureLayoutVersion===5)
-  return ownedBefore!==state.owned.length||equippedBefore!==state.eq.가구.length;
- const oldVersion=state.furnitureLayoutVersion;
- const previous=oldVersion===1?LAYOUT_V1:oldVersion===2?LAYOUT_V2:oldVersion===3?LAYOUT_V3:LAYOUT_V4;
- const eqOriginal=oldVersion===4?SHOWROOM_FURNITURE_V4:oldVersion===3?SHOWROOM_FURNITURE_V3:Object.keys(LAYOUT_V2);
- const defaultEquipment=state.eq.가구.length===eqOriginal.length
-  &&state.eq.가구.every(id=>eqOriginal.includes(id));
+ if(state.furnitureLayoutVersion===6)return false;
+ // Start the new room arrangement with everything in the bag. Existing
+ // ownership, saved positions and purchase history remain recoverable.
  for(const [id,pos] of Object.entries(DEFAULT_FURNITURE_LAYOUT)){
-  if((!oldVersion||defaultEquipment)&&!state.owned.includes(id))state.owned.push(id);
-  const saved=state.pos[id],prev=previous[id];
-  if(!oldVersion||!saved||(prev&&saved[0]===prev[0]&&saved[1]===prev[1]))
-   state.pos[id]=[...pos];
+  if(!state.furnitureLayoutVersion&&!state.owned.includes(id))state.owned.push(id);
+  if(!state.pos[id])state.pos[id]=[...pos];
  }
- if(!oldVersion||defaultEquipment)
-  state.eq.가구=[...SHOWROOM_FURNITURE];
- state.furnitureLayoutVersion=5;
+ state.eq.가구=[];
+ state.furnitureLayoutVersion=6;
  return true;
 }
 export function validateSave(value, items) {
@@ -132,7 +121,7 @@ export function validateSave(value, items) {
     }
   }
   if(s.furnitureLayoutVersion!==undefined){
-    if(![1,2,3,4,5].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
+    if(![1,2,3,4,5,6].includes(s.furnitureLayoutVersion))throw Error('가구 배치를 읽을 수 없어요.');
     result.furnitureLayoutVersion=s.furnitureLayoutVersion;
   }
   ensureFurnitureLayout(result,items);
@@ -175,3 +164,4 @@ export function purchase(state, product) {
   if (!integer(product.price,0,100000000) || state.coins < product.price) throw Error('냐냐냥이 부족해요.');
   return {coins:state.coins-product.price,owned:[...state.owned,product.id]};
 }
+
