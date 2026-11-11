@@ -21,11 +21,9 @@ replace("  $('dev').style.width=Math.max(220,w)+'px';fitLCD();",
 // The shell image used to contain buttons, so changing z-index alone could
 // never raise their artwork above a bezel or any overlapping LCD decoration.
 const controlForegroundCode = `
-// Render only genuine D-pad/button pixels above the bezel, never square pieces
-// of the console background. Adjacent buttons must not erase each other.
-function renderControllerForeground(source){
+function renderControllerForeground(full,plain){
  const host=$('btns');
- if(!host||MODE!=='console'||!source)return;
+ if(!host||MODE!=='console'||!full||!plain)return;
  let layer=host.querySelector('.controller-art-front');
  if(!layer){
   layer=document.createElement('canvas');
@@ -36,38 +34,33 @@ function renderControllerForeground(source){
  if(layer.width!==GD.W)layer.width=GD.W;
  if(layer.height!==GD.H)layer.height=GD.H;
  const context=layer.getContext('2d');
- const sourcePixels=source.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
- const output=context.createImageData(GD.W,GD.H);
- const copyPixel=(x,y)=>{
-  const i=(y*GD.W+x)*4;
-  output.data[i]=sourcePixels[i];
-  output.data[i+1]=sourcePixels[i+1];
-  output.data[i+2]=sourcePixels[i+2];
-  output.data[i+3]=sourcePixels[i+3];
- };
- // The left cross is isolated from the screen and the other buttons.
- for(let y=80;y<172;y++)for(let x=9;x<92;x++)copyPixel(x,y);
- // Extract the actual circular button and its 4px lower shadow with an
- // exact pixel mask. Do not copy any surrounding rectangular background.
- for(const [key,cx,cy,r] of GD.btn){
-  if(!['OK','BACK','MENU','HOME','FEED','PLAY'].includes(key))continue;
-  const x0=Math.max(0,Math.floor(cx-r-2)),x1=Math.min(GD.W,Math.ceil(cx+r+2));
-  const y0=Math.max(0,Math.floor(cy-r-2)),y1=Math.min(GD.H,Math.ceil(cy+r+6));
-  for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
-   const dx=x+.5-cx,dy=y+.5-cy;
-   const onFace=dx*dx+dy*dy<=(r+.25)*(r+.25);
-   const onShadow=dy>0&&dx*dx+(dy-4)*(dy-4)<=(r+.75)*(r+.75);
-   if(onFace||onShadow)copyPixel(x,y);
-  }
+ const whole=full.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
+ const background=plain.getContext('2d').getImageData(0,0,GD.W,GD.H).data;
+ const pixels=context.createImageData(GD.W,GD.H);
+ // Only the actual changed button pixels are overlaid. Never copy
+ // surrounding rectangular shell pixels or paint the same button twice.
+ for(let i=0;i<whole.length;i+=4){
+  if(whole[i]===background[i]&&whole[i+1]===background[i+1]
+    &&whole[i+2]===background[i+2]&&whole[i+3]===background[i+3])continue;
+  pixels.data[i]=whole[i];pixels.data[i+1]=whole[i+1];
+  pixels.data[i+2]=whole[i+2];pixels.data[i+3]=whole[i+3];
  }
- context.putImageData(output,0,0);
+ context.clearRect(0,0,GD.W,GD.H);
+ context.putImageData(pixels,0,0);
 }
 `;
 replace("function applyShell(){", controlForegroundCode+"\nfunction applyShell(){");
-replace("const shellCache={};let shellKey='';","const shellCache={},shellRasterCache={};let shellKey='';");
-replace("shellCache[shellKey]='url('+c.toDataURL()+')'","shellRasterCache[shellKey]=c;shellCache[shellKey]='url('+c.toDataURL()+')'");
+replace("const shellCache={};let shellKey='';","const shellCache={},shellRasterCache={},shellBlankRasterCache={};let shellKey='';");
+replace("shellCache[shellKey]='url('+c.toDataURL()+')'","shellRasterCache[shellKey]=c;const plain=MODE==='console'?makeConsole(th,skin,false):c;shellBlankRasterCache[shellKey]=plain;shellCache[shellKey]='url('+plain.toDataURL()+')'");
 replace("  $('dev').style.setProperty('--shell',shellCache[shellKey]);",
- "  $('dev').style.setProperty('--shell',shellCache[shellKey]);\n  renderControllerForeground(shellRasterCache[shellKey]);");
+ "  $('dev').style.setProperty('--shell',shellCache[shellKey]);\n  renderControllerForeground(shellRasterCache[shellKey],shellBlankRasterCache[shellKey]);");
+// Paint the console body without physical controls; the foreground layer
+// receives only the pixel difference between a complete and plain shell.
+// This avoids double-painting, rectangular D-pad copies and scale-dependent seams.
+replace("function makeConsole(th,sk){","function makeConsole(th,sk,paintControls=true){");
+replace("if(dp(x,y)){const a=arrow(x,y)","if(paintControls&&dp(x,y)){const a=arrow(x,y)");
+replace("else if(dp(x,y,5))col=","else if(paintControls&&dp(x,y,5))col=");
+replace("for(const [cx,cy,r,key,ic] of BT){","if(paintControls)for(const [cx,cy,r,key,ic] of BT){");
 replace('const E1=[[84,38],[112,-6],[148,30]]','const E1=[[84,38],[112,0],[148,30]]');
 // 4:3 landscape LCD: 240x180 inside the existing 448x262 console.
 // The room remains square, and physical buttons sit outside the frame.
