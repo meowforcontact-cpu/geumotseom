@@ -72,3 +72,5 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
 .mission-economy-list{font-size:8px;line-height:12px;border-bottom:1px dotted var(--dash);padding:3px}
 .mission-economy-list>div,.mission-line{display:flex;justify-content:space-between;gap:4px;padding:2px}
 .mission-economy-list span{white-space:nowrap}
+
+.shop-policy-note{display:flex;flex-direction:column;justify-content:center;min-height:76px;padding:6px 4px;border:1px dotted var(--dash);background:var(--cell);color:var(--ink);font:9px/17px Galmuri9,monospace;text-align:center}
