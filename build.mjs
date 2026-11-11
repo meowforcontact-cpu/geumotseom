@@ -119,7 +119,7 @@ const start=html.indexOf('// 서버 연동 지점:');
 const end=html.indexOf('\nconst state=',start);
 if(start<0||end<0)throw Error('상점 경계 없음');
 html=html.slice(0,start)+`const ShopAPI={mode:'demo',async load(){return {coins:1500,earned:1000,owned:['m1']}},async buy(id){return purchase(state,item(id))}};\n`+html.slice(end);
-replace('const state=',`const FURNITURE_CATALOG=${JSON.stringify(furnitureCatalog)};\nconst FURNITURE_URLS=${JSON.stringify(furnitureUrls)};\nITEMS.filter(i=>i.cat==='가구').forEach(i=>i.retired=true);ITEMS.push(...FURNITURE_CATALOG);\nITEMS.find(i=>i.id==='t1').retired=true;ITEMS.find(i=>i.id==='p1').price=0;ITEMS.find(i=>i.id==='p1').only='일일 미션 3개 완수 누적 15일 보상';\nITEMS.push(...${JSON.stringify(titlePolicyProducts)});\nconst state=`);
+replace('const state=',`const FURNITURE_CATALOG=${JSON.stringify(furnitureCatalog)};\nconst FURNITURE_URLS=${JSON.stringify(furnitureUrls)};\nITEMS.filter(i=>i.cat==='가구').forEach(i=>i.retired=true);ITEMS.push(...FURNITURE_CATALOG);\nITEMS.find(i=>i.id==='t1').retired=true;ITEMS.find(i=>i.id==='p1').price=0;ITEMS.find(i=>i.id==='p1').only='일일 미션 3개 완수 누적 15일 보상';\nITEMS.push(...${JSON.stringify(PET_PRODUCTS)});\nITEMS.push(...${JSON.stringify(titlePolicyProducts)});\nconst state=`);
 replace('<script>',`<style>${await readFile('src/ui-phase1.css','utf8')}</style>`+'<script type="module">\nimport {KEY,day,validateSave,snapshot,purchase,ensureDaily,recordDailyAction,syncAttendance,claimAttendance,ensureFurnitureLayout,needsStarterPet,claimStarterPet} from "./storage.mjs";');
 replace("startAnim('eat',18);return say('냠냠!')", "recordDaily('feed');startAnim('eat',18);return say('냠냠!')");
 replace("startAnim('play',20);return say('신난다!')", "recordDaily('play');startAnim('play',20);return say('신난다!')");
