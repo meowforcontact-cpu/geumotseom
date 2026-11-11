@@ -4,7 +4,15 @@ furnitureTools.className='furniture-tools';furnitureTools.hidden=true;
 furnitureTools.setAttribute('role','group');furnitureTools.setAttribute('aria-label','가구 위치 편집');
 furnitureTools.innerHTML='<button type="button" data-edit="done">완료</button><button type="button" data-edit="store">보관</button><button type="button" data-edit="bag">가구 가방</button><button type="button" data-edit="cancel">취소</button>';
 $('lcdwrap').append(furnitureTools);
-const roomPoint=e=>{const r=rc.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width*RW,y:(e.clientY-r.top)/r.height*RH}};
+const roomPoint=e=>{
+ const r=rc.getBoundingClientRect();
+ let x=(e.clientX-r.left)/r.width*RW,y=(e.clientY-r.top)/r.height*RH;
+ if(isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park'){
+  const view=whitewoodRoomView();
+  x=(x-view.x)/view.scale;y=(y-view.y)/view.scale;
+ }
+ return {x,y};
+};
 function roomFurnitureAt(x,y){
  return [...state.eq.가구].reverse().find(id=>{
   const b=furnitureRenderBounds(id,furnitureEdit?.id===id?furnitureEdit.draft:null);
@@ -41,15 +49,12 @@ function moveFurnitureDraft(press,p){
  if(!b)return;
  const whitewood=isWhitewoodRoom();
  const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
- const left=whitewood?Math.max(2,Math.round((RW-(RW>200?216:192))/2)+6):0;
- const right=whitewood?Math.min(RW-2,RW-Math.round((RW-(RW>200?216:192))/2)-6):RW;
+ const left=whitewood?3:0,right=whitewood?125:RW;
  const minY=whitewood?34:55-b.height;
- const maxY=whitewood?124-b.height:RH-b.height;
+ const maxY=whitewood?125-b.height:RH-b.height;
  const x=clamp(p.x-press.offset[0],left,Math.max(left,right-b.width));
  const y=clamp(p.y-press.offset[1],minY,Math.max(minY,maxY));
- const dx=whitewood?(b.sourceWidth-b.width)/2:0;
- const dy=whitewood?b.sourceHeight-b.height:0;
- furnitureEdit.draft=[Math.round(x-DX-dx),Math.round(y-dy)];
+ furnitureEdit.draft=[Math.round(x-(whitewood?0:DX)),Math.round(y)];
  QK='';
 }
 rc.addEventListener('pointerdown',e=>{
@@ -63,7 +68,7 @@ rc.addEventListener('pointerdown',e=>{
   if(furnitureEdit)beginFurnitureDrag(roomPress,id);
   else roomPress.timer=setTimeout(()=>{if(roomPress?.pointer===e.pointerId)beginFurnitureDrag(roomPress,id)},450);
  }else{
-  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=FLOOR-size;
+  const size=stage()==='egg'?34:38,px=cat.x+(64-size)/2,py=FLOOR-size+(isWhitewoodRoom()?14:0);
   if(!furnitureEdit&&p.x>=px&&p.x<px+size&&p.y>=py&&p.y<py+size){
    roomPress.pet=true;roomPress.active=true;
   }else if(!furnitureEdit){
