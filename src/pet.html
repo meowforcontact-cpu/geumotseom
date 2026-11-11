@@ -27,6 +27,11 @@ body{min-height:100svh;overflow:hidden;background:radial-gradient(var(--dotc) 1.
 .lcdwrap::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:linear-gradient(135deg,rgba(255,255,255,.26) 0,rgba(255,255,255,0) 26%),linear-gradient(90deg,transparent calc(100% - 1px),var(--scan) 0) 0 0/calc(100%/64) 100%,linear-gradient(transparent calc(100% - 1px),var(--scan) 0) 0 0/100% calc(100%/64);box-shadow:inset 0 0 10px var(--vig)}
 #room{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:block;touch-action:manipulation}
 .btns{position:absolute;inset:0;z-index:3;pointer-events:none}
+/* Match the transparent controller artwork to the shell's 448x262 raster.
+   Without this, canvas uses its intrinsic 448px CSS width even when the
+   handheld is scaled, leaving square patches across the round buttons. */
+.btns>.controller-art-front{position:absolute;inset:0;display:block;width:100%;height:100%;image-rendering:pixelated;pointer-events:none;z-index:0}
+.btns>.eb{z-index:1}
 .eb{position:absolute;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:auto;border:0;border-radius:50%;background:transparent;cursor:pointer;display:grid;place-items:center;padding:0;
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .eb:hover{background:rgba(255,255,255,.3)}
