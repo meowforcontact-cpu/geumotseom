@@ -12,11 +12,9 @@ function furnitureRenderBounds(id, position){
  const whitewood=isWhitewoodRoom(),factor=1;
  const width=Math.max(8,Math.round(w*factor));
  const height=Math.max(8,Math.round(h*factor));
- const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
- // The room boundary is the only placement limit; wall area and furniture overlap are allowed.
- const x=whitewood?clamp(p[0],0,Math.max(0,whitewoodWorldWidth()-width)):clamp(p[0]+DX,0,Math.max(0,RW-width));
- const y=clamp(p[1],0,Math.max(0,RH-height));
- return {x:Math.round(x),y:Math.round(y),width,height,sourceWidth:w,sourceHeight:h};
+ // Floor furniture uses a foot anchor; wall-mounted pieces remain on the wall.
+ const [x,y]=roomPlacementPosition(id,width,height,p[0]+(whitewood?0:DX),p[1],whitewood?whitewoodWorldWidth():RW,RH);
+ return {x,y,width,height,sourceWidth:w,sourceHeight:h};
 }
 function drawFurniture(k,id){
  const product=item(id),image=furnitureImages[id];

@@ -139,12 +139,9 @@ function moveFurnitureDraft(press,p){
  const b=furnitureRenderBounds(furnitureEdit.id,furnitureEdit.draft);
  if(!b)return;
  const whitewood=isWhitewoodRoom();
- const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
- // Keep the complete furniture sprite inside the room, without any other placement restriction.
  const maxX=whitewood?whitewoodWorldWidth():RW;
- const x=clamp(p.x-press.offset[0],0,Math.max(0,maxX-b.width));
- const y=clamp(p.y-press.offset[1],0,Math.max(0,RH-b.height));
- furnitureEdit.draft=[Math.round(x-(whitewood?0:DX)),Math.round(y)];
+ const [x,y]=roomPlacementPosition(furnitureEdit.id,b.width,b.height,p.x-press.offset[0],p.y-press.offset[1],maxX,RH);
+ furnitureEdit.draft=[x-(whitewood?0:DX),y];
  QK='';
 }
 rc.addEventListener('pointerdown',e=>{
@@ -177,7 +174,7 @@ rc.addEventListener('pointermove',e=>{
    const inset=(64-(stage()==='egg'?34:38))/2;
    const right=(isWhitewoodRoom()&&roomAssetsReady()&&placeNow().place!=='park'?whitewoodWorldWidth():RW);
    cat.x=cat.tx=Math.round(Math.max(-inset,Math.min(right-64+inset,p.x-roomPress.petOffset[0]-32)));
-   cat.y=cat.ty=Math.round(Math.max(45,Math.min(124,p.y-roomPress.petOffset[1]+(stage()==='egg'?17:19))));
+   cat.y=cat.ty=Math.round(Math.max(roomFloorBackY(RH),Math.min(124,p.y-roomPress.petOffset[1]+(stage()==='egg'?17:19))));
    anim={type:'play',t:20};suppressRoomClick=true;e.preventDefault();
   }
   return;

@@ -9,7 +9,7 @@ function advanceRoomPetForDepth(){
  }else if(--cat.wait<0){
   const inset=(64-38)/2;
   cat.tx=-inset+Math.random()*(RW-64+2*inset);
-  cat.ty=45+Math.random()*79;cat.wait=20+Math.floor(Math.random()*35);
+  cat.ty=roomFloorBackY(RH)+Math.random()*(124-roomFloorBackY(RH));cat.wait=20+Math.floor(Math.random()*35);
  }
 }
 function sortRoomDepthEntries(entries){

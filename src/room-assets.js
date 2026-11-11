@@ -113,8 +113,8 @@ function drawDetailedRoom(){
   const inset=(64-(stage()==='egg'?34:38))/2;
   cat.x=Math.max(-inset,Math.min(RW-64+inset,cat.x));
   cat.tx=Math.max(-inset,Math.min(RW-64+inset,cat.tx));
-  cat.y=Math.max(45,Math.min(124,cat.y));
-  cat.ty=Math.max(45,Math.min(124,cat.ty));
+  cat.y=Math.max(roomFloorBackY(RH),Math.min(124,cat.y));
+  cat.ty=Math.max(roomFloorBackY(RH),Math.min(124,cat.ty));
   try{scene(true);drawFurnitureSelection(bx)}
   finally{RW=savedRW;DX=savedDX;bx.restore()}
  }else{
