@@ -267,142 +267,110 @@ body,.st,.st *,.eb,.account-status,.account-loading,.account-loading *{font-fami
   background:#fbf0f3;border-bottom-color:#cca6ba;color:#82506f
 }
 
-/* Landscape-first 2026-11 notebook menu. Two pages: profile/actions 40%, menu 60%. */
+/* Binder main menu: profile and daily actions on left, 3x3 category navigation on right. */
 .diary-host .bd:has(.landscape-diary){padding:2px 3px!important;min-height:0;overflow:hidden!important}
 .landscape-diary,.landscape-diary *{box-sizing:border-box}
 .landscape-diary{
  --diary-paper:#fbfdff;--diary-blue:#e7f1fc;--diary-line:#93b4d7;--diary-ink:#3b5c83;
  position:relative;isolation:isolate;display:grid;
- grid-template-columns:minmax(0,2fr) 11px minmax(0,3fr);
- width:100%;height:100%;min-width:0;min-height:0;
- overflow:hidden;background:var(--diary-paper);color:var(--diary-ink);
- border:1px solid var(--diary-line);font:9px/12px Galmuri9,monospace;
+ grid-template-columns:minmax(0,2fr) 10px minmax(0,3fr);
+ width:calc(100% - 11px);height:100%;min-width:0;min-height:0;margin-right:11px;
+ overflow:visible;background:var(--diary-paper);color:var(--diary-ink);
+ border:1px solid var(--diary-line);box-shadow:1px 1px 0 #d2e3f5;
+ font:9px/12px Galmuri9,monospace
 }
 :root[data-skin="pink"] .landscape-diary{--diary-paper:#fffbfd;--diary-blue:#faeaf4;--diary-line:#d8a9c5;--diary-ink:#895477}
 .landscape-diary__layer{
- position:absolute;z-index:-1;inset:3px -1px -1px 1px;
- background:repeating-linear-gradient(0deg,transparent 0 7px,#abc9e624 7px 8px);
- transform:rotate(-.6deg);pointer-events:none
+ position:absolute;z-index:-1;inset:2px -1px -1px 1px;pointer-events:none;
+ background:repeating-linear-gradient(0deg,transparent 0 7px,#abc9e633 7px 8px);
+ transform:rotate(-.5deg)
 }
-.landscape-diary__left,.landscape-diary__right{position:relative;min-width:0;min-height:0;overflow:hidden}
+.landscape-diary__left,.landscape-diary__right{position:relative;min-height:0;min-width:0;overflow:hidden}
 .landscape-diary__left{
- display:flex;flex-direction:column;gap:2px;padding:3px 4px 3px 5px;
+ display:flex;flex-direction:column;gap:2px;padding:3px 4px;
  background:var(--diary-blue);border-right:1px solid var(--diary-line)
 }
-.landscape-diary__left-title{
- height:12px;min-height:12px;overflow:hidden;white-space:nowrap;
- font:8px/12px Galmuri9,monospace;letter-spacing:-.2px;
- border-bottom:1px dotted var(--diary-line);text-align:center
-}
-.landscape-diary__left-title span{font-size:7px;opacity:.65}
-.landscape-diary__identity{display:flex;flex:none;align-items:center;gap:4px;height:31px;min-height:31px}
+.landscape-diary__left-title{height:11px;flex:none;text-align:center;white-space:nowrap;overflow:hidden;border-bottom:1px dotted var(--diary-line);font:8px/11px Galmuri9,monospace}
+.landscape-diary__left-title span{font:6px/10px Galmuri9,monospace;opacity:.65}
+.landscape-diary__identity{display:flex;align-items:center;gap:4px;height:32px;flex:none}
 .landscape-diary__portrait{
- appearance:none;display:grid;place-items:center;flex:none;width:32px;height:30px;
- padding:1px;border:1px solid var(--diary-line);
- background:var(--diary-paper);color:inherit
+ appearance:none;display:grid;place-items:center;width:32px;height:30px;flex:none;
+ padding:1px;background:var(--diary-paper);color:inherit;border:1px solid var(--diary-line);
+ border-radius:0;cursor:pointer
 }
-.landscape-diary__portrait canvas{
- display:block;width:27px!important;height:27px!important;
- image-rendering:pixelated;object-fit:contain
-}
-.landscape-diary__identity-copy{display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1;gap:0}
-.landscape-diary__identity-copy small{font:7px/9px Galmuri9,monospace!important;opacity:.8}
-.landscape-diary__identity-copy strong{
- display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
- font:9px/12px Galmuri9,monospace;font-weight:400
-}
-.landscape-diary__profile-link{
- appearance:none;align-self:flex-start;background:transparent;border:0;border-bottom:1px dotted var(--diary-line);
- padding:0;color:inherit;font:7px/10px Galmuri9,monospace!important;cursor:pointer
-}
-.landscape-diary__stats{
- display:flex;flex-direction:column;flex:none;min-width:0;gap:0;padding:1px 0;
- border-top:1px dotted var(--diary-line);border-bottom:1px dotted var(--diary-line)
-}
-.landscape-diary__stat{
- display:flex;align-items:center;justify-content:space-between;gap:2px;
- min-width:0;height:13px;min-height:13px;
- font:8px/12px Galmuri9,monospace!important;white-space:nowrap
-}
+.landscape-diary__portrait canvas{width:27px!important;height:27px!important;image-rendering:pixelated}
+.landscape-diary__identity-copy{display:flex;flex-direction:column;justify-content:center;gap:2px;flex:1;min-width:0}
+.landscape-diary__identity-copy strong{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font:9px/11px Galmuri9,monospace;font-weight:400}
+.landscape-diary__profile-link{appearance:none;align-self:flex-start;border:0;border-bottom:1px dotted var(--diary-line);background:transparent;color:inherit;padding:0;font:7px/10px Galmuri9,monospace!important;cursor:pointer}
+.landscape-diary__stats{display:flex;flex-direction:column;flex:none;gap:0;border-top:1px dotted var(--diary-line);border-bottom:1px dotted var(--diary-line)}
+.landscape-diary__stat{display:flex;align-items:center;justify-content:space-between;gap:3px;height:12px;min-width:0;font:8px/12px Galmuri9,monospace!important}
 .landscape-diary__stat span{flex:none;opacity:.8}
-.landscape-diary__stat strong{
- flex:1;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;
- font:8px/12px Galmuri9,monospace!important;font-weight:400
-}
-.landscape-diary__activity-heading{
- flex:none;display:flex;justify-content:space-between;gap:2px;
- height:12px;min-height:12px;padding:1px 0 0;
+.landscape-diary__stat strong{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;font:8px/12px Galmuri9,monospace!important;font-weight:400}
+.landscape-diary__activity-heading{display:flex;justify-content:space-between;flex:none;height:12px;font:8px/11px Galmuri9,monospace!important}
+.landscape-diary__activity-heading span{font:7px/10px Galmuri9,monospace;opacity:.65}
+.landscape-diary__quick{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));flex:1;gap:2px;min-height:0;overflow:hidden}
+.landscape-diary__quick-button{
+ appearance:none;display:flex;align-items:center;gap:3px;width:100%;min-width:0;min-height:0;
+ padding:0 3px;border:1px solid var(--diary-line);border-radius:0;
+ background:var(--diary-paper);color:inherit;cursor:pointer;
  font:8px/11px Galmuri9,monospace!important;white-space:nowrap
 }
-.landscape-diary__activity-heading span{font-size:7px;opacity:.65}
-.landscape-diary__quick{
- min-height:0;display:grid;grid-template-rows:repeat(3,minmax(0,1fr));
- flex:1;gap:2px;overflow:hidden;padding:0
-}
-.landscape-diary__quick-button{
- appearance:none;display:flex;align-items:center;gap:3px;min-width:0;min-height:0;
- width:100%;padding:0 3px;background:var(--diary-paper);color:inherit;
- border:1px dotted var(--diary-line);border-radius:0;
- font:8px/12px Galmuri9,monospace!important;cursor:pointer;white-space:nowrap;
-}
-.landscape-diary__quick-button>span:nth-child(2){
- flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis
-}
+.landscape-diary__quick-button>span:nth-child(2){flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis}
 .landscape-diary__quick-button small{font:7px/10px Galmuri9,monospace!important}
 .landscape-diary__quick-icon{flex:none;display:grid;place-items:center;width:13px;height:12px}
-.landscape-diary__quick-icon canvas{width:11px!important;height:11px!important;image-rendering:pixelated}
+.landscape-diary__quick-icon canvas{width:12px!important;height:12px!important;image-rendering:pixelated}
 .landscape-diary__binding{
  position:relative;display:flex;flex-direction:column;align-items:center;
  justify-content:space-evenly;min-width:0;min-height:0;
  border-right:1px solid var(--diary-line);border-left:1px solid var(--diary-line);
- background:linear-gradient(90deg,#d6e5f3 0,#f7fcff 45%,#deebf7 100%)
+ background:#e0eaf5
 }
+:root[data-skin="pink"] .landscape-diary__binding{background:#f4e6ee}
 .landscape-diary__ring{
  position:relative;z-index:1;display:block;width:10px;height:6px;
- border:2px solid #6f98c2;border-radius:5px;background:#fbfdff;
- box-shadow:0 1px 0 #4d759b
+ border:2px solid #6f98c2;border-radius:5px;background:var(--diary-paper);box-shadow:0 1px 0 #4d759b
 }
-.landscape-diary__right{
- display:flex;flex-direction:column;gap:4px;
- padding:5px 11px 5px 6px;background:var(--diary-paper)
-}
-.landscape-diary__right-title{
- display:flex;align-items:baseline;justify-content:space-between;
- gap:3px;min-height:17px;height:17px;flex:none;
- border-bottom:1px solid var(--diary-line);white-space:nowrap
-}
-.landscape-diary__right-title>span{font:16px/16px Galmuri9,monospace;letter-spacing:1px}
+:root[data-skin="pink"] .landscape-diary__ring{border-color:#bd86a6;box-shadow:0 1px 0 #975b7c}
+.landscape-diary__right{display:flex;flex-direction:column;gap:2px;padding:4px 3px 3px 5px;background:var(--diary-paper)}
+.landscape-diary__right-title{display:flex;align-items:baseline;justify-content:space-between;gap:2px;height:15px;min-height:15px;flex:none;border-bottom:1px solid var(--diary-line);white-space:nowrap}
+.landscape-diary__right-title>span{font:14px/14px Galmuri9,monospace;letter-spacing:1px}
 .landscape-diary__right-title small{font:6px/9px Galmuri9,monospace!important;opacity:.7}
-.landscape-diary__menu{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
- grid-template-rows:repeat(3,minmax(0,1fr));
- flex:1;min-height:0;min-width:0;gap:3px
+.landscape-diary__groups{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:0;flex:1;min-height:0;min-width:0;overflow:hidden}
+.landscape-diary__category{display:flex;flex-direction:column;min-width:0;min-height:0;padding:1px 0 2px;border-bottom:1px dotted var(--diary-line)}
+.landscape-diary__category:last-child{border-bottom:0}
+.landscape-diary__category h3{display:block;flex:none;height:11px;margin:0;padding-left:2px;white-space:nowrap;overflow:hidden;color:var(--diary-ink);font:8px/11px Galmuri9,monospace}
+.landscape-diary__category-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:1;min-height:0;gap:2px}
+.landscape-diary__menu-link{
+ appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ min-height:0;min-width:0;gap:1px;padding:0 1px;
+ border:1px solid transparent;border-radius:0;background:transparent;
+ color:inherit;font:7px/10px Galmuri9,monospace!important;cursor:pointer
 }
-.landscape-diary__menu-button{
- appearance:none;display:flex;align-items:center;justify-content:center;
- flex-direction:column;gap:2px;min-height:0;min-width:0;
- overflow:hidden;padding:1px 0;border:1px dotted var(--diary-line);
- background:transparent;color:inherit;border-radius:0;
- font:9px/12px Galmuri9,monospace!important;cursor:pointer
-}
-.landscape-diary__menu-button>span:last-child{white-space:nowrap;line-height:12px}
-.landscape-diary__menu-icon{display:grid;place-items:center;flex:none;width:21px;height:20px}
-.landscape-diary__menu-icon canvas{display:block;width:18px!important;height:18px!important;image-rendering:pixelated}
-.landscape-diary__menu-button:hover,.landscape-diary__menu-button.is-selected,.landscape-diary__menu-button:focus-visible,
+.landscape-diary__menu-icon{display:grid;place-items:center;width:15px;height:15px;flex:none}
+.landscape-diary__menu-icon canvas{display:block;width:14px!important;height:14px!important;image-rendering:pixelated}
+.landscape-diary__menu-label{max-width:100%;overflow:hidden;text-overflow:clip;white-space:nowrap;text-align:center;letter-spacing:-.35px;font:7px/10px Galmuri9,monospace!important}
+.landscape-diary__menu-link:hover,.landscape-diary__menu-link.is-selected,.landscape-diary__menu-link:focus-visible,
 .landscape-diary__quick-button:hover,.landscape-diary__quick-button:focus-visible{
- background:var(--diary-blue);outline:1px solid var(--diary-ink);outline-offset:-2px
+ background:var(--diary-blue);outline:1px solid var(--diary-ink);outline-offset:-1px
 }
 .landscape-diary__index{
- position:absolute;right:0;top:23px;bottom:5px;width:9px;
- display:flex;flex-direction:column;align-items:stretch;justify-content:space-evenly;
- pointer-events:none
+ position:absolute;z-index:4;right:-12px;top:21px;bottom:6px;width:12px;
+ display:flex;flex-direction:column;gap:3px;pointer-events:auto
 }
-.landscape-diary__index span{
- display:grid;place-items:center;height:28px;min-height:0;
- border:1px solid var(--diary-line);border-right:0;
- background:var(--diary-blue);writing-mode:vertical-rl;
- font:6px/8px Galmuri9,monospace!important;letter-spacing:0
+.landscape-diary__index button{
+ appearance:none;display:grid;place-items:center;flex:1;min-height:0;
+ border:1px solid var(--diary-line);border-left:0;border-radius:0;
+ background:var(--diary-blue);color:var(--diary-ink);
+ font:6px/8px Galmuri9,monospace!important;writing-mode:vertical-rl;
+ white-space:nowrap;padding:1px 0;cursor:pointer
 }
+.landscape-diary__index button.is-current{
+ position:relative;right:1px;width:13px;
+ background:var(--diary-paper);border-color:var(--diary-ink);border-left:0
+}
+.landscape-diary__index button:hover,.landscape-diary__index button:focus-visible{outline:1px solid var(--diary-ink);background:var(--diary-paper)}
+@media(prefers-reduced-motion:reduce){.landscape-diary__layer{transform:none}}
+
 /* Temporarily disable the portrait game without deleting its UI or saves. */
 #landscape-only{display:none}
 @media (orientation:portrait){
