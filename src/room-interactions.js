@@ -10,26 +10,40 @@ document.body.append(furnitureTools);
 // Refit the whole console when space is tight instead of drawing over the room.
 function positionFurnitureDrawer(){
  if(furnitureTools.hidden)return;
- const device=$('dev'),viewWidth=window.innerWidth,viewHeight=window.innerHeight;
- const gap=12,margin=12;
+ const device=$('dev'),viewport=window.visualViewport;
+ const viewWidth=viewport?.width||document.documentElement.clientWidth;
+ const viewHeight=viewport?.height||window.innerHeight;
+ const originX=viewport?.offsetLeft||0,originY=viewport?.offsetTop||0;
+ const gap=12,margin=20,drawerWidth=furnitureTools.offsetWidth;
+ // The left drawer and all of the console must fit the *visible* viewport.
+ // Calculate from the natural viewport size, never the previously resized device.
+ const touch=matchMedia('(pointer:coarse)').matches;
+ const padT=touch?(MODE==='egg'?64:44):16;
+ const naturalWidth=Math.min(viewWidth-48,Math.max(1,viewHeight-padT-48)*GD.W/GD.H,1040);
+ const available=Math.max(1,viewWidth-drawerWidth-gap-2*margin);
  device.style.translate='';
- fitDev(); // Recover the unedited device width before computing a new layout.
- const naturalWidth=device.getBoundingClientRect().width;
- const drawerWidth=furnitureTools.offsetWidth;
- const maxWidth=Math.max(196,viewWidth-drawerWidth-gap-margin*2);
- device.style.width=Math.min(naturalWidth,maxWidth)+'px';
- // The page centers the device; moving by half the drawer allowance reserves
- // a full drawer-width gap on the left while keeping the right edge onscreen.
- device.style.translate=Math.round((drawerWidth+gap)/2)+'px 0';
- const rect=device.getBoundingClientRect();
- const left=Math.max(8,Math.min(rect.left-drawerWidth-gap,viewWidth-drawerWidth-8));
+ device.style.width=Math.max(1,Math.min(naturalWidth,available))+'px';
+ const centeredShift=(drawerWidth+gap)/2;
+ device.style.translate=Math.round(centeredShift)+'px 0';
+ let rect=device.getBoundingClientRect();
+ // Safari visualViewport can be narrower than the layout viewport.
+ // Clamp the translated console to both visible edges after CSS sizing.
+ const beyondRight=rect.right-(originX+viewWidth-margin);
+ if(beyondRight>0){
+  device.style.translate=Math.round(centeredShift-beyondRight)+'px 0';
+  rect=device.getBoundingClientRect();
+ }
+ const left=Math.max(originX+8,Math.min(rect.left-drawerWidth-gap,originX+viewWidth-drawerWidth-8));
  const height=furnitureTools.offsetHeight;
- const top=Math.max(8,Math.min(rect.top+(rect.height-height)/2,viewHeight-height-8));
+ const top=Math.max(originY+8,Math.min(rect.top+(rect.height-height)/2,originY+viewHeight-height-8));
  furnitureTools.style.left=Math.round(left)+'px';
  furnitureTools.style.top=Math.round(top)+'px';
+ fitLCD();
 }
 
 addEventListener('resize',()=>{if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer)});
+window.visualViewport?.addEventListener('resize',()=>{if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer)});
+window.visualViewport?.addEventListener('scroll',()=>{if(!furnitureTools.hidden)requestAnimationFrame(positionFurnitureDrawer)});
 const roomPoint=e=>{
  const r=rc.getBoundingClientRect();
  let x=(e.clientX-r.left)/r.width*RW,y=(e.clientY-r.top)/r.height*RH;
