@@ -27,8 +27,8 @@ test('published device uses exact shared button art and hitbox coordinates',asyn
  assert.ok(cross);const dc=vm.runInNewContext(cross[1]);
  for(const key of ['U','D','L','R']){
    const b=dev.btn.find(b=>b[0]===key);assert.ok(b,'D-pad '+key+' must be clickable');
-   assert.equal(b[1],dc[0]+(key==='L'?-21:key==='R'?21:0));
-   assert.equal(b[2],dc[1]+10+(key==='U'?-21:key==='D'?21:0));
+   assert.equal(b[1],dc[0]+(key==='L'?-25:key==='R'?25:0));
+   assert.equal(b[2],dc[1]+10+(key==='U'?-25:key==='D'?25:0));
  }
  assert.match(html,/renderControllerForeground\(shellRasterCache\[shellKey\],shellBlankRasterCache\[shellKey\]\)/);
  assert.match(html,/const plain=MODE==='console'\?makeConsole\(th,skin,false\):c/);
