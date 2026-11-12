@@ -1421,8 +1421,8 @@ function makeConsole(th,sk,paintControls=true){
   const solid=(x,y)=>face(x,y)||depth(x,y)||ear(x,y);
   const frameO=(x,y)=>rr(x,y,96,34,352,232,10),hole=(x,y)=>x>=104&&x<=343&&y>=42&&y<=221;
   // 십자키
-  const DC=[50,112],dH=(x,y,o)=>rr(x,y,21,101+o,79,123+o,5),dV=(x,y,o)=>rr(x,y,39,83+o,61,141+o,5),dp=(x,y,o=0)=>dH(x,y,o)||dV(x,y,o);
-  const arrow=(x,y)=>{const X=x+.5-DC[0],Y=y+.5-DC[1];const tr=(u,v)=>v>=-25&&v<=-19&&Math.abs(u)<=(v+25)*.9;return tr(X,Y)||tr(X,-Y)||tr(Y,X)||tr(Y,-X)};
+  const DC=[50,112],dH=(x,y,o)=>rr(x,y,9,96+o,91,128+o,5),dV=(x,y,o)=>rr(x,y,34,71+o,66,153+o,5),dp=(x,y,o=0)=>dH(x,y,o)||dV(x,y,o);
+  const arrow=(x,y)=>{const X=x+.5-DC[0],Y=y+.5-DC[1];const tr=(u,v)=>v>=-37&&v<=-31&&Math.abs(u)<=(v+37)*.9;return tr(X,Y)||tr(X,-Y)||tr(Y,X)||tr(Y,-X)};
   // 버튼 아이콘 11x11
   const IC={
    paw:['...............','....xx...xx....','...xxxx.xxxx...','...xxxx.xxxx...','....xx...xx....','xxx..xxxxx..xxx','xxx.xxxxxxx.xxx','.x.xxxxxxxxx.x.','...xxxxxxxxx...','..xxxxxxxxxxx..','..xxxxx.xxxxx..','..xxxx...xxxx..','...xx.....xx...','...............','...............'],
@@ -1432,7 +1432,7 @@ function makeConsole(th,sk,paintControls=true){
    bowl:['.................','......x..........','.....xxx........x','....xxxxx......xx','..xxxxxxxxx...xxx','.xxxxxx.xxxx.xxxx','.x..xxxx.xxxxxxx.','xx..xxxx.xxxxxx..','xxxxxxxx.xxxxx...','xxxxxxxx.xxxxxx..','.xxxxxx.xxxxxxxx.','.xxxxxxxxxxx.xxxx','..xxxxxxxxx...xxx','....xxxxx......xx','................x','.................','.................'],
    yarn:['......xx.......','...xxxxx.xx....','..xxxxx.xxx....','.xxxxx.xxx.xx..','.xxxx.xxx.xxx..','.xxx.xxx.xxx...','xxx.xxx.xxx.xx.','xx.xxx.xxx.xxx.','..xxx.xxx.xxx..','.xxx.xxx.xxxx..','.xx.xxx.xxxxx..','...xxx.xxxxxx..','...xx.xxxxx..x.','......xx.....x.','...........xx..'],
    home:['...............','.......x.......','......xxx......','.....xxxxx.xx..','....xxxxxxxxx..','...xxxxxxxxxxx.','..xxxxxxxxxxxxx','.xxxxxxxxxxxxx.','...xxxxxxxxx...','...xxxxxxxxx...','...xxx...xxx...','...xxx...xxx...','...xxx...xxx...','...xxx...xxx...','...............']};
-  const BT=[[422,112,14,"a","paw"],[398,142,14,"b","back"],[398,82,14,"x","menu"],[374,112,14,"y","home"],[64,186,17,"food","bowl"],[384,186,17,"play","yarn"]];
+  const BT=[[423,112,16,"a","paw"],[398,137,16,"b","back"],[398,87,16,"x","menu"],[373,112,16,"y","home"],[64,186,16,"food","bowl"],[384,186,16,"play","yarn"]];
   const ICO={};for(const k in IC){const n=IC[k].length;let x0=99,x1=-1,y0=99,y1=-1;IC[k].forEach((r,y)=>[...r].forEach((ch,x)=>{if(ch==='x'){x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y)}}));ICO[k]=[Math.floor((n-(x1-x0+1))/2)-x0,Math.floor((n-(y1-y0+1))/2)-y0]}
   const put_=(x,y,c)=>{const i=(y*W+x)*4,p=hx(c);D[i]=p[0];D[i+1]=p[1];D[i+2]=p[2];D[i+3]=255};
   const pTH=[mixc(TH[2],'#ffffff',.2),mixc(TH[1],'#ffffff',.15),TH[3]];
@@ -1593,7 +1593,7 @@ const DEVS={
  egg:{W:200,H:264,bez:[41,84,118,118],mg:0,rw:128,stw:176,
    btn:[['FEED',72,230,13.5,0,'먹이'],['OK',100,234,13.5,0,'확인 (길게: 뒤로)'],['PLAY',128,230,13.5,0,'놀이']]},
  console:{W:448,H:262,bez:[104,52,240,180],mg:4,rw:170,stw:234,
-   btn:[["U",50,101,10.6,0,"위"],["D",50,143,10.6,0,"아래"],["L",29,122,10.6,0,"왼쪽"],["R",71,122,10.6,0,"오른쪽"],["OK",422,122,14,0,"A 확인"],["BACK",398,152,14,0,"B 뒤로"],["MENU",398,92,14,0,"X 메뉴"],["HOME",374,122,14,0,"Y 홈"],["FEED",64,196,17,0,"먹이 (길게: 간식 고르기)"],["PLAY",384,196,17,0,"놀이"]]}
+   btn:[["U",50,97,16,0,"위"],["D",50,147,16,0,"아래"],["L",25,122,16,0,"왼쪽"],["R",75,122,16,0,"오른쪽"],["OK",423,122,16,0,"A 확인"],["BACK",398,147,16,0,"B 뒤로"],["MENU",398,97,16,0,"X 메뉴"],["HOME",373,122,16,0,"Y 홈"],["FEED",64,196,16,0,"먹이 (길게: 간식 고르기)"],["PLAY",384,196,16,0,"놀이"]]}
 };
 let MODE='',GD=null;
 const pickMode=()=>{const w=innerWidth,h=innerHeight;return w>h?'console':'egg'};
