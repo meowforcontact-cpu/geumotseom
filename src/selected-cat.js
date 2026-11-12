@@ -1,4 +1,4 @@
-// Restored-L/G original eight directions selected by the user. Never regenerate the face.
+// User approved Q ORIGINAL eight directions for deployment. No outline thinning.
 const selectedCatImages={},selectedCatFacing={direction:'south'};
 const selectedCatOriginalSprite=petSprite;
 petSprite=function(kind,expression,theme=skin){
@@ -18,3 +18,4 @@ petSprite=function(kind,expression,theme=skin){
 for(const [direction,url] of Object.entries(WHITEWOOD_ASSETS.cat)){
  const image=new Image();image.onload=()=>{selectedCatImages[direction]=image;spriteCache.clear();QK='';render()};image.src=url;
 }
+

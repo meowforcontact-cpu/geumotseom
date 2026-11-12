@@ -14,9 +14,9 @@ test('production bundle embeds the selected background, all eight cats and eleve
  assert.equal(assets.version,'selected-20261112');
  assert.equal(Object.keys(assets.cat).length,8);assert.equal(Object.keys(assets.furniture).length,11);
  const entries=[['room.png',assets.room],...Object.entries(assets.cat).map(([d,url])=>['cat/'+d+'.png',url]),...Object.entries(assets.furniture).map(([id,url])=>['furniture/'+id+'.png',url])];
- for(const [file,url]of entries){const original=await readFile('src/assets/selected-room-20261112/'+file);assert.equal(hash(Buffer.from(url.split(',')[1],'base64')),hash(original),file)}
+ for(const [file,url]of entries){const original=await readFile(file.startsWith('cat/')?'src/assets/cat-Q-original-20261112/'+file.slice(4):'src/assets/selected-room-20261112/'+file);assert.equal(hash(Buffer.from(url.split(',')[1],'base64')),hash(original),file)}
  assert.equal(hash(Buffer.from(assets.room.split(',')[1],'base64')),'75ca9ab7ccea643919fc40c3a5b87e8eb02b4249e8d855270c6c2d3b82d1b8c8');
- assert.equal(hash(Buffer.from(assets.cat.south.split(',')[1],'base64')),'babdb48e46577edf9469683d97f418663ec9f3e070a92e4fd056e54d6b1e50ea');
+ assert.equal(hash(Buffer.from(assets.cat.south.split(',')[1],'base64')),'6e505f21850adca3bf8fe48bb3b9e390cb76dc7d09f116add8ab9ff7da33d78a');
  assert.ok(html.includes('const selectedCatImages='));
 });
 test('landscape camera uses the full wide world with no square crop or black margins',async()=>{
