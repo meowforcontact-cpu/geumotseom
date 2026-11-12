@@ -78,17 +78,18 @@ replace('rr(x-1,y,95,37,353,233,7)','rr(x-1,y,100,38,348,228,7)');
 // and their real HTML pointer targets (448×262 shell pixel coordinates).
 // In makeConsole(), the raster drawing uses y - 10; the DOM uses full y.
 const shellArtOffsetY=10;
-const consoleButtonRadius=16;
-const consoleDpad={x:50,y:122,reach:25,halfLength:41,halfThickness:consoleButtonRadius,hitRadius:consoleButtonRadius};
+const consoleButtonRadius=10;
+const consoleStickRadius=13;
+const consoleDpad={x:50,y:122,reach:17,halfLength:27,halfThickness:consoleButtonRadius,hitRadius:consoleButtonRadius};
 const consoleFaceButtons=[
-  ['OK',423,122,consoleButtonRadius,'a','paw','A 확인'],
-  ['BACK',398,147,consoleButtonRadius,'b','back','B 뒤로'],
-  ['MENU',398,97,consoleButtonRadius,'x','menu','X 메뉴'],
-  ['HOME',373,122,consoleButtonRadius,'y','home','Y 홈']
+  ['OK',415,122,consoleButtonRadius,'a','paw','A 확인'],
+  ['BACK',398,139,consoleButtonRadius,'b','back','B 뒤로'],
+  ['MENU',398,105,consoleButtonRadius,'x','menu','X 메뉴'],
+  ['HOME',381,122,consoleButtonRadius,'y','home','Y 홈']
 ];
 const consoleBottomButtons=[
-  ['FEED',64,196,consoleButtonRadius,'food','bowl','먹이 (길게: 간식 고르기)'],
-  ['PLAY',384,196,consoleButtonRadius,'play','yarn','놀이']
+  ['FEED',64,196,consoleStickRadius,'food','bowl','먹이 (길게: 간식 고르기)'],
+  ['PLAY',384,196,consoleStickRadius,'play','yarn','놀이']
 ];
 const consoleArtButtons=[...consoleFaceButtons,...consoleBottomButtons]
   .map(([,x,y,r,fill,glyph])=>[x,y-shellArtOffsetY,r,fill,glyph]);
@@ -110,6 +111,9 @@ replace('v>=-31&&v<=-23&&Math.abs(u)<=(v+31)*.9',
  'v>=-'+(padLen-4)+'&&v<=-'+(padLen-10)+'&&Math.abs(u)<=(v+'+(padLen-4)+')*.9');
 replace("const BT=[[425,108,14.5,'a','paw'],[404.5,129,14.5,'b','back'],[404.5,87,14.5,'x','menu'],[384,108,14.5,'y','home'],[63,205,17,'food','bowl'],[385,205,17,'play','yarn']]",
  'const BT='+JSON.stringify(consoleArtButtons));
+// Keep each pixel glyph inside the smaller button face with visible padding.
+replace('const P_=IC[ic],n_=P_.length,ix=x-Math.round(cx-n_/2)-ICO[ic][0],iy=y-Math.round(cy-n_/2)-ICO[ic][1];',
+ 'const P_=IC[ic],n_=P_.length,size_=Math.min(n_,Math.round(r*1.1)),ix=Math.floor((x-Math.round(cx-size_/2))*n_/size_)-ICO[ic][0],iy=Math.floor((y-Math.round(cy-size_/2))*n_/size_)-ICO[ic][1];');
 replace("btn:[['L',45,99,13,0,'위'],['R',45,145,13,0,'아래'],['L',22,122,13,0,'왼쪽'],['R',68,122,13,0,'오른쪽'],\n        ['OK',425,118,15,0,'A 확인'],['BACK',404.5,139,15,0,'B 뒤로'],['MENU',404.5,97,15,0,'X 메뉴'],['HOME',384,118,15,0,'Y 홈'],\n        ['FEED',63,215,17,0,'먹이 (길게: 간식 고르기)'],['PLAY',385,215,17,0,'놀이']]",
  'btn:'+JSON.stringify(consoleHitButtons));
 replace("ArrowUp:'L',ArrowDown:'R'","ArrowUp:'U',ArrowDown:'D'");
