@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -26,3 +28,17 @@ jobs:
         run: node --test test/controller-foreground-layout.test.mjs test/controller-single-layer.test.mjs test/console-button-geometry.test.mjs
       - name: Run full regression suite
         run: npm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pixel inspection dependency
+        run: python -m pip install -r scripts/pixel-assets-requirements.txt
+      - name: Verify pixel inspection tool
+        run: python scripts/test_pixel_assets.py
+      - name: Inspect existing room assets without replacing them
+        run: python scripts/check_pixel_assets.py --baseline
+      - name: Check new or modified pixel assets in changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_COMMIT: ${{ github.event.pull_request.base.sha }}
+        run: python scripts/check_pixel_assets.py --changed "$BASE_COMMIT"
