@@ -10,7 +10,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def inspect(path, kind, size=None, materials=None, legacy=False):
+def inspect(path, kind, size=None, materials=None, legacy=False, palette=None):
     errors, review = [], []
     with Image.open(path) as image:
         if image.format != "PNG":
@@ -36,6 +36,20 @@ def inspect(path, kind, size=None, materials=None, legacy=False):
         (review if legacy else errors).append(f"반투명 픽셀 {partial}개")
     if not size and kind != "background" and not legacy:
         review.append("승인된 이미지 크기 미지정")
+    if not legacy and kind in {"sprite", "ui"} and palette is None:
+        review.append("승인된 RGB 팔레트 미지정")
+    if palette is not None:
+        if not isinstance(palette, list) or not palette or any(
+            not isinstance(color, str) or len(color) != 7 or color[0] != "#"
+            or any(c not in "0123456789abcdefABCDEF" for c in color[1:])
+            for color in palette
+        ):
+            raise ValueError("palette는 비어 있지 않은 #RRGGBB 목록이어야 함")
+        approved = {tuple(bytes.fromhex(color[1:])) for color in palette}
+        unexpected = sorted(opaque - approved)
+        if unexpected:
+            errors.append("미승인 불투명 색상: " + ", ".join(
+                "#" + bytes(color).hex().upper() for color in unexpected))
     if not legacy and kind == "furniture" and not materials:
         review.append("소재별 마스크 미제공: 색상 규칙 검증 보류")
     if materials:
@@ -50,6 +64,9 @@ def inspect(path, kind, size=None, materials=None, legacy=False):
             with Image.open(mask_path) as m:
                 if m.size != rgba.size:
                     errors.append(f"{section['name']}: 마스크 크기 불일치")
+                    continue
+                if m.convert("RGBA").getchannel("A").getextrema() != (255, 255):
+                    errors.append(f"{section['name']}: 마스크 자체는 불투명해야 함")
                     continue
                 mask = list(m.convert("L").get_flattened_data())
             if any(value not in (0, 255) for value in mask):
@@ -113,8 +130,16 @@ def changed(base_ref):
             rows.append({"file": name, "status": "REVIEW", "errors": [],
                          "review": ["신규/변경 PNG에 승인된 검사 프로필 미등록"]})
             continue
-        row = inspect(ROOT / name, profile["kind"], profile["size"],
-                      ROOT / profile["materials"] if profile.get("materials") else None)
+        if profile["kind"] not in {"sprite", "furniture", "background", "ui"}:
+            raise ValueError(f"{name}: 잘못된 에셋 종류")
+        size = profile["size"]
+        if not isinstance(size, list) or len(size) != 2 or any(
+            type(n) is not int or n <= 0 for n in size
+        ):
+            raise ValueError(f"{name}: 승인 크기는 양의 정수 두 개여야 함")
+        row = inspect(ROOT / name, profile["kind"], size,
+                      ROOT / profile["materials"] if profile.get("materials") else None,
+                      palette=profile.get("palette"))
         row["file"] = name
         rows.append(row)
     return rows
@@ -126,15 +151,17 @@ def main():
     mode.add_argument("--baseline", action="store_true")
     mode.add_argument("--changed", metavar="BASE_COMMIT")
     mode.add_argument("--file", type=Path)
-    parser.add_argument("--kind", choices=["sprite", "furniture", "background"])
+    parser.add_argument("--kind", choices=["sprite", "furniture", "background", "ui"])
     parser.add_argument("--size", nargs=2, type=int, metavar=("W", "H"))
     parser.add_argument("--materials", type=Path)
+    parser.add_argument("--palette", type=Path, help="승인된 #RRGGBB 목록 JSON 파일")
     args = parser.parse_args()
     if args.file and not args.kind:
         parser.error("--file requires --kind")
     try:
         rows = baseline() if args.baseline else changed(args.changed) if args.changed else [
-            inspect(args.file, args.kind, args.size, args.materials)
+            inspect(args.file, args.kind, args.size, args.materials,
+                    palette=json.loads(args.palette.read_text(encoding="utf-8")) if args.palette else None)
         ]
     except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError) as exc:
         print(f"검사 오류: {exc}", file=sys.stderr)

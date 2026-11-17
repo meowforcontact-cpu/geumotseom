@@ -14,10 +14,10 @@
 ## 명령
 ```sh
 npm run build
-node --test test/discord.test.mjs test/storage.test.mjs test/attendance.test.mjs test/daily.test.mjs test/selected-room-assets.test.mjs
+npm run test:p0
 npm test
 ```
-Node 22 이상. 현재 CI verify-room은 빌드·콘솔 검사·전체 회귀 테스트를 실행한다. 배포 전 P0 및 관련 테스트 실패 시 병합/배포 중지.
+Node 22 이상. CI verify-room과 dist 게시 워크플로는 빌드·콘솔 검사·P0 게이트·전체 회귀 테스트·픽셀 검사를 실행한다. P0 및 전체 검사 실패 시 해당 워크플로가 중단된다. 운영 배포와 main 브랜치 병합 승인 절차는 별도로 유지한다.
 
 ## 추가 검증 (현재 자동 검사 외)
 - 모바일 터치·가로/세로 화면과 실제 버튼 클릭, 가구 드래그 후 재접속.
@@ -27,3 +27,6 @@ Node 22 이상. 현재 CI verify-room은 빌드·콘솔 검사·전체 회귀 �
 
 ## 기록 양식
 테스트 명령 / 실행 환경 / 통과·실패 수 / 실패 재현 / 미검증 항목 / 배포 여부. 실제 실행하지 않은 검사는 미실행 처리.
+
+## 품질 개선 효과 기록
+같은 기간과 정의로 변경별 재작업 횟수, AI 작업 재설명 횟수, 신규 에셋 검사 실패 건수, P0 통과율, 배포 후 발견된 회귀 오류 수를 기록한다. 초기 목표는 P0 100%와 데이터 손실·규격 위반 에셋 반영 0건이다. 재작업 감소율은 기준 기간 측정 전에는 미측정으로 표시한다.
