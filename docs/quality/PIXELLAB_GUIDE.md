@@ -5,6 +5,8 @@
 - 대상: Pixel Apprentice(Tier 1)를 사용하는 그못섬 제작자와 Codex 에셋 담당 AI.
 - 근거: [PixelLab MCP 도구 명세](https://api.pixellab.ai/mcp/docs), [플랜](https://www.pixellab.ai/), [MCP 안내](https://www.pixellab.ai/mcp), [공식 문서](https://www.pixellab.ai/docs), [Game Builder](https://www.pixellab.ai/ai-game-builder). 아래 비용은 조사 시점 공식 명세의 generation 단위다. 실행 전 현재 연결의 도구 스키마·요금·잔액을 우선 확인한다. 이 문서는 계정 조회·실제 과금·생성 실행 결과가 아니다.
 
+> 2026-11-17 디자인 연구 보완: [아트 디렉션](../ART_STYLE_GUIDE.md), [레퍼런스 아카이브](../ART_REFERENCE.md). 아래 기존 32px·수염 등은 현행 기준/예시이며 신규 폴드 시안에서는 수염 생략, 검은 귀, 짧은 몸, 넓은 미간 및 48/64px 비교를 별도 검토한다. 기존 승인 규격 변경이나 유료 생성 승인을 뜻하지 않는다. 실제 참조는 권리 확인 후 역할별로 사용하고 최신 도구 도움말·요금 확인.
+
 ## 1. 적용 범위와 의사결정
 
 - 디자인·기능의 최상위 기준: [프로젝트 기획](PROJECT_SPEC.md), [펫 돌보기/친밀도 v0.3](PET_CARE_SPEC.md), [캐릭터 생활 기획](CHARACTER_LIFE_SPEC.md), [픽셀 제작](../pixel-asset-style-guide.md), [카메라](../room-camera-standard.md), [검수](ASSET_CHECK.md). 이 문서는 외부 도구의 사용법을 보완하며 위 명세를 변경하지 않는다.
@@ -90,7 +92,7 @@ Generation은 결과 이미지 수, 프레임 수 또는 Codex 토큰과 동일�
 | `create_character_pro_flash` | template_id=mannequin, width=height=32, n_directions=8; 무료 비용 견적 | 동물형이어도 두 발이면 mannequin. cat/dog 등의 템플릿은 네 발용. custom은 스켈레톤 애니메이션 제한 |
 | `create_character` mode=pro | 고난도 스타일 일치·참조 콘셉트/팔레트용 | 기본 32px 10 generations; 필요할 때만. 모드에 따라 palette/style 제약이 있으므로 현재 계약 확인 |
 
-영문 원본 프롬프트 예시(기존 고양이 교체 명령 아님):
+영문 원본 프롬프트 예시(기존 32px 기준의 예시이며 신규 폴드 후보 선택·기존 고양이 교체 명령 아님):
 ```text
 32x32 transparent pixel-art sprite of a tiny bipedal anthropomorphic cat companion.
 Standing upright, large round head, very short rounded arms and legs, soft muted
