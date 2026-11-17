@@ -8,6 +8,7 @@
 
 ## 기준서 라우팅
 - 게임 기획과 현재 상태: [README](README.md), [리뉴얼 명세](docs/quality/PROJECT_SPEC.md)
+- PixelLab MCP 에셋 생성·비용·도구 선택: [PixelLab 제작 운영 가이드](docs/quality/PIXELLAB_GUIDE.md)
 - 기존 픽셀 아트: [제작 규격](docs/pixel-asset-style-guide.md), [카메라 및 배치](docs/room-camera-standard.md), [프로젝트 메모리](MEMORY.md)
 - 구현 및 연결: 관련 소스, [연동 배포 안내](integration/연동-배포-안내.md)
 - 변경 기록과 승인: [결정 기록](docs/quality/DECISIONS.md)
