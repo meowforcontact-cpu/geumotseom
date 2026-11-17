@@ -1,0 +1,31 @@
+{
+  "materials": [
+    {
+      "name": "headboard_emblem",
+      "mask": "headboard_emblem.png"
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "pillow",
+      "mask": "pillow.png"
+    },
+    {
+      "name": "quilt_blue",
+      "mask": "quilt_blue.png",
+      "max_colors": 3
+    },
+    {
+      "name": "quilt_white",
+      "mask": "quilt_white.png"
+    },
+    {
+      "name": "wood_frame",
+      "mask": "wood_frame.png",
+      "max_colors": 3
+    }
+  ]
+}

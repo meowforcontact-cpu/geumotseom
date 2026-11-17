@@ -1,0 +1,18 @@
+{
+  "materials": [
+    {
+      "name": "cushion_button",
+      "mask": "cushion_button.png"
+    },
+    {
+      "name": "cushion_fabric",
+      "mask": "cushion_fabric.png",
+      "max_colors": 3
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    }
+  ]
+}

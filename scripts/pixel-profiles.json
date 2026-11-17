@@ -1,1 +1,90 @@
-{}
+{
+  "src/assets/selected-room-20261112/furniture-clean/cream_f1.png": {
+    "kind": "furniture",
+    "size": [
+      78,
+      106
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f1/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f3.png": {
+    "kind": "furniture",
+    "size": [
+      60,
+      84
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f3/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f4.png": {
+    "kind": "furniture",
+    "size": [
+      32,
+      84
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f4/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f5.png": {
+    "kind": "furniture",
+    "size": [
+      88,
+      76
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f5/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f6.png": {
+    "kind": "furniture",
+    "size": [
+      44,
+      54
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f6/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f7.png": {
+    "kind": "furniture",
+    "size": [
+      92,
+      60
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f7/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f8.png": {
+    "kind": "furniture",
+    "size": [
+      32,
+      60
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f8/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f9.png": {
+    "kind": "furniture",
+    "size": [
+      50,
+      58
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f9/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_f10.png": {
+    "kind": "furniture",
+    "size": [
+      34,
+      24
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_f10/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_flower_table.png": {
+    "kind": "furniture",
+    "size": [
+      68,
+      64
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_flower_table/materials.json"
+  },
+  "src/assets/selected-room-20261112/furniture-clean/cream_tea_table.png": {
+    "kind": "furniture",
+    "size": [
+      68,
+      58
+    ],
+    "materials": "docs/quality/masks/furniture-clean-20261117/cream_tea_table/materials.json"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "materials": [
+    {
+      "name": "cushion_fabric",
+      "mask": "cushion_fabric.png",
+      "max_colors": 3
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "paw_emblem",
+      "mask": "paw_emblem.png"
+    },
+    {
+      "name": "upholstery",
+      "mask": "upholstery.png",
+      "max_colors": 3
+    },
+    {
+      "name": "wood_legs",
+      "mask": "wood_legs.png"
+    }
+  ]
+}

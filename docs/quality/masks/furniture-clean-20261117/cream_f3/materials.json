@@ -1,0 +1,36 @@
+{
+  "materials": [
+    {
+      "name": "flower_leaf",
+      "mask": "flower_leaf.png"
+    },
+    {
+      "name": "flower_petals",
+      "mask": "flower_petals.png",
+      "max_colors": 3
+    },
+    {
+      "name": "mirror_glass",
+      "mask": "mirror_glass.png",
+      "max_colors": 3
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "stool_fabric",
+      "mask": "stool_fabric.png"
+    },
+    {
+      "name": "vases_and_bottles",
+      "mask": "vases_and_bottles.png"
+    },
+    {
+      "name": "wood_frame",
+      "mask": "wood_frame.png",
+      "max_colors": 3
+    }
+  ]
+}

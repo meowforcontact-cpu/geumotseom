@@ -1,0 +1,22 @@
+{
+  "materials": [
+    {
+      "name": "fabric_tuft",
+      "mask": "fabric_tuft.png"
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "upholstery",
+      "mask": "upholstery.png",
+      "max_colors": 3
+    },
+    {
+      "name": "wood_legs",
+      "mask": "wood_legs.png"
+    }
+  ]
+}
