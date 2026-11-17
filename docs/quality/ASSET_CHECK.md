@@ -25,7 +25,7 @@ python scripts/check_pixel_assets.py --file path/to/menu.png --kind ui --size 51
 {"materials":[{"name":"천","mask":"cloth.png","max_colors":2},{"name":"목재","mask":"wood.png","max_colors":2},{"name":"외곽선","mask":"outline.png","outline":true}]}
 ```
 
-기존 에셋 일괄 자동 수정/축소/투명화는 하지 않는다. 신규 검사 결과와 승인 원본 비교를 먼저 수행한다.
+기존 에셋 일괄 자동 수정/축소/투명화는 하지 않는다. 신규 검사 결과와 승인 원본 비교를 먼저 수행한다. 2026-11-17 가구 11개의 수정 요청에 따라 원본을 보존한 채 별도 파생 에셋을 제작했다. [변경 기록](FURNITURE_CLEAN_20261117.md)을 참조한다.
 
 ## PR 및 main push 자동 검사
 PR 또는 main push에서 추가/수정/이름 변경된 `src/assets/`, `src/art/`의 PNG를 자동 감지한다. 신규 또는 변경 에셋은 `scripts/pixel-profiles.json`에 승인된 크기/종류와 필요한 마스크 명세 경로 또는 팔레트를 등록한다. 미등록/검토 필요/실패는 검사 실패로 표시한다. 마스크 PNG는 게임 에셋 폴더 대신 별도 검수 폴더에 저장한다.

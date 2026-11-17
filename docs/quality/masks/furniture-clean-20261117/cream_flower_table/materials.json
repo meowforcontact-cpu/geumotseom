@@ -1,0 +1,43 @@
+{
+  "materials": [
+    {
+      "name": "book_cover",
+      "mask": "book_cover.png"
+    },
+    {
+      "name": "book_pages",
+      "mask": "book_pages.png"
+    },
+    {
+      "name": "flower_leaf",
+      "mask": "flower_leaf.png"
+    },
+    {
+      "name": "flower_petals",
+      "mask": "flower_petals.png",
+      "max_colors": 3
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "table_motif",
+      "mask": "table_motif.png"
+    },
+    {
+      "name": "vase_ceramic",
+      "mask": "vase_ceramic.png"
+    },
+    {
+      "name": "vase_motif",
+      "mask": "vase_motif.png"
+    },
+    {
+      "name": "wood_table",
+      "mask": "wood_table.png",
+      "max_colors": 3
+    }
+  ]
+}

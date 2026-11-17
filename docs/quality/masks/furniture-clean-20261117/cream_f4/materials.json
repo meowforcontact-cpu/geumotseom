@@ -1,0 +1,30 @@
+{
+  "materials": [
+    {
+      "name": "clock_emblem",
+      "mask": "clock_emblem.png"
+    },
+    {
+      "name": "clock_face",
+      "mask": "clock_face.png"
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "pendulum_metal",
+      "mask": "pendulum_metal.png"
+    },
+    {
+      "name": "pendulum_window",
+      "mask": "pendulum_window.png"
+    },
+    {
+      "name": "wood_case",
+      "mask": "wood_case.png",
+      "max_colors": 3
+    }
+  ]
+}

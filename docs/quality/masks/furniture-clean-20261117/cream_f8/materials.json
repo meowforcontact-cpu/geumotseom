@@ -1,0 +1,25 @@
+{
+  "materials": [
+    {
+      "name": "metal_chain",
+      "mask": "metal_chain.png"
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "shade_fabric",
+      "mask": "shade_fabric.png"
+    },
+    {
+      "name": "shade_trim",
+      "mask": "shade_trim.png"
+    },
+    {
+      "name": "stand_base",
+      "mask": "stand_base.png"
+    }
+  ]
+}

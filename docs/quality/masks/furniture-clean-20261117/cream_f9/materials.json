@@ -1,0 +1,26 @@
+{
+  "materials": [
+    {
+      "name": "leaves",
+      "mask": "leaves.png",
+      "max_colors": 3
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "pot_ceramic",
+      "mask": "pot_ceramic.png"
+    },
+    {
+      "name": "pot_motif",
+      "mask": "pot_motif.png"
+    },
+    {
+      "name": "stems_soil",
+      "mask": "stems_soil.png"
+    }
+  ]
+}

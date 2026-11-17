@@ -1,0 +1,34 @@
+{
+  "materials": [
+    {
+      "name": "book_cover",
+      "mask": "book_cover.png"
+    },
+    {
+      "name": "book_pages",
+      "mask": "book_pages.png"
+    },
+    {
+      "name": "cup_blue",
+      "mask": "cup_blue.png"
+    },
+    {
+      "name": "cup_ceramic",
+      "mask": "cup_ceramic.png"
+    },
+    {
+      "name": "outline",
+      "mask": "outline.png",
+      "outline": true
+    },
+    {
+      "name": "tea",
+      "mask": "tea.png"
+    },
+    {
+      "name": "wood_table",
+      "mask": "wood_table.png",
+      "max_colors": 3
+    }
+  ]
+}

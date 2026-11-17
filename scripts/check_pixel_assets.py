@@ -110,8 +110,37 @@ def baseline():
     rows = [inspect(base / "room.png", "background", (1024, 768), legacy=True)]
     rows.extend(inspect(original / f"{d}.png", "sprite", (64, 64), legacy=True) for d in directions)
     rows.extend(inspect(base / "cat" / f"{d}.png", "sprite", (96, 96), legacy=True) for d in directions)
-    rows.extend(inspect(p, "furniture", legacy=True) for p in sorted((base / "furniture").glob("*.png")))
+    # The original user-selected PNGs remain archived unchanged. The active build
+    # now uses pixel-clean derivatives, so they must pass their strict profiles.
+    profiles = json.loads((ROOT / "scripts/pixel-profiles.json").read_text(encoding="utf-8"))
+    active = sorted((base / "furniture-clean").glob("*.png"))
+    if len(active) != 11:
+        raise ValueError("활성 가구 에셋은 11개여야 함")
+    for p in active:
+        name = p.relative_to(ROOT).as_posix()
+        if name not in profiles:
+            raise ValueError(f"{name}: 활성 가구 검사 프로필 미등록")
+        row = inspect_profile(name, profiles[name])
+        if row["status"] != "PASS_NUMERIC":
+            row["errors"].extend(row["review"])
+            row["status"] = "FAIL"
+        rows.append(row)
     return rows
+
+
+def inspect_profile(name, profile):
+    if profile["kind"] not in {"sprite", "furniture", "background", "ui"}:
+        raise ValueError(f"{name}: 잘못된 에셋 종류")
+    size = profile["size"]
+    if not isinstance(size, list) or len(size) != 2 or any(
+        type(n) is not int or n <= 0 for n in size
+    ):
+        raise ValueError(f"{name}: 승인 크기는 양의 정수 두 개여야 함")
+    row = inspect(ROOT / name, profile["kind"], size,
+                  ROOT / profile["materials"] if profile.get("materials") else None,
+                  palette=profile.get("palette"))
+    row["file"] = name
+    return row
 
 
 def changed(base_ref):
@@ -130,18 +159,7 @@ def changed(base_ref):
             rows.append({"file": name, "status": "REVIEW", "errors": [],
                          "review": ["신규/변경 PNG에 승인된 검사 프로필 미등록"]})
             continue
-        if profile["kind"] not in {"sprite", "furniture", "background", "ui"}:
-            raise ValueError(f"{name}: 잘못된 에셋 종류")
-        size = profile["size"]
-        if not isinstance(size, list) or len(size) != 2 or any(
-            type(n) is not int or n <= 0 for n in size
-        ):
-            raise ValueError(f"{name}: 승인 크기는 양의 정수 두 개여야 함")
-        row = inspect(ROOT / name, profile["kind"], size,
-                      ROOT / profile["materials"] if profile.get("materials") else None,
-                      palette=profile.get("palette"))
-        row["file"] = name
-        rows.append(row)
+        rows.append(inspect_profile(name, profile))
     return rows
 
 
