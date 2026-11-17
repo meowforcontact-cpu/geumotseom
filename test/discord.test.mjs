@@ -11,3 +11,26 @@ test('account state requires a live session',async()=>{const c=setup();const r=a
 test('cross-origin and CSRF-less account writes are blocked',async()=>{const c=setup();const {cookie}=await login(c);for(const origin of ['https://evil.example','https://pika.example']){const res=await c.worker.fetch(new Request('https://pika.example/api/account/pet',{method:'POST',headers:{Cookie:cookie,Origin:origin,'Content-Type':'application/json'},body:'{}'}),c.env);assert.equal(res.status,403)}});
 test('account save uses revisions to reject stale writes and does not touch bot economy',async()=>{const c=setup();const {cookie}=await login(c);const me=await (await c.worker.fetch(new Request('https://pika.example/api/account/me',{headers:{Cookie:cookie}}),c.env)).json();const send=revision=>c.worker.fetch(new Request('https://pika.example/api/account/pet',{method:'POST',headers:{Cookie:cookie,Origin:'https://pika.example','Content-Type':'application/json','X-Pika-CSRF':me.csrf},body:JSON.stringify({revision,save:sample()})}),c.env);assert.equal((await send(0)).status,200);assert.equal((await send(0)).status,409);const read=await (await c.worker.fetch(new Request('https://pika.example/api/account/pet',{headers:{Cookie:cookie}}),c.env)).json();assert.equal(read.revision,1);assert.equal(read.save.state.coins,1500);assert.equal(c.calls.filter(x=>x.url.includes('/guilds')).length,0)});
 test('malformed imports rejected and logout invalidates session',async()=>{const c=setup();const {cookie}=await login(c);const me=await (await c.worker.fetch(new Request('https://pika.example/api/account/me',{headers:{Cookie:cookie}}),c.env)).json();const headers={Cookie:cookie,Origin:'https://pika.example','X-Pika-CSRF':me.csrf,'Content-Type':'application/json'};const invalid=await c.worker.fetch(new Request('https://pika.example/api/account/pet',{method:'POST',headers,body:JSON.stringify({revision:0,save:{version:1}})}),c.env);assert.equal(invalid.status,400);assert.equal((await c.worker.fetch(new Request('https://pika.example/api/account/logout',{method:'POST',headers}),c.env)).status,200);assert.equal((await c.worker.fetch(new Request('https://pika.example/api/account/me',{headers:{Cookie:cookie}}),c.env)).status,401)});
+
+test('two authenticated accounts have independent saves and revisions',async()=>{
+ const first=setup();
+ const second={env:first.env,worker:createWorker({products:items,fetcher:async url=>{
+  if(url.endsWith('/oauth2/token/revoke'))return new Response(null,{status:204});
+  if(url.endsWith('/oauth2/token'))return Response.json({access_token:'second-test-token',scope:'identify',expires_in:3600});
+  if(url.endsWith('/users/@me'))return Response.json({id:'123456789012345679',username:'second-tester'});
+  throw Error('unexpected request');
+ }})};
+ const a=await login(first),b=await login(second);
+ async function saveFor(ctx,session,coins){
+  const me=await (await ctx.worker.fetch(new Request('https://pika.example/api/account/me',{headers:{Cookie:session.cookie}}),ctx.env)).json();
+  const save=sample();save.state.coins=coins;
+  return ctx.worker.fetch(new Request('https://pika.example/api/account/pet',{method:'POST',headers:{Cookie:session.cookie,Origin:'https://pika.example','Content-Type':'application/json','X-Pika-CSRF':me.csrf},body:JSON.stringify({revision:0,save})}),ctx.env);
+ }
+ assert.equal((await saveFor(first,a,1200)).status,200);
+ assert.equal((await saveFor(second,b,800)).status,200);
+ async function readFor(ctx,session){return (await ctx.worker.fetch(new Request('https://pika.example/api/account/pet',{headers:{Cookie:session.cookie}}),ctx.env)).json();}
+ const sa=await readFor(first,a),sb=await readFor(second,b);
+ assert.equal(sa.revision,1);assert.equal(sb.revision,1);
+ assert.equal(sa.save.state.coins,1200);assert.equal(sb.save.state.coins,800);
+ first.database.raw.close();
+});
