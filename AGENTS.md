@@ -8,11 +8,17 @@
 
 ## 기준서 라우팅
 - 게임 기획과 현재 상태: [README](README.md), [리뉴얼 명세](docs/quality/PROJECT_SPEC.md)
+- 신규 캐릭터·공간·UI 디자인: [아트 디렉션](docs/ART_STYLE_GUIDE.md), [레퍼런스 아카이브](docs/ART_REFERENCE.md). 사용자 취향과 미승인 시안은 구분한다.
 - PixelLab MCP 에셋 생성·비용·도구 선택: [PixelLab 제작 운영 가이드](docs/quality/PIXELLAB_GUIDE.md)
 - 기존 픽셀 아트: [제작 규격](docs/pixel-asset-style-guide.md), [카메라 및 배치](docs/room-camera-standard.md), [프로젝트 메모리](MEMORY.md)
 - 구현 및 연결: 관련 소스, [연동 배포 안내](integration/연동-배포-안내.md)
 - 변경 기록과 승인: [결정 기록](docs/quality/DECISIONS.md)
 - 테스트 및 배포 판정: [품질 점검표](docs/quality/TEST_PLAN.md)
+
+## 디자인 작업
+- 사용자 취향: 2000년대 GBA/DS 레트로 도트, 파스텔, 넓고 둥근 얼굴·넓은 미간·작은 몸, 새침한 반눈, 종별 실루엣과 햄토리식 전신 행동. 배경·UI는 화이트우드 방과 파스텔 다이어리 감성.
+- 신규 폴드 고양이(검은 귀·수염 생략·짧은 몸·넓은 미간) 및 48/64px는 검토 후보. 기존 32px 규격과 승인 원본을 변경하지 않는다.
+- 실제 참조의 역할·권리·논리 해상도·bbox·실제 표시 크기를 구분하고, 유료 생성/최종 원본·방향·모션·착용 확장은 단계별 승인. 출처 아트 자체를 게임에 복제하지 않는다.
 
 ## 보호 및 검증
 - 기존 승인된 빈 방과 8방향 고양이 원본, 저장 호환성, 기존 보유품·재화·XP·구매 기록을 보존한다. 사용자 승인 없이 원본을 교체하지 않는다.
