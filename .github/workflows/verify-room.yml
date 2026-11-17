@@ -26,6 +26,8 @@ jobs:
         run: npm run build
       - name: Check generated console geometry
         run: node --test test/controller-foreground-layout.test.mjs test/controller-single-layer.test.mjs test/console-button-geometry.test.mjs
+      - name: Verify P0 regression gate
+        run: npm run test:p0
       - name: Run full regression suite
         run: npm test
       - uses: actions/setup-python@v5
@@ -38,7 +40,7 @@ jobs:
       - name: Inspect existing room assets without replacing them
         run: python scripts/check_pixel_assets.py --baseline
       - name: Check new or modified pixel assets in changes
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
         env:
-          BASE_COMMIT: ${{ github.event.pull_request.base.sha }}
+          BASE_COMMIT: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: python scripts/check_pixel_assets.py --changed "$BASE_COMMIT"

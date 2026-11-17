@@ -6,6 +6,8 @@ on:
       - 'src/**'
       - 'build.mjs'
       - 'test/**'
+      - 'scripts/**'
+      - 'package.json'
       - '.github/workflows/publish-dist.yml'
   workflow_dispatch:
 permissions:
@@ -21,6 +23,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -28,8 +31,24 @@ jobs:
         run: npm run build
       - name: Verify console button geometry and rendering
         run: node --test test/controller-foreground-layout.test.mjs test/controller-single-layer.test.mjs test/console-button-geometry.test.mjs
+      - name: Verify P0 regression gate
+        run: npm run test:p0
       - name: Validate complete functionality
         run: npm test
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pixel inspection dependency
+        run: python -m pip install -r scripts/pixel-assets-requirements.txt
+      - name: Verify pixel inspector and baseline
+        run: |
+          python scripts/test_pixel_assets.py
+          python scripts/check_pixel_assets.py --baseline
+      - name: Validate changed game PNGs before publishing dist
+        if: github.event_name == 'push'
+        env:
+          BASE_COMMIT: ${{ github.event.before }}
+        run: python scripts/check_pixel_assets.py --changed "$BASE_COMMIT"
       - name: Commit tested static assets for GitHub-connected deploy
         shell: bash
         run: |
