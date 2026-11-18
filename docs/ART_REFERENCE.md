@@ -4,6 +4,21 @@
 - 적용 기준은 [ART_STYLE_GUIDE](ART_STYLE_GUIDE.md), 현재 규격/보호 대상은 [기존 제작 기준](pixel-asset-style-guide.md)을 따른다.
 - 타 작품 그래픽·캐릭터·도안은 스타일을 분석하기 위한 참조다. 원본 재배포, 트레이싱, 그대로 게임에 삽입, 저작권/라이선스 미확인 입력의 생성 사용은 금지한다. 이 저장소가 공개되어 있으므로 사용자 첨부 원본/개인 화면·제3자 스프라이트 파일을 복제하지 않고 이름·링크·분석만 기록한다.
 
+## 4. 주요 레퍼런스 — 역할별로 제한
+
+| 우선 | 레퍼런스 | 가져올 것 | 가져오지 않을 것 |
+| --- | --- | --- | --- |
+| 기준 원본 | 사용자 선택 D 방 및 자유 캐릭터·30° 기하 참조 | 유일한 카메라/비례 시각 앵커 | 생성 오류, 바뀐 얼굴, 54px 원본 키 |
+| 구도 핵심 | 내친구 포밍뿌! (사용자 제공 화면) | 정면 중심, 낮은 내려다보기, 커다란 펫과 생활 가구 | 비픽셀 렌더링, 강한 원근, 프레임 |
+| 구도 핵심 | Pet Society / [Paw Society 실화면(팬 재현)](https://pawsociety.app/#) | 정면 중심 실내, 펫과 방 꾸미기의 상대 크기 | 원작 그래픽 복제, 비픽셀 그림체 |
+| 구도 보조 | [Tamagotchi Paradise My Lab 공식 설명서](https://tamagotchi-official.com/manual/toy/paradise/paradise_web_manual_mylab_IS_EN.pdf) 7~8장(Room) | 정면 픽셀 방과 캐릭터·가구/문 연결 | 기기·화면 구조와 개별 도트 복제 |
+| 공간/에셋 보조 | [Dogz 2 GBA 소녀 방](https://www.spriters-resource.com/game_boy_advance/dogz2/asset/4098/) / [소년 방](https://www.spriters-resource.com/game_boy_advance/dogz2/asset/4093/) | 저해상도 소재 표현, 가구의 앞·윗면 및 펫 크기 비교 | 방의 정확한 투영각을 D로 간주하지 않음 |
+| 캐릭터 행동 | [Hamtaro Ham-Ham Heartbreak](https://www.spriters-resource.com/game_boy_advance/hamtarohamhamheartbreak/asset/26220/) / [Rainbow Rescue](https://www.spriters-resource.com/game_boy_advance/hamtarorr/asset/19723/) | 짧은 몸의 손·발, 감정/행동 실루엣, 조합 | 카메라/캐릭터 디자인 복제 |
+| 행동 구조 | [Neko Atsume](https://play.google.com/store/apps/details?id=jp.co.hit_point.nekoatsume) | 가구/물건에 반응하는 관찰 | 수집형 시스템과 카메라 복제 |
+
+Dogz 2 배경 공개 시트의 PNG 치수는 소녀 방 361×271, 소년 방 359×276이다. 이는 추출된 방 PNG 크기이지 게임 뷰포트나 그못섬 가구의 개별 사이즈가 아니다. 다른 게임의 정확한 캐릭터 키나 타일 수는 원본 실측 없이 단정하지 않는다. 레퍼런스는 각도·비례·시각 표현 연구용이며 원본 복제/AI 참조 업로드 권리는 별도 확인한다.
+
+
 ## 1. 사용자 첨부 — 무엇이 귀여운가
 
 | 자료 | 관찰 및 논리 픽셀(추정) | 가져올 것 / 피할 것 |
